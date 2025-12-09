@@ -1,0 +1,123 @@
+{% extends '../shared/_base.html' %}
+{% block title %} {{ challenge.title }} {% endblock %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+    <section class="table-components">
+        <div class="container-fluid">
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-12">
+              </div>
+            </div>
+          </div>
+
+          <div class="tables-wrapper">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <h3 class="mb-20">{{ challenge.id}}. {{ challenge.title }}</h3>
+                    <ul class="mb-30 buttons-group">
+                      <li class="me-10">
+                        <a href="#0" class="main-btn text-sm px-2 py-1 success-btn-light btn-hover">
+                          {{ challenge.get_difficulty_display }}
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#tags" class="main-btn text-sm px-2 py-1 light-btn btn-hover">
+                          <i class="lni lni-tag"></i>
+                          Teglar
+                         </a>
+                      </li>
+                      <li>
+                        <a href="#hints" class="main-btn text-sm px-2 py-1 info-btn btn-hover">
+                          <i class="lni lni-bulb"></i>
+                          Yordam
+                         </a>
+                      </li>
+                    </ul>
+                    {{ challenge.description|safe}}
+                    <table class="table striped-table mb-30 mt-30">
+                      <tbody>
+                        <tr>
+                            <td><b>Kiruvchi ma'lumotlar</b></td>
+                            <td>{{ challenge.input_description|safe }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Chiquvchi ma'lumotlar</b></td>
+                            <td>{{ challenge.output_description|safe }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <h6 class="mt-50 mb-20">Testlar</h6>
+                    <table class="table striped-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            <h6>Input</h6>
+                          </th>
+                          <th>
+                            <h6>Output</h6>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for t in challenge.sample_tests %}
+                        <tr>
+                            <td>{{ t.input }}</td>
+                            <td>{{ t.output }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                    <div id="tags">
+                      <h6 class="mt-40 mb-10">Teglar</h6>
+                      <ul class="buttons-group">
+                        {% for tag in challenge.tags.all %}
+                          <li><a href="{% url 'challenge_by_tag' tag.slug %}" class="main-btn text-sm px-2 py-1 light-btn btn-hover">#{{ tag.name }}</a></li>
+                        {% empty %}
+                          <li><span class="text-sm">Teglar mavjud emas.</span></li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                    <div id="hints">
+                      <h6 class="mb-10 mt-30">Yordam</h6>
+                      <ul class="buttons-group">
+                        {% for hint in challenge.hints.all %}
+                          <li><span>{{ hint.text|safe }}</span></li>
+                        {% empty %}
+                          <li><span class="text-sm">Yordam mavjud emas.</span></li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card-style mb-30">
+                    <h6 class="mb-20">Yechim yuborish</h6>
+                    <form method="post" action="{% url 'run_code' challenge.slug %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-style-1 mt-30">
+                            <label for="language">Dasturlash tili</label>
+                            {{ form.language }}
+                        </div>
+                        <div class="input-style-1">
+                            <label for="code_file">Dastur kodi:</label>
+                            {{ form.code }}
+                        </div>
+                        <button type="submit" class="main-btn mr-20 primary-btn mt-10">
+                          <i class="lni lni-play"></i>
+                          Run Code
+                        </button>
+                        <button type="submit" class="main-btn success-btn-light mt-10">
+                          <i class="lni lni-cloud-upload"></i>
+                          Yuborish
+                        </button>
+                    </form>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </section>
+{% endblock content %} 

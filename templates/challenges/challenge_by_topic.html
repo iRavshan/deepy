@@ -1,0 +1,109 @@
+{% extends '../shared/_base.html' %}
+{% block title %} {{ topic.name }} {% endblock %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+    <section class="table-components">
+        <div class="container-fluid">
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title">
+                  <h2>Masalalar
+                  </h2>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="#0">Home</a>
+                      </li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Challenges
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <div class="col-lg-12">
+                <ul class="buttons-group mb-20">
+                  {% for tag in tags %}
+                  <li>
+                    <a href="{% url 'challenge_by_tag' tag.slug %}" class="btn btn-outline-primary">{{ tag.name }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="col-lg-12">
+                <ul class="buttons-group mb-20">
+                  <li>
+                    <a href="{% url 'challenge_list' %}" class="main-btn primary-btn rounded-full btn-hover">Barchasi</a>
+                  </li>
+                  {% for topic in topics %}
+                  <li>
+                    <a href="{% url 'challenge_by_topic' topic.slug %}" class="main-btn primary-btn-light rounded-full btn-hover">{{ topic.name }}</a>
+                  </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="tables-wrapper">
+
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="card-style mb-30">
+                  <div class="table-wrapper table-responsive">
+                    <table class="table striped-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            <h6>Nomi</h6>
+                          </th>
+                          <th>
+                            <h6>Time Limit</h6>
+                          </th>
+                          <th>
+                            <h6>Memory Limit</h6>
+                          </th>
+                          <th>
+                            <h6>Difficulty</h6>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for challenge in challenges %}
+                        <tr>
+                          <td>
+                            <a href="{% url 'challenge_detail' challenge.slug %}">{{forloop.counter}}. {{ challenge.title }}</a>
+                          </td>
+                          <td>
+                            <p>{{ challenge.time_limit }} sec</p>
+                          </td>
+                          <td>
+                            <p>{{ challenge.memory_limit }} MB</p>
+                          </td>
+                          <td>
+                            {% if challenge.difficulty == 'easy' %}
+                            <span class="status-btn success-btn">{{ challenge.get_difficulty_display }}</span>
+                            {% elif challenge.difficulty == 'medium' %}
+                            <span class="status-btn warning-btn">{{ challenge.get_difficulty_display }}</span>
+                            {% else %}  
+                            <span class="status-btn danger-btn-light">{{ challenge.get_difficulty_display }}</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+{% endblock content %} 

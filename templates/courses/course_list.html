@@ -1,0 +1,61 @@
+{% extends '../shared/_base.html' %}
+{% block title %} Courses {% endblock %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+    <section class="card-components">
+        <div class="container-fluid">
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title">
+                  <h2>Kurslar</h2>
+                </div>
+              </div>
+              <!-- end col -->
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="#0">Home</a>
+                      </li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Courses
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+              <!-- end col -->
+            </div>
+            <!-- end row -->
+          </div>
+
+          <div class="cards-styles">
+
+            <div class="row">
+              {% for course in courses %}
+              <div class="col-xl-6 col-lg-6">
+                <div class="card-style-5 mb-30">
+                  <div class="card-image">
+                    <a href="#0">
+                      <img src="{% static 'images/cards/card-style-5/card-2.jpg' %}" alt="course_image" />
+                    </a>
+                  </div>
+                  <div class="card-content">
+                    <h4><a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a></h4>
+                    <p>{{ course.description }}</p>
+                    <a href="{% url 'course_detail' course.slug %}" class="main-btn primary-btn btn-hover">Kursga o'tish</a>
+                  </div>
+                </div>
+                <!-- end card -->
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <!-- ========== cards-styles end ========== -->
+        </div>
+        <!-- end container -->
+    </section>
+{% endblock content %} 

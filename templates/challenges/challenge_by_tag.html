@@ -1,0 +1,96 @@
+{% extends '../shared/_base.html' %}
+{% block title %} {{ tag.name }} {% endblock %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+    <section class="table-components">
+        <div class="container-fluid">
+          <div class="title-wrapper pt-30">
+            <div class="row align-items-center">
+              <div class="col-md-6">
+                <div class="title">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="breadcrumb-wrapper">
+                  <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                      <li class="breadcrumb-item">
+                        <a href="#0">Home</a>
+                      </li>
+                      <li class="breadcrumb-item active" aria-current="page">
+                        Challenges
+                      </li>
+                    </ol>
+                  </nav>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tables-wrapper">
+
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="card-style-2 mb-30">
+                    <div class="card-content">
+                      <h4 class="mb-30">{{ tag.name|upper}}</h4>
+                      <a class="main-btn text-sm px-2 py-1 light-btn btn-hover">
+                          {{ challenges.count }} ta masala
+                      </a>
+                    </div>
+                  </div>
+              </div>
+              <div class="col-lg-8">
+                <div class="card-style mb-30">
+                  <div class="table-wrapper table-responsive">
+                    <table class="table striped-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            <h6>Nomi</h6>
+                          </th>
+                          <th>
+                            <h6>Time Limit</h6>
+                          </th>
+                          <th>
+                            <h6>Memory Limit</h6>
+                          </th>
+                          <th>
+                            <h6>Difficulty</h6>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for challenge in challenges %}
+                        <tr>
+                          <td>
+                            <a href="{% url 'challenge_detail' challenge.slug %}">{{forloop.counter}}. {{ challenge.title }}</a>
+                          </td>
+                          <td>
+                            <p>{{ challenge.time_limit }} sec</p>
+                          </td>
+                          <td>
+                            <p>{{ challenge.memory_limit }} MB</p>
+                          </td>
+                          <td>
+                            {% if challenge.difficulty == 'easy' %}
+                            <span class="status-btn success-btn">{{ challenge.get_difficulty_display }}</span>
+                            {% elif challenge.difficulty == 'medium' %}
+                            <span class="status-btn warning-btn">{{ challenge.get_difficulty_display }}</span>
+                            {% else %}  
+                            <span class="status-btn danger-btn-light">{{ challenge.get_difficulty_display }}</span>
+                            {% endif %}
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+{% endblock content %} 

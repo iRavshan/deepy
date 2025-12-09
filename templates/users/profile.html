@@ -1,0 +1,8 @@
+<h1>Your Profile</h1>
+
+<p>Username: {{ user.username }}</p>
+<p>Full name: {{ user.full_name }}</p>
+<p>Bio: {{ user.bio }}</p>
+<img src="{{ user.avatar.url }}" alt="Avatar">
+
+<a href="{% url 'users:profile_edit' %}">Edit profile</a>
