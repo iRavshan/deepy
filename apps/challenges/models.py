@@ -91,7 +91,7 @@ class Challenge(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, blank=True, related_name='challenges')
 
     class Meta:
-        ordering = ['difficulty', 'title']
+        ordering = ['id']
 
     def save(self, *args, **kwargs):
         if not self.slug:

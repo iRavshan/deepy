@@ -5,54 +5,7 @@
 {% load i18n %}
     <section class="table-components">
         <div class="container-fluid">
-          <div class="title-wrapper pt-30">
-            <div class="row align-items-center">
-              <div class="col-md-6">
-                <div class="title">
-                  <h2>Masalalar
-                  </h2>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="breadcrumb-wrapper">
-                  <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                      <li class="breadcrumb-item">
-                        <a href="#0">Home</a>
-                      </li>
-                      <li class="breadcrumb-item active" aria-current="page">
-                        Challenges
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
-              </div>
-              <div class="col-lg-12">
-                <ul class="buttons-group mb-20">
-                  {% for tag in tags %}
-                  <li>
-                    <a href="{% url 'challenge_by_tag' tag.slug %}" class="btn btn-outline-primary">{{ tag.name }}</a>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-              <div class="col-lg-12">
-                <ul class="buttons-group mb-20">
-                  <li>
-                    <a href="{% url 'challenge_list' %}" class="main-btn primary-btn rounded-full btn-hover">Barchasi</a>
-                  </li>
-                  {% for topic in topics %}
-                  <li>
-                    <a href="{% url 'challenge_by_topic' topic.slug %}" class="main-btn primary-btn-light rounded-full btn-hover">{{ topic.name }}</a>
-                  </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="tables-wrapper">
-
+          <div class="tables-wrapper pt-30">
             <div class="row">
               <div class="col-lg-12">
                 <div class="card-style mb-30">

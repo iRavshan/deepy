@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
+from ckeditor.fields import RichTextField
 
 
 
@@ -30,8 +31,18 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+    
 
+class LearningDetail(models.Model):
+    course = models.ForeignKey(Course, related_name='learning_details', on_delete=models.CASCADE)
+    text = RichTextField(max_length=255)
+    order = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.text
 
 
 class Section(models.Model):
@@ -67,7 +78,6 @@ class Lesson(models.Model):
     section = models.ForeignKey(Section, related_name="lessons", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, editable=False)
-    video_url = models.URLField(blank=True, null=True)
     content = models.TextField()  
     order = models.PositiveIntegerField()
 

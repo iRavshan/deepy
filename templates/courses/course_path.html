@@ -1,0 +1,93 @@
+
+{% extends '../shared/_base.html' %}
+{% block title %} Kurslar {% endblock %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+<section class="course-path-wrapper">
+    <div class="course-path">
+            {% for section in course.sections.all %}
+            <div class="unit-header">
+                <div class="unit-info">
+                    <h2>Bo'lim {{ section.order }}</h2>
+                    <p>{{ section.title }}</p>
+                </div>
+                <a class="unit-info-btn"><i class="fa-solid fa-book"></i>Qo'llanma</a>
+            </div>
+            
+            <div class="path-nodes">
+                {% for lesson in section.lessons.all %}
+                {% if lesson.is_completed %}
+                <div class="level-row">
+                    <div class="level-item">
+                        <div class="circle-btn status-completed"><i class="fa-solid fa-star"></i></div>
+                        <div class="tooltip">{{ lesson.title }}</div>
+                    </div>
+                </div>
+                {% elif lesson.is_active %}
+                <div class="level-row">
+                    <div class="level-item">
+                        <div class="start-bubble">Start</div>
+                        <div class="ring-container">
+                            <svg class="progress-svg" viewBox="0 0 100 100">
+                                <circle class="ring-track" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
+                                <circle class="ring-fill" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
+                            </svg>
+                            <div class="circle-btn status-active">📊</div>
+                        </div>
+                        <div class="tooltip">{{ lesson.title }}</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="level-row">
+                    <div class="level-item">
+                        <a class="circle-btn status-locked"><i class="fa-solid fa-lock"></i></a>
+                        <div class="tooltip">{{ lesson.title }}</div>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+
+                <div style="position: absolute; left: 20px; top: 250px; z-index: -1; opacity: 1;">
+                    <img src="nova.jpg" alt="" style="width: 220px;">
+                </div>
+
+            </div>
+            {% endfor %}
+    </div>
+</section>
+
+
+<aside class="right-panel">
+        <div class="course-card">
+            
+            <div class="card-header">
+                <div class="course-name">{{ course.title }}</div>
+                <div class="percent-badge">65%</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar-fill" style="width: 65%;"></div>
+            </div>
+
+            <div class="cert-section">
+                <div class="cert-icon">📜</div>
+                <div class="cert-details">
+                    <span class="cert-title">Course Certificate</span>
+                    <span class="cert-status">Finish course to unlock</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card cheat-sheet">
+            <div class="cheat-header">
+                <span><i class="fa-solid fa-lightbulb"></i></span>
+                <span>Cheat Sheet</span>
+            </div>
+            <p class="note-text">
+                <strong>Pro Tip:</strong> When using <code>position: sticky</code>, ensure the parent container doesn't have <code>overflow: hidden</code> set, or it won't work!
+            </p>
+        </div>
+</aside>
+{% endblock content %} 

@@ -1,5 +1,6 @@
 import tempfile
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from pathlib import Path
 from .models import Challenge, Submission, Tag, Topic
@@ -35,19 +36,18 @@ def challenge_detail(request, slug):
 
 
 @login_required
+@require_POST
 def run_code_in_docker(request, slug):
     challenge = Challenge.objects.get(slug=slug)
-
-    if request.method == "POST":
-        code = request.POST.get('code', '')
-        language = request.POST.get('language', 'python')
-        if not code:
-            return JsonResponse({
-                'success': False,
-                'error': 'No code provided',
-                'output': ''
-            })
-        # Basic validation
+    code = request.POST.get('code', '')
+    language = request.POST.get('language', 'python')
+    
+    if not code:
+        return JsonResponse({
+            'success': False,
+            'error': 'No code provided',
+            'output': ''
+        })
         if len(code) > 10000:  # Limit code size
             return JsonResponse({
                 'success': False,
@@ -55,10 +55,8 @@ def run_code_in_docker(request, slug):
                 'output': ''
             })
     
-        # Execute code
         executor = CodeExecutor()
         result = executor.execute_code(code, language)
         
         return JsonResponse(result)
-
-    return JsonResponse({"error": "Only POST allowed"})
+    

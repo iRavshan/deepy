@@ -1,69 +1,63 @@
 {% extends '../shared/_base.html' %}
-{% block title %} Login {% endblock %}
+{% block title %} {{ course.title }} {% endblock %}
 {% block content %}
 {% load static %}
 {% load i18n %}
-    <section class="card-components">
-        <div class="container-fluid">
-          <div class="title-wrapper pt-30">
-            <div class="row align-items-center">
-              <div class="col-md-6">
-                <div class="title">
-                  <h2>{{ course.title }}</h2>
-                </div>
-              </div>
-              <!-- end col -->
-              <div class="col-md-6">
-                <div class="breadcrumb-wrapper">
-                  <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                      <li class="breadcrumb-item">
-                        <a href="#0">Home</a>
-                      </li>
-                      <li class="breadcrumb-item active" aria-current="page">
-                        Courses
-                      </li>
-                    </ol>
-                  </nav>
-                </div>
-              </div>
-              <!-- end col -->
-            </div>
-            <!-- end row -->
-          </div>
-
-          <div class="cards-styles">
-
-            <div class="row">
-              <div class="col-xl-12 col-lg-12">
-                <div class="card-style-5 mb-30">
-                  <div class="card-image">
-                    <a href="#0">
-                      <img src="{% static 'images/cards/card-style-5/card-2.jpg' %}" alt="course_image" />
-                    </a>
-                  </div>
-                  <div class="card-content">
-                    <h4><a href="{% url 'course_detail' course.slug %}">{{ course.title }}</a></h4>
-                    <span class="alert">{{ course.get_level_display }}</span>
-                    <span class="alert">{{ course.lesson_count }} lessons</span>
-                    <span class="alert">{{ course.lesson_count }} exercises</span>
-                    <p>{{ course.description }}</p>
-                    {% for section in course.sections.all %}
-                        <h4 class="mt-3">{{ section.title }}</h4>
-                        <ul>
-                          {% for lesson in section.lessons.all %}
-                          <li><a href="{% url 'lesson_detail' course_slug=course.slug lesson_slug=lesson.slug %}" class="mt-2">{{ lesson.title }}</a></li>
-                          {% endfor %}
-                        </ul>
-                    {% endfor %}
-                  </div>
-                </div>
-                <!-- end card -->
-              </div>
-            </div>
-          </div>
-          <!-- ========== cards-styles end ========== -->
+<section class="course-content-area">
+    <div class="course-banner">
+        <div class="banner-content">
+            <h1>{{ course.title }}</h1>
+            <p>{{ course.description }}</p>
+            {% if not is_enrolled %}
+            <form action="{% url 'enroll_course' course.slug %}" method="post" class="course-enroll-form">
+                {% csrf_token %}
+                <button class="btn-3d btn-gold">Sayohatni boshlash</button>
+            </form>
+            {% else %}
+            <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold">Davom ettirish</a>
+            {% endif %}
         </div>
-        <!-- end container -->
-    </section>
+        <i class="fa-brands fa-python banner-icon"></i>
+    </div>
+    <div class="content-card">
+        <h2 class="section-title">Nimalarni o'rganasiz</h2>
+        <ul class="learning-list">
+            {% for learning_detail in course.learning_details.all %}
+            <li>
+                <i class="fa-solid fa-check check-icon"></i>
+                <span>{{ learning_detail.text|safe }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="content-card">
+        <h2 class="section-title">Nishonlar</h2>
+        <div class="badges-grid">
+            <div class="badge-item">
+                <div class="badge-icon-bg b-gold">
+                    <i class="fa-solid fa-scroll"></i>
+                </div>
+                <span class="badge-label">Syntax Starter</span>
+            </div>
+            <div class="badge-item">
+                <div class="badge-icon-bg b-purple">
+                    <i class="fa-solid fa-bug"></i>
+                </div>
+                <span class="badge-label">Bug Hunter I</span>
+            </div>
+            <div class="badge-item">
+                <div class="badge-icon-bg b-locked">
+                    <i class="fa-solid fa-database"></i>
+                </div>
+                <span class="badge-label">Data Wrangler</span>
+            </div>
+            <div class="badge-item">
+                <div class="badge-icon-bg b-locked">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <span class="badge-label">Course Master</span>
+                </div>
+        </div>
+    </div>
+</section>
 {% endblock content %} 
