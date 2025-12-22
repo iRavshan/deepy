@@ -14,10 +14,13 @@
         <a href="#" class="nav-link-item">Contests</a>
         <a href="#" class="nav-link-item">Discuss</a>
     </div>
-
+    {% if user.is_authenticated %}
     <div class="user-stats">
         <div class="stat-item streak"><i class="fa-solid fa-fire"></i>15</div>
         <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
         <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
     </div>
+    {% else %}
+    <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
+    {% endif %}
 </nav>

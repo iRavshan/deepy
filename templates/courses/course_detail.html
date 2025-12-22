@@ -11,10 +11,10 @@
             {% if not is_enrolled %}
             <form action="{% url 'enroll_course' course.slug %}" method="post" class="course-enroll-form">
                 {% csrf_token %}
-                <button class="btn-3d btn-gold">Sayohatni boshlash</button>
+                <button class="btn-3d btn-gold btn-transform">Sayohatni boshlash</button>
             </form>
             {% else %}
-            <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold">Davom ettirish</a>
+            <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold btn-transform">Davom ettirish</a>
             {% endif %}
         </div>
         <i class="fa-brands fa-python banner-icon"></i>

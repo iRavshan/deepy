@@ -29,9 +29,10 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractUser):
     username = None   
     email = models.EmailField(unique=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
     is_email_verified = models.BooleanField(default=False)
     
-    USERNAME_FIELD = "email"
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []  # email and password are required automatically
 
     objects = CustomUserManager()

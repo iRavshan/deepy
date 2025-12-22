@@ -1,10 +1,11 @@
 from django.urls import path
-from .views import challenge_list, challenge_detail, challenge_by_tag, challenge_by_topic, run_code_in_docker
+from .views import challenge_list, challenge_detail, challenge_by_tag, challenge_by_topic, judge_submission
+
 
 urlpatterns = [
     path('', challenge_list, name='challenge_list'),
     path('<slug:slug>', challenge_detail, name='challenge_detail'),
     path('tag/<slug:slug>', challenge_by_tag, name='challenge_by_tag'),
     path('topic/<slug:slug>', challenge_by_topic, name='challenge_by_topic'),
-    path('run_code/<slug:slug>', run_code_in_docker, name='run_code'),
+    path('run_code/<slug:slug>', judge_submission, name='judge_submission'),
 ]

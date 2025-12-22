@@ -21,10 +21,9 @@ def login_view(request):
     if request.method == "POST":
         form = EmailLoginForm(request, data=request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
+            user = authenticate(username=form.cleaned_data.get('username'), 
+                                password=form.cleaned_data.get('password'))
+            if user:
                 login(request, user)
                 return redirect('course_list')
     else:

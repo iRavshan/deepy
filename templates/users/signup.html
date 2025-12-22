@@ -1,113 +1,64 @@
-{% extends '../shared/_base.html' %}
+{% extends '../shared/_blank.html' %}
 {% block title %} Sign Up {% endblock %}
 {% load socialaccount %}
 {% block content %}
 {% load static %}
 {% load i18n %}
-
-
-      <section class="signin-section">
-        <div class="container-fluid">
-          <!-- ========== title-wrapper start ========== -->
-          <div class="title-wrapper pt-30">
-            <div class="row align-items-center">
-              <div class="col-md-6">
-                <div class="title">
-                  <h2>Sign up</h2>
-                </div>
-              </div>
-            </div>
-            <!-- end row -->
-          </div>
-          <!-- ========== title-wrapper end ========== -->
-
-          <div class="row g-0 auth-row">
-            <div class="col-lg-6">
-              <div class="auth-cover-wrapper bg-primary-100">
-                <div class="auth-cover">
-                  <div class="title text-center">
-                    <h1 class="text-primary mb-10">Welcome</h1>
-                    <p class="text-medium">
-                      Create your account to start your journey with us.
-                    </p>
-                  </div>
-                  <div class="cover-image">
-                    <img src="{% static '/images/auth/signin-image.svg' %}" alt="" />
-                  </div>
-                  <div class="shape-image">
-                    <img src="{% static '/images/auth/shape.svg' %}" alt="" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- end col -->
-            <div class="col-lg-6">
-              <div class="signin-wrapper">
-                <div class="form-wrapper">
-                  <h6 class="mb-15">Sign Up Form</h6>
-                  <p class="text-sm mb-25">
-                    Start creating the best possible user experience for you
-                    customers.
-                  </p>
-                  <form action="{% url 'signup' %}" method="POST">
-                    {% csrf_token %}
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="input-style-1">
-                          <label>{{ form.email.label }}</label>
-                          {{ form.email }}
-                        </div>
-                      </div>
-                      <!-- end col -->
-                      <div class="col-12">
-                        <div class="input-style-1">
-                          <label>{{ form.password1.label }}</label>
-                          {{ form.password1 }}
-                        </div>
-                      </div>
-
-                      <div class="col-12">
-                        <div class="input-style-1">
-                          <label>{{ form.password2.label }}</label>
-                          {{ form.password2 }}
-                        </div>
-                      </div>
-                      <!-- end col -->
-                      <div class="col-12">
-                        <div class="button-group d-flex justify-content-center flex-wrap">
-                          <button class="main-btn primary-btn btn-hover w-100 text-center" type="submit">
-                            Sign Up
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- end row -->
-                  </form>
-                  <div class="singin-option pt-40">
-                    <p class="text-sm text-medium text-center text-gray">
-                      Easy Sign In With
-                    </p>
-                    <div class="button-group pt-40 pb-40 d-flex justify-content-center flex-wrap">
-                      <button class="main-btn primary-btn-outline m-2">
-                        <i class="lni lni-github-fill mr-10"></i>
-                        Github
-                      </button>
-                      <a class="main-btn danger-btn-outline m-2" href="{% provider_login_url 'google' %}">
-                        <i class="lni lni-google mr-10"></i>
-                        Google
-                      </a>
-                    </div>
-                    <p class="text-sm text-medium text-dark text-center">
-                      Already have an account?
-                      <a href="{%url 'login' %}">Login</a>
-                    </p> 
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- end col -->
-          </div>
-          <!-- end row -->
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="mascot-wrapper">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Robot Mascot" class="mascot-img">
         </div>
-      </section>
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Create Profile</h1>
+                <p>Join the SkillTree community today.</p>
+            </div>
+            <form method="post">
+              {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-wrapper">
+                      <input type="number" class="form-input" placeholder="Age">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="text" class="form-input" placeholder="Name (Optional)">
+                        <i class="fa-regular fa-user input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="email" class="form-input" placeholder="Email">
+                        <i class="fa-regular fa-envelope input-icon"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input type="password" class="form-input" placeholder="Password">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-signup btn-transform">Create Account</button>
+            </form>
+            <div class="terms-text">
+                By creating an account, you agree to SkillTree's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            </div>
+            <div class="divider">
+                <span>Or</span>
+            </div>
+            <button class="social-btn btn-transform">
+                <i class="fa-brands fa-google icon-google" style="font-size: 1.2rem;"></i>
+                Sign up with Google
+            </button>
+            <button class="social-btn btn-transform">
+                <i class="fa-brands fa-github icon-github" style="font-size: 1.2rem;"></i>
+                Sign up with GitHub
+            </button>
+            <div class="footer-links">
+                Already have an account? <a href="{% url 'login' %}">Log in</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %} 

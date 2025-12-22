@@ -85,8 +85,6 @@ class Challenge(models.Model):
     time_limit = models.FloatField(default=1.0)
     memory_limit = models.IntegerField(default=256)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-
     tags = models.ManyToManyField(Tag, related_name="challenges", blank=True)
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, blank=True, related_name='challenges')
 

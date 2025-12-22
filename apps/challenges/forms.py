@@ -2,17 +2,11 @@ from django import forms
 from .models import Submission
 
 class ChallangeSubmissionForm(forms.ModelForm):
+    code = forms.CharField(widget=forms.Textarea(attrs={
+        'class': 'editor-layer',
+        'id': 'editing-layer',
+        'spellcheck': 'false'
+    }))
     class Meta:
         model = Submission
-        fields = ["code", "language"]
-
-        widgets = {
-            "code": forms.Textarea(attrs={
-                "rows": 10,
-                "placeholder": "Kodingizni shu yerga yozing...",
-                "class": "form-control"
-            }),
-            "language": forms.Select(attrs={
-                "class": "form-control"
-            }),
-        }
+        fields = ['code']

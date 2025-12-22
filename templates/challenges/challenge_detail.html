@@ -1,51 +1,406 @@
-{% extends '../shared/_blank.html' %}
-{% block title %} {{ challenge.title }} {% endblock %}
+{% extends '../shared/_base.html' %}
+{% block title %} Challenges {% endblock %}
 {% block content %}
 {% load static %}
 {% load i18n %}
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-lg-12 p-0">
-      <a href="{% url 'challenge_list' %}" class="btn btn-light m-3">
-        <i class="ti ti-arrow-left me-1"></i> Back
-      </a>
-    </div>
-    <div class="col-lg-6 p-0">
-      <div class="challenge-description-wrapper card mb-0 rounded-0 border-0">
-        <div class="card-body">
-          <h2 class="mb-4 fw-semibold">{{challenge.id}}. {{ challenge.title }} 
-            {% if challenge.difficulty == 'easy' %}
-            <span class="badge bg-success rounded-3 fw-semibold vertical-align-middle mx-2">Easy</span>
-            {% elif challenge.difficulty == 'medium' %}
-            <span class="badge bg-warning rounded-3 fw-semibold vertical-align-middle mx-2">Med.</span>
-            {% elif challenge.difficulty == 'hard' %}
-            <span class="badge bg-danger rounded-3 fw-semibold vertical-align-middle mx-2">Hard</span>
-            {% endif %}
-          </h2>
-          {% for tag in challenge.tags.all %}
-            <a href="{% url 'challenge_by_tag' tag.slug %}" class="badge bg-light rounded-3 me-1 fs-sm">{{ tag.name }}</a>
-          {% endfor %}
-          <p class="mt-5">{{ challenge.description|safe }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-6 p-0">
-      <div class="challenge-solution-wrapper">
-        <div class="card">
-          <div class="card-body">
-            <form action="{% url 'run_code' challenge.slug %}" method="post">
-              <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Your solution</label>
-                <textarea class="form-control" rows="15"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary me-2"><i class="ti ti-player-play me-2"></i> Run code</button>
-              <button class="btn btn-success"><i class="ti ti-cloud-upload me-2"></i>Submit</button>
+    <style>
+        :root {
+            /* --- Palette --- */
+            --bg-panel: #ffffff;
+            --text-dark: #3c3c3c;
+            --text-medium: #777777;
+            --border-color: #e5e5e5;
+            
+            --theme-green: #58cc02; --theme-green-dark: #46a302;
+            --theme-blue: #1cb0f6; --theme-blue-dark: #1899d6;
+            --theme-orange: #ff9600;
+            --theme-red: #ff4b4b;
+            
+            --tag-blue-bg: #ddf4ff; --tag-blue-text: #1cb0f6;
+            --tag-purple-bg: #f4e7ff; --tag-purple-text: #ce82ff;
+            
+            --panel-radius: 24px;
+            --btn-radius: 16px;
+
+            /* Editor Colors (Monokai-ish) */
+            --editor-bg: #2d2d2d;
+            --editor-gutter: #3e3e3e;
+            --editor-selection: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            color: var(--text-dark);
+            height: 100vh;
+            display: flex; flex-direction: column;
+        }
+        /* --- Main Layout (FLEXBOX for Resizing) --- */
+        .main-container {
+            flex-grow: 1;
+            max-width: 100%; /* Full width allowed */
+            margin: 0; 
+            padding: 20px 25px 40px 25px;
+            display: flex; /* Changed from Grid to Flex */
+            align-items: stretch; /* Ensure equal height */
+            overflow: hidden;
+        }
+
+        /* --- Panel Styles --- */
+        .panel {
+            background: var(--bg-panel);
+            border: 2px solid var(--border-color);
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            height: 100%;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            /* Flex properties */
+            flex-shrink: 0; 
+        }
+
+        /* LEFT PANEL SPECIFICS */
+        .left-panel {
+            width: 40%; /* Initial Width */
+            min-width: 300px; /* Minimum width constraint */
+            padding: 0;
+            border-radius: var(--panel-radius) 0 0 var(--panel-radius); /* Rounded left, square right */
+            border-right: none; /* Merge border with resizer */
+        }
+
+        /* RIGHT PANEL SPECIFICS */
+        .right-panel {
+            flex-grow: 1; /* Takes remaining space */
+            min-width: 400px; /* Minimum width constraint */
+            padding: 30px;
+            border-radius: 0 var(--panel-radius) var(--panel-radius) 0; /* Square left, rounded right */
+            border-left: none; /* Merge border with resizer */
+        }
+
+        /* --- RESIZER HANDLE --- */
+        .resizer {
+            width: 8px;
+            background-color: #f0f0f0;
+            border-top: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+            cursor: col-resize;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        
+        .resizer:hover, .resizer.active {
+            background-color: var(--theme-blue);
+        }
+
+        /* Little grip dots in the resizer */
+        .resizer::after {
+            content: "•••";
+            color: #ccc;
+            font-size: 10px;
+            writing-mode: vertical-rl;
+            letter-spacing: 2px;
+            pointer-events: none;
+        }
+        .resizer:hover::after { color: white; }
+
+
+        /* --- Left Panel Content Wrapper --- */
+        .left-panel-content {
+            padding: 30px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        /* --- Tabs Navigation --- */
+        .tabs-nav {
+            display: flex;
+            background: #f7f7f7;
+            border-bottom: 2px solid var(--border-color);
+            padding: 10px 20px 0 20px;
+            gap: 5px;
+            flex-shrink: 0;
+        }
+        .tab-btn {
+            padding: 12px 20px; border: none; background: transparent;
+            font-family: 'Sora', sans-serif; font-weight: 700; color: var(--text-medium);
+            cursor: pointer; border-radius: 12px 12px 0 0; transition: all 0.2s;
+            position: relative; bottom: -2px;
+        }
+        .tab-btn:hover { background: rgba(0,0,0,0.05); color: var(--text-dark); }
+        .tab-btn.active {
+            background: var(--bg-panel); color: var(--theme-blue);
+            border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-panel);
+        }
+
+        /* Tab Content Areas */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Problem Description --- */
+        .problem-header { margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;}
+        .problem-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; }
+        .badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 8px 16px; border-radius: 20px; font-weight: 700; font-size: 0.9rem; }
+        .badge.difficulty { background: var(--theme-green); color: white; }
+        .badge.tag { background: var(--tag-blue-bg); color: var(--tag-blue-text); }
+
+        .problem-text p { margin-bottom: 20px; line-height: 1.6; font-size: 1.05rem; font-weight: 600; }
+        .code-span { background: #f0f0f0; padding: 4px 8px; border-radius: 8px; font-family: monospace; font-weight: 700; color: var(--theme-blue-dark); }
+        .example-box {
+            background: #f7f7f7; padding: 20px; border-radius: var(--btn-radius);
+            font-family: monospace; margin-bottom: 25px; border: 2px solid var(--border-color);
+        }
+        .example-box div { margin-bottom: 8px; }
+        .label { font-weight: 800; color: var(--text-dark); font-family: 'Sora'; margin-right: 5px;}
+
+        /* --- Hints Styling --- */
+        .hint-card {
+            background: #fff8e1; border: 2px solid #ffe082;
+            padding: 15px; border-radius: 16px; margin-bottom: 15px;
+            display: flex; gap: 15px; align-items: start;
+        }
+        .hint-icon { color: var(--theme-orange); font-size: 1.2rem; margin-top: 3px; }
+        
+        /* --- Submissions Styling --- */
+        .submission-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; border-bottom: 2px solid var(--border-color);
+        }
+        .sub-status { font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .status-acc { color: var(--theme-green); }
+        .status-err { color: var(--theme-red); }
+        .sub-time { color: var(--text-medium); font-size: 0.9rem; font-weight: 600; }
+
+        /* --- Right Panel (Editor) --- */
+        .editor-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; flex-shrink: 0;
+        }
+        .lang-select {
+            padding: 10px 20px; border-radius: var(--btn-radius); border: 2px solid var(--border-color);
+            font-family: 'Sora'; font-weight: 700; color: var(--text-dark);
+            background: white; cursor: pointer; outline: none;
+        }
+
+        /* --- STACKED EDITOR CONTAINER --- */
+        .editor-container-stack {
+            position: relative;
+            flex-grow: 1;
+            background: var(--editor-bg);
+            border-radius: var(--btn-radius);
+            border: 2px solid #1e1e1e;
+            overflow: hidden;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .editor-layer {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            padding: 20px; padding-left: 55px; /* Space for line numbers */
+            margin: 0; width: 100%; height: 100%;
+            font-family: inherit; font-size: inherit; line-height: inherit;
+            white-space: pre-wrap; overflow: auto; border: none; box-sizing: border-box;
+        }
+
+        #highlighting-layer {
+            z-index: 1; pointer-events: none; color: #f8f8f2;
+        }
+
+        #editing-layer {
+            z-index: 2; color: transparent; background: transparent;
+            caret-color: white; resize: none; outline: none;
+        }
+        #editing-layer::selection { background: var(--editor-selection); color: transparent; }
+
+        .gutter {
+            position: absolute; top: 0; left: 0; bottom: 0;
+            width: 45px; background: var(--editor-gutter); color: #888;
+            padding: 20px 5px; text-align: right; border-right: 1px solid #555;
+            z-index: 3; pointer-events: none; overflow: hidden;
+            font-family: inherit; font-size: inherit; line-height: inherit; user-select: none;
+        }
+        /* --- Buttons --- */
+        .buttons-row { display: flex; gap: 20px; flex-shrink: 0; }
+        .btn-3d {
+            flex: 1; padding: 15px; border: none; border-radius: var(--btn-radius);
+            font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.2rem;
+            color: white; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-blue { background: var(--theme-blue); box-shadow: 0 5px 0 var(--theme-blue-dark); }
+        .btn-green { background: var(--theme-green); box-shadow: 0 5px 0 var(--theme-green-dark); }
+        .btn-3d:active { transform: translateY(5px); box-shadow: none; }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-container { flex-direction: column; }
+            .left-panel, .right-panel { width: 100%; border-radius: var(--panel-radius); border: 2px solid var(--border-color); }
+            .left-panel { height: 400px; margin-bottom: 20px; }
+            .resizer { display: none; } /* Hide resizer on mobile */
+            .panel { height: auto; }
+            .right-panel { height: 500px; }
+            body { height: auto; }
+        }
+    </style>
+    <main class="main-container">
+        <section class="panel left-panel" id="leftPanel">
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i> Description</button>
+                <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i> Hints</button>
+                <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i> Submissions</button>
+            </div>
+
+            <div class="left-panel-content">
+                <div id="tab-desc" class="tab-content active">
+                    <header class="problem-header">
+                        <h1>{{ challenge.id }}. {{ challenge.title }}</h1>
+                        <div class="badges">
+                            <span class="badge difficulty">Easy</span>
+                            <span class="badge tag"><i class="fa-solid fa-hashtag"></i> Array</span>
+                        </div>
+                    </header>
+                    <div class="problem-text">
+                        {{ challenge.description|safe }}
+                        <h3>Example 1:</h3>
+                        <div class="example-box">
+                            <div><span class="label">Input:</span> nums = [2,7,11,15], target = 9</div>
+                            <div><span class="label">Output:</span> [0,1]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-hints" class="tab-content">
+                    <h2 style="margin-bottom: 20px;">Hints</h2>
+                    <div class="hint-card">
+                        <i class="fa-solid fa-lightbulb hint-icon"></i>
+                        <div>
+                            <h4 style="margin-bottom: 5px;">Hint 1</h4>
+                            <p style="margin: 0; font-size: 0.95rem; color: #555;">A brute force approach would involve checking every pair of numbers. This would be O(n^2).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-subs" class="tab-content">
+                    <h2 style="margin-bottom: 20px;">My Submissions</h2>
+                    <div class="submission-item">
+                        <div class="sub-status status-acc"><i class="fa-solid fa-check"></i> Accepted</div>
+                        <div class="sub-time">Just now</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="resizer" id="dragHandle"></div>
+
+        <section class="panel right-panel" id="rightPanel">
+            <div class="editor-header">
+                <h3 style="font-weight: 800;">Code Editor</h3>
+                <select class="lang-select">
+                    <option value="python">Python 3</option>
+                    <option value="java">Java</option>
+                    <option value="cpp">C++</option>
+                </select>
+            </div>
+            <form action="{% url 'judge_submission' challenge.slug %}" method="post">
+                {% csrf_token %}
+                <div class="editor-container-stack">
+                    {{ form.code }}
+                </div>
+                <div class="buttons-row">
+                    <button class="btn-3d btn-blue" type="submit"><i class="fa-solid fa-play"></i>Run</button>
+                    <button class="btn-3d btn-green"><i class="fa-solid fa-check"></i>Submit</button>
+                </div>
             </form>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-  
-{% endblock content %}
+        </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
+    <script>
+        // --- RESIZABLE LOGIC (NEW) ---
+        const resizer = document.getElementById('dragHandle');
+        const leftPanel = document.getElementById('leftPanel');
+        const mainContainer = document.querySelector('.main-container');
+        
+        let isResizing = false;
+
+        resizer.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            document.body.style.cursor = 'col-resize';
+            resizer.classList.add('active');
+            // Disable text selection during drag
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            // Calculate new width for the left panel based on mouse X position
+            // We subtract the container's left offset to get the relative position
+            const containerOffsetLeft = mainContainer.getBoundingClientRect().left;
+            const newWidth = e.clientX - containerOffsetLeft;
+            
+            // Set constraints (min width 300px, max width container - 400px)
+            const minWidth = 300;
+            const maxWidth = mainContainer.clientWidth - 400;
+
+            if (newWidth > minWidth && newWidth < maxWidth) {
+                leftPanel.style.width = `${newWidth}px`;
+                // Right panel automatically adjusts due to flex-grow: 1
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = 'default';
+                resizer.classList.remove('active');
+                document.body.style.userSelect = 'auto';
+            }
+        });
+
+
+        // --- EDITOR LOGIC ---
+        const textarea = document.getElementById('editing-layer');
+        const highlightCode = document.getElementById('highlighting-content');
+        const lineNumbers = document.getElementById('line-numbers');
+
+        function update() {
+            let text = textarea.value;
+            if(text[text.length-1] == "\n") { text += " "; }
+            
+            highlightCode.textContent = text;
+            Prism.highlightElement(highlightCode);
+
+            const numberOfLines = textarea.value.split('\n').length;
+            lineNumbers.innerHTML = Array(numberOfLines).fill(0).map((_, i) => i + 1).join('<br>');
+        }
+
+        function syncScroll() {
+            document.getElementById('highlighting-layer').scrollTop = textarea.scrollTop;
+            document.getElementById('highlighting-layer').scrollLeft = textarea.scrollLeft;
+            lineNumbers.scrollTop = textarea.scrollTop;
+        }
+
+        textarea.addEventListener('input', update);
+        textarea.addEventListener('scroll', syncScroll);
+        update(); // Initial call
+
+        // --- TABS LOGIC ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            if(tabName === 'desc') buttons[0].classList.add('active');
+            if(tabName === 'hints') buttons[1].classList.add('active');
+            if(tabName === 'subs') buttons[2].classList.add('active');
+        }
+    </script>
+{% endblock content %} 

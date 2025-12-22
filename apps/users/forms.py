@@ -4,10 +4,17 @@ from .models import User
 
 
 class EmailLoginForm(AuthenticationForm):
-    username = forms.EmailField(label="Email")
+    username = forms.EmailField(widget=forms.EmailInput(attrs={
+        'class': 'form-input',
+        'placeholder': 'Your Email'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'form-input',
+        'placeholder': 'Password'
+    }))
 
 
 class UserSignupForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['email']
+        fields = ['email', 'first_name']
