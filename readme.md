@@ -12,11 +12,11 @@
 - ❌ **Muammo:** O‘quvchilar ko‘pincha nazariyaga tiqilib qoladi, amaliy mashqlar va motivatsiya yetishmaydi.  
 - ✅ **Yechim:** DEEPY — gamifikatsiya, interaktiv topshiriqlar va darhol feedback orqali o‘rganishni qiziqarli va samarali qiladi.  
 
-![ProblemSolution](static/img/banners/question-and-answer-solving-problem-or-business-solution-ask-for-reply-or-idea-to-solve-difficulty-and-trouble-faq-concept-businessman-hand-holding-question-mark-with-other-reply-with-lightbulb-vector.jpg)
+![alt text](static/img/banners/problem-solution.jpg)
 
 ---
 
-## :🌍 World Building
+## 🌍 World Building
 DEEPY olamida foydalanuvchilar bilim izlab sayohat qiladi va ularga to‘rt asosiy personaj hamroh bo‘ladi. Har biri o‘ziga xos xarakter va vazifaga ega:
 
 🟨 NOVA — muvozanatni saqlovchi ustoz  
