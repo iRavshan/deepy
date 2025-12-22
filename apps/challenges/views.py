@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .models import Challenge, Submission, Tag, Topic
 from .forms import ChallangeSubmissionForm
 from django.http import JsonResponse
-from .utils.code_runners.python_runner import run_code
+from .utils.code_runners.python.python_judge import judge_submission
+
 
 
 def challenge_list(request):
@@ -36,11 +37,8 @@ def challenge_detail(request, slug):
 
 @login_required
 @require_POST
-def judge_submission(request, slug):
+def judge_submission_view(request, slug):
     challenge = Challenge.objects.get(slug=slug)
-
-    form = ChallangeSubmissionForm(request, data=request.POST)
-
-    if form.is_valid():
-        code = form.cleaned_data.get('code')
-        print(code) 
+    code = request.POST.get('code')
+    result = judge_submission(code, challenge.hidden_tests, challenge.time_limit)
+    print(result)

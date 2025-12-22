@@ -307,9 +307,7 @@
             </div>
             <form action="{% url 'judge_submission' challenge.slug %}" method="post">
                 {% csrf_token %}
-                <div class="editor-container-stack">
-                    {{ form.code }}
-                </div>
+                <textarea name="code" id="code"></textarea>
                 <div class="buttons-row">
                     <button class="btn-3d btn-blue" type="submit"><i class="fa-solid fa-play"></i>Run</button>
                     <button class="btn-3d btn-green"><i class="fa-solid fa-check"></i>Submit</button>
