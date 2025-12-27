@@ -1,12 +1,5 @@
 from .python_runner import run_code
 
-test_cases = [
-    {"input": "2 3", "expected": "5"},       # Oddiy test
-    {"input": "10 20", "expected": "30"},    # Ikkinchi test
-    {"input": "-5 5", "expected": "0"}       # Uchunchi test
-]
-
-
 def judge_submission(user_code, test_cases, time_limit=2.0):    
     for i, test in enumerate(test_cases, 1):
         input_str = test["input"]
@@ -22,7 +15,8 @@ def judge_submission(user_code, test_cases, time_limit=2.0):
         if result["status"] != "OK":
             return {
                 "verdict": result["status"], # Masalan: "Time Limit Exceeded"
-                "failed_test": i
+                "failed_test": 0,
+                "error": result["output"]
             }
         
         # 3. Javobni solishtirish

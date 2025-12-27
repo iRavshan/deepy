@@ -4,7 +4,7 @@
 {% load static %}
 {% load i18n %}
 {% if enrolled_courses %}
-<h1 class="page-title">Kurslaringiz</h1>
+<h1 class="page-title">Your courses</h1>
 <div class="course-grid">
   {% for course in enrolled_courses %}
   <div class="course-card">
@@ -14,7 +14,19 @@
     <div class="card-body">
       <a href="{% url 'course_detail' course.slug %}" class="course-title">{{ course.title }}</a>
       <div class="course-info">
-        <i class="fa-solid fa-crown crown-icon"></i> Level 3 · Unit 5
+        {% if course.level == 'beginner' %}
+        <div class="course-level beginner-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% elif course.level == 'intermediate' %}
+        <div class="course-level intermediate-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% else %}
+        <div class="course-level advanced-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% endif %}
       </div>
       <div class="progress-container">
         <div class="progress-bar-bg">
@@ -22,12 +34,12 @@
         </div>
         <span class="progress-text">65%</span>
       </div>
-      <a class="card-btn btn-transform" href="{% url 'course_detail' course.slug %}">Davom etish</a>
+      <a class="card-btn btn-transform" href="{% url 'course_detail' course.slug %}">Continue</a>
     </div>
   </div>
   {% endfor %}
 </div>
-<h1 class="page-title">Boshqa kurslar</h1>
+<h1 class="page-title">Other courses</h1>
 <div class="course-grid">
   {% if unenrolled_courses %}
   {% for course in unenrolled_courses %}
@@ -38,18 +50,30 @@
     <div class="card-body">
       <a href="{% url 'course_detail' course.slug %}" class="course-title">{{ course.title }}</a>
       <div class="course-info">
-        <i class="fa-solid fa-crown crown-icon"></i> Level 3 · Unit 5
+        {% if course.level == 'beginner' %}
+        <div class="course-level beginner-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% elif course.level == 'intermediate' %}
+        <div class="course-level intermediate-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% else %}
+        <div class="course-level advanced-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% endif %}
       </div>
       <a class="card-btn btn-transform" href="{% url 'course_detail' course.slug %}">Batafsil</a>
     </div>
   </div>
   {% endfor %}
   {% else %}
-  <p>Boshqa kurslar mavjud emas</p>
+  <p>There is no courses left</p>
   {% endif %}
 </div>
 {% else %}
-<h1 class="page-title">Barcha kurslar</h1>
+<h1 class="page-title">All courses</h1>
 <div class="course-grid">
   {% for course in courses %}
   <div class="course-card">
@@ -59,9 +83,21 @@
     <div class="card-body">
       <a href="{% url 'course_detail' course.slug %}" class="course-title">{{ course.title }}</a>
       <div class="course-info">
-        <i class="fa-solid fa-crown crown-icon"></i> Level 3 · Unit 5
+        {% if course.level == 'beginner' %}
+        <div class="course-level beginner-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% elif course.level == 'intermediate' %}
+        <div class="course-level intermediate-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% else %}
+        <div class="course-level advanced-level">
+          <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+        </div>
+        {% endif %}
       </div>
-      <a class="card-btn btn-transform" href="{% url 'course_detail' course.slug %}">Batafsil</a>
+      <a class="card-btn btn-transform" href="{% url 'course_detail' course.slug %}">See details</a>
     </div>
   </div>
   {% endfor %}

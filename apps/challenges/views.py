@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from .models import Challenge, Submission, Tag, Topic
@@ -31,8 +32,50 @@ def challenge_by_tag(request, slug):
 def challenge_detail(request, slug):
     challenge = get_object_or_404(Challenge, slug=slug)
     form = ChallangeSubmissionForm()
-    return render(request, 'challenges/challenge_detail.html', {'challenge': challenge, 
-                                                                'form': form})
+    
+    context = {
+        'challenge': challenge, 
+        'form': form,
+        'submissions': None
+    }
+
+    if request.user.is_authenticated:
+        submissions = Submission.objects.filter(submitted_by=request.user, challenge=challenge)
+        if submissions is not None:
+            context['submissions'] = submissions
+    
+    return render(request, 'challenges/challenge_detail.html', context)
+
+
+
+def search_challenges(request):
+    query = request.GET.get('q', '')
+    difficulty_filter = request.GET.get('difficulty', '')
+    
+    # Start with all challenges
+    challenges = Challenge.objects.all()
+
+    if query:
+        # Search in title, description, OR topic name
+        # We use .distinct() to prevent duplicate results when matching across relationships
+        challenges = challenges.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(tags__name__icontains=query) |
+            Q(topic__name__icontains=query)
+        ).distinct()
+
+    # Apply strict filtering for difficulty if provided
+    if difficulty_filter and difficulty_filter in ['easy', 'medium', 'hard']:
+        challenges = challenges.filter(difficulty=difficulty_filter)
+
+    context = {
+        'challenges': challenges,
+        'query': query,
+        'selected_difficulty': difficulty_filter,
+    }
+    
+    return render(request, 'challenges/challenge_list.html', context)
 
 
 @login_required

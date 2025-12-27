@@ -78,7 +78,7 @@ class Lesson(models.Model):
     section = models.ForeignKey(Section, related_name="lessons", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, editable=False)
-    content = models.TextField()  
+    speech = models.TextField()  
     order = models.PositiveIntegerField()
 
     class Meta:

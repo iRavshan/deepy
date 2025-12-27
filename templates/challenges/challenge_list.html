@@ -4,15 +4,15 @@
 {% load static %}
 {% load i18n %}
 <div class="page-header-row">
-    <h1 class="page-title">Chellenjlar</h1>
+    <h1 class="page-title">Challenges</h1>
     <div class="search-container">
         <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" class="search-input" placeholder="Chellenjlarni izlash...">
+        <input type="text" class="search-input" placeholder="Search challenges...">
     </div>
 </div>
         
         <div class="filter-bar">
-            <button class="filter-btn active">Barchasi</button>
+            <a class="filter-btn active" href="{% url 'challenge_list' %}">All</a>
             <button class="filter-btn">Arrays</button>
             <button class="filter-btn">Strings</button>
             
@@ -40,11 +40,11 @@
                     <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
                     <div class="problem-meta">
                         {% if challenge.difficulty == 'easy' %}
-                        <span class="badge easy">Oson</span>
+                        <span class="badge easy">Easy</span>
                         {% elif challenge.difficulty == 'medium' %}
-                        <span class="badge medium">O'rta.</span>
+                        <span class="badge medium">Med.</span>
                         {% else %}
-                        <span class="badge hard">Qiyin</span>
+                        <span class="badge hard">Hard</span>
                         {% endif %}
                         <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
                     </div>

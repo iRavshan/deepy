@@ -8,19 +8,24 @@
         <div class="banner-content">
             <h1>{{ course.title }}</h1>
             <p>{{ course.description }}</p>
+            <div class="course-details">
+                <div class="course-detail"><i class="fa-solid fa-signal"></i> {{ course.get_level_display }}</div>
+                <div class="course-detail"><i class="fa-solid fa-book-open"></i> 19 Lessons</div>
+                <div class="course-detail"><i class="fa-solid fa-code"></i> 28 Exercises</div>
+            </div>
             {% if not is_enrolled %}
             <form action="{% url 'enroll_course' course.slug %}" method="post" class="course-enroll-form">
                 {% csrf_token %}
-                <button class="btn-3d btn-gold btn-transform">Sayohatni boshlash</button>
+                <button class="btn-3d btn-gold btn-transform">Start the journey</button>
             </form>
             {% else %}
-            <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold btn-transform">Davom ettirish</a>
+            <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold btn-transform">Continue</a>
             {% endif %}
         </div>
-        <i class="fa-brands fa-python banner-icon"></i>
+        <img src="/static/img/banner-image.png" alt="" class="banner-image">
     </div>
     <div class="content-card">
-        <h2 class="section-title">Nimalarni o'rganasiz</h2>
+        <h2 class="section-title">What you'll learn</h2>
         <ul class="learning-list">
             {% for learning_detail in course.learning_details.all %}
             <li>
@@ -31,7 +36,7 @@
         </ul>
     </div>
     <div class="content-card">
-        <h2 class="section-title">Nishonlar</h2>
+        <h2 class="section-title">Badges</h2>
         <div class="badges-grid">
             <div class="badge-item">
                 <div class="badge-icon-bg b-gold">

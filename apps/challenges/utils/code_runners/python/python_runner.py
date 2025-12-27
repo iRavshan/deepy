@@ -1,13 +1,20 @@
 import docker
+import docker.errors
 import os
 import shutil
 import tempfile
 from requests.exceptions import ReadTimeout
 
-client = docker.from_env()
+try:
+    client = docker.from_env()
+except Exception:
+    client = None
 
 def run_code(user_code, input_data="", time_limit=2.0):
-    temp_dir = tempfile.mkdtemp()
+    base_dir = os.path.join(os.getcwd(), "temp_submissions")
+    os.makedirs(base_dir, exist_ok=True)
+
+    temp_dir = tempfile.mkdtemp(dir=base_dir)
     
     try:
         with open(os.path.join(temp_dir, "solution.py"), "w") as f:
@@ -16,15 +23,27 @@ def run_code(user_code, input_data="", time_limit=2.0):
         with open(os.path.join(temp_dir, "input.txt"), "w") as f:
             f.write(input_data)
 
-        container = client.containers.run(
-            image="python:3.9-slim",
-            command='sh -c "python /app/solution.py < /app/input.txt"',
-            volumes={temp_dir: {'bind': '/app', 'mode': 'rw'}},
-            working_dir="/app",
-            mem_limit="128m",
-            network_disabled=True,
-            detach=True
-        )
+        try:
+            abs_temp_dir = os.path.abspath(temp_dir)
+            print(abs_temp_dir)
+            print(temp_dir)
+            print(base_dir)
+            container = client.containers.run(
+                image="python:3.9-slim",
+                command='sh -c "python /app/solution.py < /app/input.txt"',
+                volumes={abs_temp_dir: {'bind': '/app', 'mode': 'rw'}},
+                working_dir="/app",
+                mem_limit="128m",
+                network_disabled=True,
+                detach=True
+            )
+
+        except docker.errors.ImageNotFound:
+            return {"status": "System Error", "output": "Python image not found. Run 'docker pull python:3.9-slim'"}
+        
+        except docker.errors.APIError as e:
+            return {"status": "System Error", "output": f"Docker API Error: {str(e)}"}
+        
 
         try:
             result = container.wait(timeout=time_limit)
@@ -40,7 +59,10 @@ def run_code(user_code, input_data="", time_limit=2.0):
             return {"status": "OK", "output": logs.decode('utf-8').strip()}
 
         except (ReadTimeout, Exception):
-            container.kill()
+            try:
+                container.kill()
+            except:
+                pass
             return {"status": "Time Limit Exceeded", "output": ""}
             
         finally:
@@ -51,5 +73,10 @@ def run_code(user_code, input_data="", time_limit=2.0):
 
     except Exception as e:
         return {"status": "System Error", "output": str(e)}
+    
     finally:
-        shutil.rmtree(temp_dir)
+        if os.path.exists(temp_dir):
+            try:
+                shutil.rmtree(temp_dir, ignore_errors=True)
+            except:
+                pass

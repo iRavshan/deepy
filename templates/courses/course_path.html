@@ -17,35 +17,25 @@
             
             <div class="path-nodes">
                 {% for lesson in section.lessons.all %}
-                {% if lesson.is_completed %}
-                <div class="level-row">
-                    <div class="level-item">
-                        <div class="circle-btn status-completed"><i class="fa-solid fa-star"></i></div>
-                        <div class="tooltip">{{ lesson.title }}</div>
-                    </div>
-                </div>
-                {% elif lesson.is_active %}
-                <div class="level-row">
-                    <div class="level-item">
-                        <div class="start-bubble">Start</div>
-                        <div class="ring-container">
-                            <svg class="progress-svg" viewBox="0 0 100 100">
-                                <circle class="ring-track" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
-                                <circle class="ring-fill" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
-                            </svg>
-                            <div class="circle-btn status-active">📊</div>
+                    <div class="level-row">
+                        <div class="level-item">
+                            {% if lesson.is_active %}
+                            <div class="start-bubble">Start</div>
+                            <div class="ring-container">
+                                <svg class="progress-svg" viewBox="0 0 100 100">
+                                    <circle class="ring-track" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
+                                    <circle class="ring-fill" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
+                                </svg>
+                                <div class="circle-btn status-active">📊</div>
+                            </div>
+                            {% else %}
+                            <a class="circle-btn status-completed" href="{% url 'lesson_detail' course.slug lesson.slug %}">
+                                <i class="fa-solid fa-star"></i>
+                            </a>
+                            {% endif %}
+                            <div class="tooltip">{{ lesson.title }}</div>
                         </div>
-                        <div class="tooltip">{{ lesson.title }}</div>
                     </div>
-                </div>
-                {% else %}
-                <div class="level-row">
-                    <div class="level-item">
-                        <a class="circle-btn status-locked"><i class="fa-solid fa-lock"></i></a>
-                        <div class="tooltip">{{ lesson.title }}</div>
-                    </div>
-                </div>
-                {% endif %}
                 {% endfor %}
 
                 <div style="position: absolute; left: 20px; top: 250px; z-index: -1; opacity: 1;">

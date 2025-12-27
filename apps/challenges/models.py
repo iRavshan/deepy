@@ -108,7 +108,7 @@ class Challenge(models.Model):
 
 
 class Submission(models.Model):
-    task = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name='submissions')
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name='submissions')
     submitted_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='task_submissions')
     code = models.TextField()
     language = models.CharField(max_length=50, choices=[

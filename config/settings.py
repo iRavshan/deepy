@@ -82,6 +82,7 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'full',
         'height': 200,
         'width': '100%',
+        
     },
     'math_editor': {
         'skin': 'moono-lisa',
