@@ -93,10 +93,9 @@
         
         .unit-title {
             font-size: 0.85rem;
-            text-transform: uppercase;
             color: #afafaf;
-            font-weight: 800;
-            margin-bottom: 10px;
+            font-weight: 600;
+            margin-bottom: 17px;
             letter-spacing: 0.5px;
         }
 
@@ -144,9 +143,13 @@
         }
 
         .lesson-text {
-            font-weight: 700;
+            font-weight: 500;
             font-size: 0.95rem;
-            color: var(--duo-text);
+            color: var(--text-dark);
+        }
+
+        .lesson-item.active .lesson-text{
+            color: var(--theme-blue-dark);
         }
 
         .lesson-item.locked .lesson-text { 
@@ -427,53 +430,34 @@
 
     <div class="course-sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3 class="sidebar-title">Python Basics</h3>
+            <h3 class="sidebar-title">{{ course.title }}</h3>
             <button class="close-btn" onclick="toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
         <div class="sidebar-content">
+            {% for section in course.sections.all %}
             <div class="unit-block">
-                <div class="unit-title">Unit 1: Getting Started</div>
-                
-                <div class="lesson-item">
-                    <div class="status-icon status-done">&#10003;</div>
-                    <div class="lesson-text">Intro to Python</div>
-                </div>
-                
-                <div class="lesson-item">
-                    <div class="status-icon status-done">&#10003;</div>
-                    <div class="lesson-text">Setup Environment</div>
-                </div>
-                
-                <div class="lesson-item active">
-                    <div class="status-icon status-current">&#9679;</div>
-                    <div class="lesson-text">Using Variables</div>
-                </div>
-
-                <div class="lesson-item locked">
-                    <div class="status-icon status-locked">&#128274;</div>
-                    <div class="lesson-text">Data Types</div>
-                </div>
+                <div class="unit-title">Unit {{ section.order }}: {{section.title}}</div>
+                {% for side_lesson in section.lessons.all %}
+                    {% if side_lesson.id == lesson.id %}
+                    <div class="lesson-item active">
+                        <div class="status-icon status-current"><i class="fa-solid fa-circle"></i></div>
+                        <a class="lesson-text">{{ side_lesson.title }}</a>
+                    </div>
+                    {% else %}
+                    <a class="lesson-item" href="{% url 'lesson_detail' course.slug side_lesson.slug %}">
+                        <div class="status-icon status-done"><i class="fa-solid fa-check"></i></div>
+                        <span class="lesson-text">{{ side_lesson.title }}</span>
+                    </a>
+                    {% endif %}
+                {% endfor %}
             </div>
-
-            <div class="unit-block">
-                <div class="unit-title">Unit 2: Logic & Loops</div>
-                
-                <div class="lesson-item locked">
-                    <div class="status-icon status-locked">&#128274;</div>
-                    <div class="lesson-text">If Statements</div>
-                </div>
-                
-                <div class="lesson-item locked">
-                    <div class="status-icon status-locked">&#128274;</div>
-                    <div class="lesson-text">While Loops</div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 
     <nav class="navbar">
-        <a class="nav-close-btn" title="Exit Lesson" href="{% url 'course_list' %}">
+        <a class="nav-close-btn" title="Exit Lesson" href="{% url 'course_path' course.slug  %}">
             <i class="fa-solid fa-xmark"></i>
         </a>
 
@@ -483,8 +467,8 @@
             <button class="nav-btn secondary"></button>
         </div>
 
-        <button class="outline-btn secondary btn-transform" onclick="toggleSidebar()">Outline 
-            <i class="fa-solid fa-bars"></i>
+        <button class="outline-btn secondary btn-transform" onclick="toggleSidebar()">
+            Outline<i class="fa-solid fa-bars"></i>
         </button>
     </nav>
 
@@ -499,17 +483,14 @@
                 <div class="subtitle-box">These are subtitles</div>
             </div>
         </div>
-
         <div class="right-panel">
-
             <div class="lesson-header-row">
-                <h2 class="lesson-title">Lesson 1: {{ lesson.title }}</h2>
+                <h2 class="lesson-title">Lesson {{lesson.order}}: {{ lesson.title }}</h2>
                 
                 <button class="action-btn btn-blue btn-transform">
                     <i class="fa-solid fa-file-pdf"></i> PDF
                 </button>
             </div>
-
             <div class="editor-container">
                 <div class="editor-header">
                     <div class="header-left">
@@ -530,13 +511,17 @@
 print("Hello World")  
 print("This is second print")</code></pre>
             </div>
-
             <div class="output-panel">
                 <span style="font-weight:800; color:#afafaf; font-size:0.8rem;">TERMINAL</span>
                 <div style="margin-top:5px; font-family:monospace;">> Ready...</div>
             </div>
+            <form action="{% url 'lesson_complete' course.slug lesson.slug %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Complete the lesson</button>
+            </form>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-python.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.min.js"></script>

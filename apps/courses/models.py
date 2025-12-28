@@ -45,6 +45,7 @@ class LearningDetail(models.Model):
         return self.text
 
 
+
 class Section(models.Model):
     course = models.ForeignKey(Course, related_name="sections", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -98,6 +99,27 @@ class Lesson(models.Model):
 
         super().save(*args, **kwargs)
 
+    @property
+    def progress(self):
+        if hasattr(self, "user_progress") and self.user_progress:
+            return self.user_progress[0]
+        return None
+
+    @property
+    def is_started(self):
+        return self.progress is not None
+
+    @property
+    def is_completed(self):
+        return self.progress.completed if self.progress else False
+
+    @property
+    def state(self):
+        if not self.is_started:
+            return "not_started"
+        if self.is_completed:
+            return "completed"
+        return "started"
 
     def __str__(self):
         return f"{self.section.title}: {self.title}"
@@ -119,6 +141,21 @@ class Enrollment(models.Model):
     
 
 
+class LessonProgress(models.Model):
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='lesson_progress')
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress')
+    completed = models.BooleanField(default=False)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'lesson')
+        ordering = ['completed_at']
+
+    def __str__(self):
+        return f"{self.user} - {self.lesson} - {'Done' if self.completed else 'Not done'}"
+    
+
+
 class GlossaryTerm(models.Model):
     term = models.CharField(max_length=100, unique=True)
     definition = models.TextField()
@@ -129,3 +166,44 @@ class GlossaryTerm(models.Model):
 
     def __str__(self):
         return self.term
+    
+
+
+class Quiz(models.Model):
+    lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='quiz')
+
+    def __str__(self):
+        return f"Quiz for {self.lesson.title}"
+    
+
+class Question(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="questions")
+    text = RichTextField()
+    order = models.PositiveIntegerField()
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.text[:50]
+    
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="answers")
+    text = RichTextField(max_length=255)
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.text
+    
+
+class QuizAttempt(models.Model):
+    user = models.ForeignKey('users.User', on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    attempted_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-attempted_at"]
+
+    def __str__(self):
+        return f"{self.user} - {self.quiz}"

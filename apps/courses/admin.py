@@ -1,9 +1,14 @@
 from django.contrib import admin
-from .models import Course, Lesson, Section, GlossaryTerm, LearningDetail, Enrollment
+from . import models
 
-admin.site.register(Course)
-admin.site.register(Section)
-admin.site.register(Lesson)
-admin.site.register(GlossaryTerm)
-admin.site.register(LearningDetail)
-admin.site.register(Enrollment)
+admin.site.register(models.Course)
+admin.site.register(models.Section)
+admin.site.register(models.Lesson)
+admin.site.register(models.GlossaryTerm)
+admin.site.register(models.LearningDetail)
+admin.site.register(models.Enrollment)
+admin.site.register(models.LessonProgress)
+admin.site.register(models.Quiz)
+admin.site.register(models.Question)
+admin.site.register(models.Answer)
+admin.site.register(models.QuizAttempt)

@@ -3,13 +3,14 @@
 {% block content %}
 {% load static %}
 {% load i18n %}
+<main class="container">
 <div class="page-header-row">
-    <h1 class="page-title">Challenges</h1>
-    <div class="search-container">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" class="search-input" placeholder="Search challenges...">
-    </div>
-</div>
+            <h1 class="page-title">Challenges</h1>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search challenges...">
+            </div>
+        </div>
         
         <div class="filter-bar">
             <a class="filter-btn active" href="{% url 'challenge_list' %}">All</a>
@@ -53,4 +54,5 @@
             </div>
             {% endfor %}
         </div>
+</main>
 {% endblock content %} 
