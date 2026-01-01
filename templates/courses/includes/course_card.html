@@ -1,0 +1,27 @@
+<div class="course-card">
+  <div class="card-header">
+    <i class="fa-solid fa-earth-americas"></i>
+  </div>
+  <div class="card-body">
+    <a href="{% url 'course_detail' course.slug %}" class="course-title">{{ course.title }}</a>
+    
+    <div class="course-info">
+      <div class="course-level {{ course.level }}-level">
+        <i class="fa-solid fa-signal"></i> {{ course.get_level_display }}
+      </div>
+    </div>
+
+    {% if show_progress %}
+    <div class="progress-container">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width: 65%;"></div>
+      </div>
+      <span class="progress-text">65%</span>
+    </div>
+    {% endif %}
+
+    <a class="card-btn btn-transform" href="{% url 'course_detail' course.slug %}">
+      {{ button_text|default:"See details" }}
+    </a>
+  </div>
+</div>

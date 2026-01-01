@@ -1,13 +1,13 @@
-
 {% extends '../shared/_base.html' %}
-{% block title %} Kurslar {% endblock %}
+{% block title %} {{ course.title }} {% endblock %}
 {% block content %}
 {% load static %}
 {% load i18n %}
 <main class="course-path-wrapper">
     <div class="course-path">
-            {% for section in sections %}
-            <div class="unit-header">
+            {% for section in course.sections.all %}
+            {% cycle 'theme-green' 'theme-blue' 'theme-purple' 'theme-orange' 'theme-brown' 'theme-pink' 'theme-red' as current_theme silent %}
+            <div class="unit-header {{ current_theme }}">
                 <div class="unit-info">
                     <h2>Unit {{ section.order }}</h2>
                     <p>{{ section.title }}</p>
@@ -15,37 +15,34 @@
                 <a class="unit-info-btn btn-transform"><i class="fa-solid fa-book"></i>Handbook</a>
             </div>
             
-            <div class="path-nodes">
+            <div class="path-nodes {{ current_theme }}">
                 {% for lesson in section.lessons.all %}
                     <div class="level-row">
                         <div class="level-item">
-                            {% if lesson.state == "completed" %}
-                            <a class="circle-btn btn-transform status-completed" href="{% url 'lesson_detail' course.slug lesson.slug %}">
-                                <i class="fa-solid fa-check"></i>
+                            <a class="circle-btn" href="{% url 'lesson_detail' course.slug lesson.slug %}">
+                                {% if lesson.id in completed_lessons %}
+                                    <i class="fa-solid fa-check"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-o"></i>
+                                {% endif %}
                             </a>
-                            {% elif lesson.state == "started" %}
-                            <div class="start-bubble">Start</div>
-                            <div class="ring-container">
-                                <svg class="progress-svg" viewBox="0 0 100 100">
-                                    <circle class="ring-track" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
-                                    <circle class="ring-fill" cx="50" cy="50" r="43" fill="none" stroke-width="7" />
-                                </svg>
-                                <div class="circle-btn status-active">📊</div>
-                            </div>
-                            {% else %}
-                            <a class="circle-btn btn-transform status-uncompleted" href="{% url 'lesson_detail' course.slug lesson.slug %}">
-                                <i class="fa-solid fa-o"></i>
-                            </a>
-                            {% endif %}
                             <div class="tooltip">{{ lesson.title }}</div>
                         </div>
                     </div>
+                    {% if lesson.has_quiz %}
+                    <div class="level-row">
+                        <div class="level-item">
+                            <a class="circle-btn" href="#">
+                                <i class="fa-solid fa-code"></i>
+                            </a>
+                            <div class="tooltip">Exercise</div>
+                        </div>
+                    </div>
+                    {% endif %}
                 {% endfor %}
-
                 <div style="position: absolute; left: 20px; top: 250px; z-index: -1; opacity: 1;">
-                    <img src="nova.jpg" alt="" style="width: 220px;">
+                    <img src="/statiac/img/nova.png" alt="" style="width: 220px;">
                 </div>
-
             </div>
             {% endfor %}
     </div>
@@ -55,13 +52,9 @@
                 
                 <div class="card-header">
                     <div class="course-name">{{ course.title }}</div>
-                    <div class="percent-badge">65%</div>
+                    <div class="percent-badge">{{ course_percentage }}%</div>
                 </div>
-
-                <div class="progress-container">
-                    <div class="progress-bar-fill" style="width: 65%;"></div>
-                </div>
-
+                {% include "courses/includes/progress_bar.html" with course_percentage=course_percentage %}
                 <div class="cert-section">
                     <div class="cert-icon">📜</div>
                     <div class="cert-details">

@@ -83,7 +83,7 @@ class Lesson(models.Model):
     order = models.PositiveIntegerField()
 
     class Meta:
-        ordering = ['order']
+        ordering = ['section', 'order']
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -100,26 +100,12 @@ class Lesson(models.Model):
         super().save(*args, **kwargs)
 
     @property
-    def progress(self):
-        if hasattr(self, "user_progress") and self.user_progress:
-            return self.user_progress[0]
-        return None
-
+    def has_quiz(self):
+        return hasattr(self, 'quiz')
+    
     @property
     def is_started(self):
         return self.progress is not None
-
-    @property
-    def is_completed(self):
-        return self.progress.completed if self.progress else False
-
-    @property
-    def state(self):
-        if not self.is_started:
-            return "not_started"
-        if self.is_completed:
-            return "completed"
-        return "started"
 
     def __str__(self):
         return f"{self.section.title}: {self.title}"
@@ -128,7 +114,7 @@ class Lesson(models.Model):
 
 class Enrollment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE)
+    course = models.ForeignKey('courses.Course', on_delete=models.CASCADE, related_name='enrollments')
     enrolled_at = models.DateTimeField(auto_now_add=True)
     last_accessed = models.DateTimeField(auto_now=True)
     is_completed = models.BooleanField(default=False)
@@ -144,6 +130,7 @@ class Enrollment(models.Model):
 class LessonProgress(models.Model):
     user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='lesson_progress')
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress')
+    started_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
     completed_at = models.DateTimeField(null=True, blank=True)
 

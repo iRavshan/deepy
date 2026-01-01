@@ -1,0 +1,4 @@
+from .course_repository import CourseRepository
+from .lesson_repository import LessonRepository
+from .enrollment_repository import EnrollmentRepository
+from .progress_repository import ProgressRepository

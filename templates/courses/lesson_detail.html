@@ -485,7 +485,7 @@
         </div>
         <div class="right-panel">
             <div class="lesson-header-row">
-                <h2 class="lesson-title">Lesson {{lesson.order}}: {{ lesson.title }}</h2>
+                <h2 class="lesson-title">Lesson {{ lesson.order }}: {{ lesson.title }}</h2>
                 
                 <button class="action-btn btn-blue btn-transform">
                     <i class="fa-solid fa-file-pdf"></i> PDF
@@ -515,10 +515,14 @@ print("This is second print")</code></pre>
                 <span style="font-weight:800; color:#afafaf; font-size:0.8rem;">TERMINAL</span>
                 <div style="margin-top:5px; font-family:monospace;">> Ready...</div>
             </div>
+            {% if user.is_authenticated %}
             <form action="{% url 'lesson_complete' course.slug lesson.slug %}" method="post">
                 {% csrf_token %}
-                <button type="submit">Complete the lesson</button>
+                <button type="submit" class=" btn-transform">Complete the lesson</button>
             </form>
+            {% else %}
+            <a href="">Complete the lesson</a>
+            {% endif %}
         </div>
     </div>
 

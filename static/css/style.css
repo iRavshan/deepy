@@ -23,6 +23,12 @@
     --theme-gold: #ffc800;
     --theme-gold-dark: #cb9e00;
     --theme-gray: #e5e5e5;
+    --theme-purple: #cc348d;
+    --theme-purple-dark: #A32A71;
+    --theme-brown: #dc8f47;
+    --theme-brown-dark: #b07239;
+    --theme-pink: #ce82ff;
+    --theme-pink-dark: #a568cc;
 
             
     /* Dimensions */
@@ -550,7 +556,7 @@ a {
 .course-path-wrapper{
     display: grid;
     gap: 40px;
-    grid-template-columns: 1fr 730px 350px 1fr;
+    grid-template-columns: 1fr 700px 350px 1fr;
 }
 
 .course-path-wrapper .right-panel{
@@ -662,12 +668,26 @@ a {
     margin: 0;
 }
 
+.container .right-panel form button[type="submit"] {
+    background-color: var(--theme-green);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--btn-radius);   
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.1s;
+    padding: 12px 24px;
+    box-shadow: 0 4px 0 var(--theme-green-dark);
+}
+
 .course-path-wrapper .course-path{
     grid-column: 2;
 }
 
 .course-path .unit-header {
-    background-color: var(--theme-green);
     border-radius: 16px;
     padding: 20px;
     color: var(--text-white);
@@ -675,6 +695,34 @@ a {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 50px;
+}
+
+.course-path .unit-header.theme-green {
+    background-color: var(--theme-green);
+}
+
+.course-path .unit-header.theme-blue {
+    background-color: var(--theme-blue);
+}
+
+.course-path .unit-header.theme-purple {
+    background-color: var(--theme-purple);
+}
+
+.course-path .unit-header.theme-orange {
+    background-color: var(--theme-orange);
+}
+
+.course-path .unit-header.theme-brown {
+    background-color: var(--theme-brown);
+}
+
+.course-path .unit-header.theme-pink {
+    background-color: var(--theme-pink);
+}
+
+.course-path .unit-header.theme-red {
+    background-color: var(--theme-red);
 }
 
 .course-path .unit-header .unit-info h2 {
@@ -685,17 +733,49 @@ a {
 
 .course-path .unit-header .unit-info p {
     font-size: 16px;
-    opacity: 0.9;
-    font-family: var(--secondary-font);
+    font-weight: 600;
 }
 
 .course-path .unit-header .unit-info-btn{
     padding: 16px;
     border-radius: var(--btn-radius);
-    background: var(--theme-green);
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.course-path .unit-header.theme-green .unit-info-btn{
     box-shadow: 0 4px 0 var(--theme-green-dark);
     border: 2px solid var(--theme-green-dark);
-    cursor: pointer;
+}
+
+.course-path .unit-header.theme-blue .unit-info-btn{
+    box-shadow: 0 4px 0 var(--theme-blue-dark);
+    border: 2px solid var(--theme-blue-dark);
+}
+
+.course-path .unit-header.theme-pink .unit-info-btn{
+    box-shadow: 0 4px 0 var(--theme-pink-dark);
+    border: 2px solid var(--theme-pink-dark);
+}
+
+.course-path .unit-header.theme-purple .unit-info-btn{
+    box-shadow: 0 4px 0 var(--theme-purple-dark);
+    border: 2px solid var(--theme-purple-dark);
+}
+
+.course-path .unit-header.theme-orange .unit-info-btn{
+    box-shadow: 0 4px 0 var(--theme-orange-dark);
+    border: 2px solid var(--theme-orange-dark);
+}
+
+.course-path .unit-header.theme-brown .unit-info-btn{
+    box-shadow: 0 4px 0 var(--theme-brown-dark);
+    border: 2px solid var(--theme-brown-dark);
+}
+
+.course-path .unit-header.theme-red .unit-info-btn{
+    box-shadow: 0 4px 0 var(--theme-red-dark);
+    border: 2px solid var(--theme-red-dark);
 }
 
 .course-path .unit-header .unit-info-btn i{
@@ -747,17 +827,50 @@ a {
     transform: scale(1);
 }
 
-.course-path .path-nodes .level-row .level-item .status-completed {
-    background-color: var(--theme-gold);
-    box-shadow: 0 8px 0 #cc9b00;
+.course-path .path-nodes .level-row .level-item .circle-btn {
     color: white;
 }
 
-.course-path .path-nodes .level-row .level-item .status-uncompleted {
-    background-color: var(--theme-gray);
-    box-shadow: 0 8px 0 #afafaf;
-    color: #afafaf;
+.course-path .path-nodes .level-row .level-item .circle-btn:hover {
+    transform: translateY(4px);
+    box-shadow: none;
 }
+
+.course-path .path-nodes.theme-green .level-row .level-item .circle-btn {
+    background-color: var(--theme-green);
+    box-shadow: 0 8px 0 var(--theme-green-dark);
+}
+
+.course-path .path-nodes.theme-blue .level-row .level-item .circle-btn {
+    background-color: var(--theme-blue);
+    box-shadow: 0 8px 0 var(--theme-blue-dark);
+}
+
+.course-path .path-nodes.theme-purple .level-row .level-item .circle-btn {
+    background-color: var(--theme-purple);
+    box-shadow: 0 8px 0 var(--theme-purple-dark);
+}
+
+.course-path .path-nodes.theme-red .level-row .level-item .circle-btn {
+    background-color: var(--theme-red);
+    box-shadow: 0 8px 0 var(--theme-red-dark);
+}
+
+.course-path .path-nodes.theme-orange .level-row .level-item .circle-btn {
+    background-color: var(--theme-orange);
+    box-shadow: 0 8px 0 var(--theme-orange-dark);
+}
+
+.course-path .path-nodes.theme-pink .level-row .level-item .circle-btn {
+    background-color: var(--theme-pink);
+    box-shadow: 0 8px 0 var(--theme-pink-dark);
+}
+
+.course-path .path-nodes.theme-brown .level-row .level-item .circle-btn {
+    background-color: var(--theme-brown);
+    box-shadow: 0 8px 0 var(--theme-brown-dark);
+}
+
 
 .tooltip::after { 
     content: ''; 
@@ -770,22 +883,64 @@ a {
 
 .level-row:nth-child(4n+1) .tooltip::after, 
 .level-row:nth-child(4n+2) .tooltip::after, 
-.level-row:nth-child(4n+3) .tooltip::after {
+.level-row:nth-child(4n+3) .tooltip::after,
+.level-row:nth-child(4n+4) .tooltip::after {
     right: 100%;
-    border-color: transparent #e5e5e5 transparent transparent;
 }
 
-
-.course-path .path-nodes .level-row .level-item .status-locked {
-    background-color: var(--theme-gray);
-    box-shadow: 0 8px 0 #cfcfcf;
-    color: #afafaf;
-    cursor: default;
+.course-path .path-nodes.theme-green .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-green .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-green .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-green .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-green) transparent transparent;
 }
+
+.course-path .path-nodes.theme-blue .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-blue .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-blue .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-blue .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-blue) transparent transparent;
+}
+
+.course-path .path-nodes.theme-purple .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-purple .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-purple .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-purple .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-purple) transparent transparent;
+}
+
+.course-path .path-nodes.theme-red .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-red .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-red .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-red .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-red) transparent transparent;
+}
+
+.course-path .path-nodes.theme-orange .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-orange .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-orange .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-orange .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-orange) transparent transparent;
+}
+
+.course-path .path-nodes.theme-pink .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-pink .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-pink .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-pink .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-pink) transparent transparent;
+}
+
+.course-path .path-nodes.theme-brown .level-row:nth-child(4n+1) .tooltip::after, 
+.course-path .path-nodes.theme-brown .level-row:nth-child(4n+2) .tooltip::after, 
+.course-path .path-nodes.theme-brown .level-row:nth-child(4n+3) .tooltip::after,
+.course-path .path-nodes.theme-brown .level-row:nth-child(4n+4) .tooltip::after {
+    border-color: transparent var(--theme-brown) transparent transparent;
+}
+
 
 .course-path .path-nodes .level-row .level-item .circle-btn {
-    width: 75px;
-    height: 75px;
+    width: 70px;
+    height: 65px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -800,12 +955,12 @@ a {
 .course-path .path-nodes .level-row .level-item .tooltip {
     position: absolute;
     background: white;
-    border: 2px solid var(--border-color);
+    border: none;
     padding: 12px 18px;
     border-radius: 12px;
     font-weight: 700;
     font-size: 15px;
-    color: #4b4b4b;
+    color: var(--text-white);
     white-space: nowrap;
     opacity: 0;
     visibility: hidden;
@@ -813,6 +968,38 @@ a {
     transition: all 0.2s;
     pointer-events: none;
     z-index: 10;
+}
+
+.course-path .path-nodes.theme-green .level-row .level-item .tooltip{
+    background-color: var(--theme-green);
+}
+
+.course-path .path-nodes.theme-blue .level-row .level-item .tooltip{
+    background-color: var(--theme-blue);
+}
+
+.course-path .path-nodes.theme-purple .level-row .level-item .tooltip{
+    background-color: var(--theme-purple);
+}
+
+.course-path .path-nodes.theme-red .level-row .level-item .tooltip{
+    background-color: var(--theme-red);
+}
+
+.course-path .path-nodes.theme-brown .level-row .level-item .tooltip{
+    background-color: var(--theme-brown);
+}
+
+.course-path .path-nodes.theme-orange .level-row .level-item .tooltip{
+    background-color: var(--theme-orange);
+}
+
+.course-path .path-nodes.theme-pink .level-row .level-item .tooltip{
+    background-color: var(--theme-pink);
+}
+
+.course-path .path-nodes.theme-green .level-row .level-item .tooltip{
+    background-color: var(--theme-green);
 }
 
 .level-item:hover .tooltip {
@@ -823,7 +1010,8 @@ a {
 
 .level-row:nth-child(4n+1) .tooltip, 
 .level-row:nth-child(4n+2) .tooltip, 
-.level-row:nth-child(4n+3) .tooltip {
+.level-row:nth-child(4n+3) .tooltip,
+.level-row:nth-child(4n+4) .tooltip {
     left: 95px;
     top: 15px;
 }
