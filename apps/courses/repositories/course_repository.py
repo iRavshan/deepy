@@ -1,5 +1,5 @@
 from typing import List, Optional
-from django.db.models import Prefetch, Count
+from django.db.models import Prefetch, Count, Q, F, Case, When, FloatField, ExpressionWrapper
 from ..models import Course, Section, Lesson
 from .base_repository import BaseRepository
 
@@ -17,7 +17,27 @@ class CourseRepository(BaseRepository[Course]):
         return Course.objects.all()
     
     def get_enrolled_courses(self, user) -> Optional[List[Course]]:
-        return Course.objects.filter(enrollments__user=user)
+        return Course.objects.filter(enrollments__user=user).annotate(
+            total_lessons=Count('sections__lessons', distinct=True),
+            
+            completed_lessons=Count(
+                'sections__lessons__progress',
+                filter=Q(
+                    sections__lessons__progress__user=user, 
+                    sections__lessons__progress__completed=True
+                ),
+                distinct=True
+            )
+        ).annotate(
+            progress_percentage=Case(
+                When(total_lessons=0, then=0.0),
+                default=ExpressionWrapper(
+                    F('completed_lessons') * 100.0 / F('total_lessons'),
+                    output_field=FloatField()
+                ),
+                output_field=FloatField()
+            )
+        )
                     
     def get_unenrolled_courses(self, user) -> Optional[List[Course]]:
         return Course.objects.exclude(enrollments__user=user)

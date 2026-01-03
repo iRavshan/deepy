@@ -1,0 +1,37 @@
+{% extends '../shared/_base.html' %}
+{% block title %} Glossary {% endblock %}
+{% block content %}
+{% load static %}
+{% load i18n %}
+<main class="container">
+    <div class="term-card-wrapper">
+        <div class="term-card">
+            <div class="term-header">
+                <h1>{{ term.term }}</h1>
+                <button class="audio-btn btn-transform" onclick="speakText()">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+            </div>
+            <div class="definition-text" id="defText">
+                {{ term.definition|safe }}
+            </div>
+        </div>
+    </div>
+</main>
+<script>
+        // Simple Text to Speech Logic
+        function speakText() {
+            const title = document.querySelector('h1').innerText;
+            const text = document.getElementById('defText').innerText;
+            
+            // Check browser support
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(title + ". " + text);
+                utterance.lang = 'en-US';
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("Text-to-speech not supported in this browser.");
+            }
+        }
+</script>
+{% endblock content %} 

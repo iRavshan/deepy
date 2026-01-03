@@ -11,8 +11,7 @@
     <div class="nav-links-middle">
         <a href="{% url 'course_list' %}" class="nav-link-item">Courses</a>
         <a href="{% url 'challenge_list' %}" class="nav-link-item active">Challenges</a>
-        <a href="#" class="nav-link-item">Contests</a>
-        <a href="#" class="nav-link-item">Discuss</a>
+        <a href="{% url 'glossary' %}" class="nav-link-item">Glossary</a>
     </div>
     {% if user.is_authenticated %}
     <div class="user-stats">

@@ -14,9 +14,9 @@
     {% if show_progress %}
     <div class="progress-container">
       <div class="progress-bar-bg">
-        <div class="progress-bar-fill" style="width: 65%;"></div>
+        <div class="progress-bar-fill" style="width: {{ course.progress_percentage|floatformat:0 }}%;"></div>
       </div>
-      <span class="progress-text">65%</span>
+      <span class="progress-text">{{ course.progress_percentage|floatformat:0 }}%</span>
     </div>
     {% endif %}
 

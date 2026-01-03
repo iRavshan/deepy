@@ -409,10 +409,6 @@
             cursor: pointer;
         }
 
-        .action-btn i{
-          margin-right: 5px;
-        }
-
         .btn-blue {
             background: var(--theme-blue);
             color: white;
@@ -444,9 +440,14 @@
                         <div class="status-icon status-current"><i class="fa-solid fa-circle"></i></div>
                         <a class="lesson-text">{{ side_lesson.title }}</a>
                     </div>
-                    {% else %}
+                    {% elif side_lesson.id in completed_lessons %}
                     <a class="lesson-item" href="{% url 'lesson_detail' course.slug side_lesson.slug %}">
                         <div class="status-icon status-done"><i class="fa-solid fa-check"></i></div>
+                        <span class="lesson-text">{{ side_lesson.title }}</span>
+                    </a>
+                    {% else %}
+                    <a class="lesson-item" href="{% url 'lesson_detail' course.slug side_lesson.slug %}">
+                        <div class="status-icon status-done"><i class="fa-solid fa-o"></i></div>
                         <span class="lesson-text">{{ side_lesson.title }}</span>
                     </a>
                     {% endif %}
@@ -502,9 +503,9 @@
                         <span class="file-name">main.py</span>
                     </div>
                     <div class="editor-toolbar">
-                        <button class="action-btn btn-blue btn-transform"><i class="fa-regular fa-copy"></i>Copy</button>
-                        <button class="action-btn btn-blue btn-transform"><i class="fa-solid fa-download"></i>Download</button>
-                        <button class="action-btn btn-run btn-transform"><i class="fa-solid fa-play"></i> Run</button>
+                        <button class="action-btn btn-blue btn-transform"><i class="fa-regular fa-copy"></i></button>
+                        <button class="action-btn btn-blue btn-transform"><i class="fa-solid fa-download"></i></button>
+                        <button class="action-btn btn-run btn-transform"><i class="fa-solid fa-play"></i></button>
                     </div>
                 </div>
                 <pre class="line-numbers"><code class="language-python">#This is comment

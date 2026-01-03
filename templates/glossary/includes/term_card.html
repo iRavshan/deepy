@@ -1,0 +1,7 @@
+<div class="term-card">
+    <a class="term-title" href="{% url 'term' term.slug %}">{{ term.term }}</a>
+    <div class="term-preview">{{ term.definition|safe }}</div>
+    <div class="card-footer">
+        <a class="read-btn btn-transform" href="{% url 'term' term.slug %}">Read Full</a>
+    </div>
+</div>

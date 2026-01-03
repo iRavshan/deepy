@@ -6,6 +6,7 @@ urlpatterns = [
     path('user/', include('apps.users.urls')),
     path('courses/', include('apps.courses.urls')),
     path('challenges/', include('apps.challenges.urls')),
+    path('glossary/', include('apps.glossary.urls')),
     path('accounts/', include('allauth.urls')),
 ]
 

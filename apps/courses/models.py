@@ -143,19 +143,6 @@ class LessonProgress(models.Model):
     
 
 
-class GlossaryTerm(models.Model):
-    term = models.CharField(max_length=100, unique=True)
-    definition = models.TextField()
-    example = models.TextField(blank=True, null=True)
-
-    class Meta:
-        ordering = ["term"]
-
-    def __str__(self):
-        return self.term
-    
-
-
 class Quiz(models.Model):
     lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='quiz')
 

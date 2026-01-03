@@ -11,17 +11,22 @@ def lesson_detail(request, course_slug, lesson_slug):
     lesson = lesson_repo.get_by_slug(course_slug, lesson_slug)
     course = course_repo.get_by_field(slug=course_slug)
 
+    context = {
+        'lesson': lesson,   
+        'course': course,
+        'completed_lessons': [],
+    }
+
     if request.user.is_authenticated:
         progress_repo = ProgressRepository()
         progress = progress_repo.get_for_user(request.user, lesson)
 
         if progress is None:
             progress_repo.mark_started(request.user, lesson)
-    
-    context = {
-        'lesson': lesson,   
-        'course': course,
-    }
+
+        completed_lessons = progress_repo.get_completed_lesson_ids(request.user, course.id)
+        context['completed_lessons'] = completed_lessons
+
     return render(request, 'courses/lesson_detail.html', context)
 
 

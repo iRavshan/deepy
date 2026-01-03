@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'django.contrib.sites',
+    'django.contrib.postgres',
 
     'ckeditor',
 
@@ -32,8 +33,8 @@ INSTALLED_APPS = [
     
     'apps.users.apps.UsersConfig',
     'apps.courses.apps.CoursesConfig',
-    'apps.datasets.apps.DatasetsConfig',
     'apps.challenges.apps.ChallengesConfig',
+    'apps.glossary.apps.GlossaryConfig',
 ]
 
 MIDDLEWARE = [
