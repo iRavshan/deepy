@@ -7,9 +7,14 @@ class TermService:
             return Term.objects.get(slug=term_slug)
         except Term.DoesNotExist:
             return None
+
+    def get_all(self, search_query=None):
+        queryset = Term.objects.all()
         
-    def get_all(self):
-        return Term.objects.all()
+        if search_query:
+            queryset = queryset.filter(term__icontains=search_query)
+            
+        return queryset
     
     def get_related_terms(self, term: Term):
         pass

@@ -20,22 +20,125 @@
         }
 
         body {
-            margin: 0; padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex; flex-direction: column;
-            height: 100vh; overflow: hidden;
-            transition: background 0.5s;
+            margin: 0;
+            font-family: 'Sora', sans-serif;
+            background-color: var(--bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+            overflow: hidden;
         }
 
         /* --- Header & HUD --- */
         header {
             padding: 20px 30px;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
             height: 80px;
         }
 
-        .brand { font-weight: 800; font-size: 24px; color: var(--theme-blue); }
+        .start-screen {
+            text-align: center;
+            background: var(--theme-pink-light);
+            padding: 40px;
+            color: var(--theme-pink-dark);
+            border-radius: 24px;
+            border: 2px solid var(--theme-pink);
+            box-shadow: 0 6px 0 var(--theme-pink);
+            max-width: 500px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .start-screen h1 {
+            color: var(--theme-pink-dark);
+            font-size: 2.5rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .start-screen p.subtitle {
+            color: var(--theme-pink-dark);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .start-screen .config-section {
+            padding: 20px;
+            border-radius: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 25px;
+        }
+
+        .start-screen .config-section .config-label {
+            display: block;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .start-screen .toggle-container {
+            display: flex;
+            background: var(--theme-pink-dark);
+            border-radius: 12px;
+            padding: 4px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            user-select: none;
+        }
+
+        .start-screen .toggle-container .slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: var(--theme-purple);
+            border-radius: 10px;
+            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 1;
+            box-shadow: 0 2px 0 var(--theme-purple-dark);
+        }
+
+        .toggle-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            z-index: 2;
+            font-weight: bold;
+            color: var(--theme-gray);
+            transition: color 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .toggle-option.active {
+            color: var(--text-white);
+        }
+
+        .start-screen .btn-start {
+            background-color: var(--theme-pink);
+            color: white;
+            border: none;
+            padding: 18px 0;
+            width: 100%;
+            border-radius: 16px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            box-shadow: 0 6px 0 var(--theme-pink-dark);
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            text-transform: uppercase;
+        }
 
         /* Timer & Score Display (Hidden by default) */
         .game-hud {
@@ -58,7 +161,16 @@
             margin-right: 5px;
         }
 
-        .timer { font-size: 24px; font-weight: 900; color: var(--text-main); font-variant-numeric: tabular-nums; }
+        .timer { 
+            font-size: 24px; 
+            font-weight: 900; 
+            color: var(--text-dark); 
+            font-variant-numeric: tabular-nums; 
+        }
+
+        .timer-container i{
+            color: var(--text-dark);
+        }
         
         .timer.urgent, 
         .timer-container i.urgent { 
@@ -169,8 +281,6 @@
 <body>
 
     <header>
-        <div class="brand">DeepFocus</div>
-
         <button class="music-btn" onclick="toggleAudioState()">
              Mute Audio 🎵
         </button>
@@ -191,20 +301,8 @@
     </header>
 
     <div class="start-screen" id="startScreen">
-        <div class="visualizer">
-            <div class="bar" style="animation-delay: 0s"></div>
-            <div class="bar" style="animation-delay: 0.1s"></div>
-            <div class="bar" style="animation-delay: 0.2s"></div>
-            <div class="bar" style="animation-delay: 0.3s"></div>
-            <div class="bar" style="animation-delay: 0.1s"></div>
-        </div>
-
-        <h1>Speed Challenge</h1>
+        <h1>Speed Run</h1>
         <p class="subtitle">Customize & Start</p>
-
-        <button class="music-btn" id="musicToggle" onclick="toggleMusic()">
-            <span>🎵</span> Turn Music On
-        </button>
 
         <div class="config-section">
             <span class="config-label">Which side shows first?</span>
@@ -215,7 +313,7 @@
             </div>
         </div>
 
-        <button class="btn-start" id="startBtn" onclick="toggleGameMode()">Start Game</button>
+        <button class="btn-start btn-transform" id="startBtn" onclick="toggleGameMode()">Start Game</button>
     </div>
 
     <main class="main-stage" id="mainStage">
@@ -267,6 +365,8 @@
             { cat: "Code", term: "Polymorphism", def: "Code that can work with different types." }
         ];
 
+        let isFrontTerm = true; // Default: Terms are on front
+
         /* --- State --- */
         let currentIndex = 0;
         let isGameMode = false;
@@ -275,6 +375,10 @@
         let timerInterval;
         let isCooldown = false;
         let audioAllowed = false;
+
+        const configSlider = document.getElementById('configSlider');
+        const optTerm = document.getElementById('optTerm');
+        const optDef = document.getElementById('optDef');
 
         /* --- Elements --- */
         const card = document.getElementById('card');
@@ -286,6 +390,22 @@
         /* --- Init --- */
         loadCard(0);
         musicEnergy.volume = 0.35; // Slightly lower as energy tracks are usually louder mastered
+
+        function toggleConfig() {
+            // Toggle the state
+            isFrontTerm = !isFrontTerm;
+            
+            // Update UI Slider
+            if (isFrontTerm) {
+                configSlider.style.transform = "translateX(0)";
+                optTerm.classList.add('active');
+                optDef.classList.remove('active');
+            } else {
+                configSlider.style.transform = "translateX(100%)";
+                optTerm.classList.remove('active');
+                optDef.classList.add('active');
+            }
+        }
 
         /* --- Audio Logic --- */
         function toggleAudioState() {
@@ -367,9 +487,11 @@
                 
                 // UI
                 document.body.classList.add('game-active');
+                document.getElementById('mainStage').style.display = 'flex';
                 document.getElementById('gameControls').style.display = 'flex';
                 document.getElementById('gameHud').style.display = 'flex';
                 document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('startScreen').style.display = 'none';
                 
                 // Audio Switch (Crossfade Logic)
                 if(audioAllowed) {

@@ -6,6 +6,7 @@ from django.db import models
 class Term(models.Model):
     term = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, editable=False)
+    short_definition = models.CharField(max_length=255)
     definition = RichTextField()
 
     class Meta:

@@ -3,8 +3,10 @@ from .services.term_service import TermService
 
 def glossary_view(request):
     term_service = TermService()
+    search_query = request.GET.get('search')
     context = {
-        'terms': term_service.get_all()
+        'terms': term_service.get_all(search_query=search_query),
+        'search_query': search_query,
     }
     return render(request, 'glossary/glossary.html', context)
 

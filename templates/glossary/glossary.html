@@ -26,11 +26,14 @@
     </div>
     <div class="page-header-row">
         <h1 class="page-title">Glossary</h1>
-        <div class="search-container">
+        <form method="GET" action="{% url 'glossary' %}" class="search-container">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="search" class="search-input" placeholder="Search terms...">
-        </div>
+            <input type="search" name="search" class="search-input" placeholder="Search terms..." value="{{ search_query|default:'' }}">
+        </form>
     </div>
+    {% if search_query and not terms %}
+        <p class="search-results-title">No results found for "{{ search_query }}"</p>
+    {% endif %}
     <section class="term-grid">
         {% for term in terms %}
         {% include "glossary/includes/term_card.html" with term=term %}
