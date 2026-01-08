@@ -4,239 +4,96 @@
 {% load static %}
 {% load i18n %}
     <main class="container">
-        <div class="page-header-row">
-            <h1 class="page-title">Challenges</h1>
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="search" class="search-input" placeholder="Search challenges...">
-            </div>
-        </div>
-        <div class="problem-list">
-            <div class="problems">
-            {% for challenge in challenges%}
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
-                {% endfor %}
-            </div>
-            <div class="sidebar">
-                <div class="filter-group">
-                    <div class="filter-header">Status</div>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Solved
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Unsolved
-                    </label>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-header">Skills</div>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Problem Solving (Basic)
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Problem Solving (Intermediate)
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Problem Solving (Advanced)
-                    </label>
-                </div>
-                <div class="filter-group">
-                    <div class="filter-header">Difficulty</div>
-                    <label class="filter-option">
-                        <input type="checkbox" checked="">
-                        <div class="checkbox-visual"></div>
-                        Easy
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Medium
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox">
-                        <div class="checkbox-visual"></div>
-                        Hard
-                    </label>
+        <form action="." method="GET">
+            <div class="page-header-row">
+                <h1 class="page-title">Challenges</h1>
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="search" name="q" class="search-input" placeholder="Search challenges..." value="{{ search_query }}">
                 </div>
             </div>
-        </div>
+            <div class="problem-list">
+                <div class="problems">
+                    {% for challenge in challenges%}
+                    <div class="problem-card">
+                        <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
+                        <div class="problem-info">
+                            <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title }}</a>
+                            <div class="problem-meta">
+                                {% if challenge.difficulty == 'easy' %}
+                                <span class="badge easy">Easy</span>
+                                {% elif challenge.difficulty == 'medium' %}
+                                <span class="badge medium">Med.</span>
+                                {% else %}
+                                <span class="badge hard">Hard</span>
+                                {% endif %}
+                                <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
+                            </div>
+                        </div>
+                        <a href="#" class="btn-action review">Review</a>
+                    </div>
+                    {% empty %}
+                    <p>No challenges found</p>
+                    {% endfor %}
+                </div>
+                <div class="sidebar">
+                    <button type="submit" class="btn-action" style="width:100%; margin-bottom: 20px;">Apply Filters</button>
+                    <div class="filter-group">
+                        <div class="filter-header">Status</div>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Solved
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Unsolved
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-header">Difficulty</div>
+                        <label class="filter-option">
+                            <input type="checkbox" checked="">
+                            <div class="checkbox-visual"></div>
+                            Easy
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Medium
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Hard
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <div class="filter-header">Tags</div>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            String Manipulation
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Arrays
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Dynamic Programming
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox">
+                            <div class="checkbox-visual"></div>
+                            Binary Trees
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
     </main>
 {% endblock content %} 

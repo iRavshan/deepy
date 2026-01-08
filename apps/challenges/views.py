@@ -10,9 +10,37 @@ from .utils.code_runners.python.python_judge import judge_submission
 
 
 def challenge_list(request):
-    return render(request, 'challenges/challenge_list.html', {'challenges': Challenge.objects.all(), 
-                                                              'tags': Tag.objects.all(),
-                                                              'topics': Topic.objects.all()})
+    challenges = Challenge.objects.all().select_related('topic').prefetch_related('tags')
+
+    search_query = request.GET.get('q', '')
+    if search_query:
+        challenges = challenges.filter(
+            Q(title__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    difficulties = request.GET.getlist('difficulty')
+    if difficulties:
+        challenges = challenges.filter(difficulty__in=difficulties)
+
+
+    selected_tags = request.GET.getlist('tag')
+    if selected_tags:
+        challenges = challenges.filter(tags__slug__in=selected_tags).distinct()
+
+    all_tags = Tag.objects.all()
+
+    context = {
+        'challenges': challenges,
+        'tags': all_tags,
+        'selected_difficulties': difficulties,
+        'selected_tags': selected_tags,
+        'search_query': search_query,
+    }
+
+    return render(request, 'challenges/challenge_list.html', context)
+
+
 
 def challenge_by_topic(request, slug):
     challenges = Challenge.objects.filter(topic__slug=slug)
@@ -45,37 +73,6 @@ def challenge_detail(request, slug):
             context['submissions'] = submissions
     
     return render(request, 'challenges/challenge_detail.html', context)
-
-
-
-def search_challenges(request):
-    query = request.GET.get('q', '')
-    difficulty_filter = request.GET.get('difficulty', '')
-    
-    # Start with all challenges
-    challenges = Challenge.objects.all()
-
-    if query:
-        # Search in title, description, OR topic name
-        # We use .distinct() to prevent duplicate results when matching across relationships
-        challenges = challenges.filter(
-            Q(title__icontains=query) |
-            Q(description__icontains=query) |
-            Q(tags__name__icontains=query) |
-            Q(topic__name__icontains=query)
-        ).distinct()
-
-    # Apply strict filtering for difficulty if provided
-    if difficulty_filter and difficulty_filter in ['easy', 'medium', 'hard']:
-        challenges = challenges.filter(difficulty=difficulty_filter)
-
-    context = {
-        'challenges': challenges,
-        'query': query,
-        'selected_difficulty': difficulty_filter,
-    }
-    
-    return render(request, 'challenges/challenge_list.html', context)
 
 
 @login_required
