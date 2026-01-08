@@ -76,11 +76,17 @@ a {
             position: sticky; top: 0; z-index: 100;
         }
         
-        /* Left: Logo */
-        .logo { font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+.logo { 
+    font-size: 1.5rem; 
+    font-weight: 800; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
 
-        /* Middle: Nav Links (New Feature) */
-        .nav-links-middle { display: flex; gap: 10px; }
+.nav-links-middle { 
+    display: flex; gap: 10px; 
+}
         
 .nav-link-item {        
     color: var(--text-medium); 
@@ -150,10 +156,14 @@ a {
 }
 
         /* --- Header & Search (New Feature) --- */
-        .page-header-row {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 25px; gap: 20px; flex-wrap: wrap;
-        }
+.page-header-row {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    margin-bottom: 40px; 
+    gap: 20px; 
+    flex-wrap: wrap;
+}
         .page-title { font-size: 2rem; font-weight: 900; }
 
         .search-container {
@@ -170,48 +180,62 @@ a {
             position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
             color: var(--text-medium); font-size: 1.1rem;
         }
-
-        /* --- Filters --- */
-        .filter-bar {
-            display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 30px; align-items: center;
-        }
-        .filter-btn {
-            padding: 10px 20px; border-radius: var(--btn-radius); border: 2px solid var(--border-color);
-            background: var(--bg-panel); font-weight: 700; color: var(--text-medium); cursor: pointer;
-            transition: all 0.2s; font-family: 'Nunito'; box-shadow: 0 4px 0 var(--border-color);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .filter-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--border-color); }
-        .filter-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--border-color); }
         
-        .filter-btn.active {
-            background: var(--theme-blue); color: white; border-color: var(--theme-blue);
-            box-shadow: 0 4px 0 var(--theme-blue-dark);
-        }
-        /* Specific styles for solved/unsolved filters */
-        .filter-btn.solved:hover { color: var(--theme-green); border-color: var(--theme-green); }
-        .filter-btn.unsolved:hover { color: var(--theme-orange); border-color: var(--theme-orange); }
-
-        .filter-separator { width: 2px; height: 25px; background: var(--border-color); margin: 0 5px; }
-
-
         /* --- Problem List Styles (Reused) --- */
-        .problem-list { display: flex; flex-direction: column; gap: 20px; }
-        .problem-card {
-            display: flex; align-items: center; background: var(--bg-panel);
-            border-radius: var(--card-radius); padding: 20px; border: 2px solid var(--border-color);
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .problem-card:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,0.05); }
+.problem-list { 
+    display: grid; 
+    grid-template-columns: 1fr 300px;
+    gap: 20px; 
+}
 
-        .status-icon {
-            width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; margin-right: 20px; flex-shrink: 0;
-        }
-        .status-solved { background: var(--theme-green); color: white; box-shadow: 0 4px 0 var(--theme-green-dark); }
-        .status-unsolved { background: var(--bg-app); color: var(--theme-blue); border: 2px solid var(--theme-blue); }
+.problem-list .problems{
+    display: grid;
+    gap: 17px;
+}
+
+.problem-card {
+    display: flex; 
+    align-items: center; 
+    background: var(--bg-panel);
+    border-radius: var(--card-radius); 
+    padding: 20px; 
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 0 rgba(0,0,0,0.05); 
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.problem-card:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 7px 0 rgba(0,0,0,0.05); 
+}
+
+.status-icon {
+    width: 50px; 
+    height: 50px; 
+    border-radius: 50%; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 1.5rem; 
+    margin-right: 20px; 
+    flex-shrink: 0;
+}
+
+.status-solved { 
+    background: var(--theme-green); 
+    color: white; 
+    box-shadow: 0 4px 0 var(--theme-green-dark); 
+}
+
+.status-unsolved { 
+    background: var(--bg-app); 
+    color: var(--theme-blue); 
+    border: 2px solid var(--theme-blue); 
+}
         
-        .problem-info { flex-grow: 1; }
+.problem-info { 
+    flex-grow: 1; 
+}
 
 .problem-title { 
     font-size: 1.2rem; 
@@ -221,7 +245,97 @@ a {
     margin-bottom: 8px; 
 }
 
-.problem-meta { display: flex; align-items: center; gap: 15px; }
+.problem-list .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.problem-list .sidebar .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.problem-list .sidebar .filter-group .filter-header {
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--text-medium);
+    letter-spacing: 1px;
+}
+
+.problem-list .sidebar .filter-group .filter-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 1rem;
+    user-select: none;
+}
+
+.problem-list .sidebar .filter-group .filter-option input {
+    display: none;
+}
+
+.problem-list .sidebar .filter-group .filter-option .checkbox-visual {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    background: white;
+    box-shadow: 0 2px 0 var(--border-color);
+}
+
+.problem-list .sidebar .filter-group .filter-option input:checked + .checkbox-visual {
+    background-color: var(--theme-green);
+    border-color: var(--theme-green);
+    box-shadow: 0 2px 0 var(--theme-green-dark);
+}
+
+.problem-list .sidebar .filter-group .filter-option .checkbox-visual::after {
+    content: '\f00c';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    color: white;
+    font-size: 14px;
+    display: none;
+    animation: popCheck 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.problem-list .sidebar .filter-group .filter-option input:checked + .checkbox-visual::after {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .problem-list {
+        grid-template-columns: 1fr;
+    }
+
+    .problem-list .sidebar {
+        order: -1; /* Sidebar on top or make collapsible */
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    .problem-list .sidebar .filter-group {
+        min-width: 150px;
+    }
+}
+
+.problem-meta { 
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+}
 
 .badge { 
     padding: 6px 12px; 
