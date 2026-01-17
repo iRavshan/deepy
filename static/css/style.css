@@ -42,7 +42,6 @@
     margin: 0; 
     padding: 0; 
     box-sizing: border-box; 
-    font-family: 'Sora', sans-serif;
 }
 
 body {
@@ -188,11 +187,6 @@ a {
     gap: 20px; 
 }
 
-.problem-list .problems{
-    display: grid;
-    gap: 17px;
-}
-
 .problem-card {
     display: flex; 
     align-items: center; 
@@ -202,6 +196,7 @@ a {
     border: 2px solid var(--border-color);
     box-shadow: 0 4px 0 rgba(0,0,0,0.05); 
     transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 17px;
 }
 
 .problem-card:hover { 

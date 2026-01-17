@@ -8,11 +8,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://web-production-b6552.up.railway.app/']
+#CSRF_TRUSTED_ORIGINS = ['localhost', 'https://web-production-b6552.up.railway.app/']
 
 INSTALLED_APPS = [
     'django.contrib.admin',

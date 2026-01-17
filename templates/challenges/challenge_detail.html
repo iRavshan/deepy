@@ -7,7 +7,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}AI Learning Platform{% endblock %} - Deepy</title>
+    <title>{{ challenge.title }} - Deepland</title>
     {% block mathjax %}
     <script>
       window.MathJax = {
@@ -35,6 +35,7 @@
         <section class="panel left-panel" id="leftPanel">
             <div class="tabs-nav">
                 <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i> Description</button>
+                <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i> Note</button>
                 <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i> Hints</button>
                 <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i> Testcase</button>
                 <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i> Submissions</button>
@@ -78,6 +79,12 @@
                             <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>
                         </div>
                         {% endfor %}
+                    </div>
+                </div>
+
+                <div id="tab-note" class="tab-content">
+                    <div id="noteEditor" class="note-editor">
+                        <p>Start typing here...</p>
                     </div>
                 </div>
 
@@ -309,6 +316,10 @@
             border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-panel);
         }
 
+        .tab-btn i{
+            margin-right: 3px;
+        }
+
         /* Tab Content Areas */
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.2s; }
@@ -331,6 +342,10 @@
             line-height: 1.6; 
             font-size: 1.05rem; 
             font-weight: 500; 
+        }
+
+        .problem-text .math-tex{
+            font-family: 'Times New Roman', serif;
         }
 
         .code-span { background: #f0f0f0; padding: 4px 8px; border-radius: 8px; font-family: monospace; font-weight: 700; color: var(--theme-blue-dark); }
@@ -685,9 +700,10 @@
             
             const buttons = document.querySelectorAll('.tab-btn');
             if(tabName === 'desc') buttons[0].classList.add('active');
-            if(tabName === 'hints') buttons[1].classList.add('active');
-            if(tabName === 'tests') buttons[2].classList.add('active');
-            if(tabName === 'subs') buttons[3].classList.add('active');
+            if(tabName === 'note') buttons[1].classList.add('active');
+            if(tabName === 'hints') buttons[2].classList.add('active');
+            if(tabName === 'tests') buttons[3].classList.add('active');
+            if(tabName === 'subs') buttons[4].classList.add('active');
         }
 
         function switchTestCase(caseNum) {
@@ -805,6 +821,35 @@
                 container.appendChild(confetti);
             }
         }
+    </script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#noteEditor'), {
+                toolbar: {
+                    items: [
+                        'heading',
+                        '|',
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strikethrough',
+                        '|',
+                        'bulletedList',
+                        'numberedList',
+                        '|',
+                        'link',
+                        'blockQuote',
+                        'insertTable',
+                        '|',
+                        'undo',
+                        'redo'
+                    ]
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
     </script>
   </body>
 </html>
