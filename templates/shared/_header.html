@@ -7,19 +7,91 @@
         <i class="fa-solid fa-tree" style="color: var(--theme-green);"></i>
         Deepland
     </div>
-        
+
     <div class="nav-links-middle">
         <a href="{% url 'course_list' %}" class="nav-link-item">Courses</a>
-        <a href="{% url 'challenge_list' %}" class="nav-link-item active">Challenges</a>
+        <a href="{% url 'challenge_list' %}" class="nav-link-item">Challenges</a>
         <a href="{% url 'glossary' %}" class="nav-link-item">Glossary</a>
     </div>
+
     {% if user.is_authenticated %}
     <div class="user-stats">
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+            <i class="fa-solid fa-moon"></i>
+        </button>
         <div class="stat-item streak"><i class="fa-solid fa-fire"></i>15</div>
         <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
         <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
     </div>
     {% else %}
+    <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+        <i class="fa-solid fa-moon"></i>
+    </button>
     <a href="{% url 'login' %}" class="login-btn btn-transform">Log In</a>
     {% endif %}
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById('theme-toggle');
+        const icon = toggleBtn.querySelector('i');
+        const html = document.documentElement;
+
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        let currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+
+        // Apply initial theme
+        if (currentTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        } else {
+            html.removeAttribute('data-theme'); // Default is light
+            icon.classList.replace('fa-sun', 'fa-moon');
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            // If currently dark, switch to light (remove attribute)
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                icon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                // Switch to dark
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    });
+</script>
+
+<style>
+    .theme-btn {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        color: var(--text-medium);
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-right: 15px;
+        justify-self: end;
+        box-shadow: 0 4px 0 var(--border-color);
+    }
+
+    .theme-btn:hover {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 var(--border-color);
+    }
+
+    .theme-btn:active {
+        transform: translateY(4px);
+        box-shadow: none;
+    }
+</style>
