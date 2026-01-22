@@ -14,48 +14,39 @@
             </div>
         </div>
         <div class="problem-list">
-            <div class="problems">
+            <div class="problems" id="challenge-container">
                 {% for challenge in challenges%}
-                <div class="problem-card">
-                    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
-                    <div class="problem-info">
-                        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}.
-                            {{ challenge.title }}</a>
-                        <div class="problem-meta">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Easy</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">Med.</span>
-                            {% else %}
-                            <span class="badge hard">Hard</span>
-                            {% endif %}
-                            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn-action review">Review</a>
-                </div>
+                {% include 'challenges/includes/challenge_card.html' %}
                 {% empty %}
                 <p>No challenges found</p>
                 {% endfor %}
+
+                <!-- Loading Skeleton (Hidden by default) -->
+                <!-- Loading Spinner (Three Dots) -->
+                <div id="loading-spinner" class="loading-spinner hidden">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+
+                <div id="sentinel" style="height: 20px; margin-top: 20px;"></div>
             </div>
+
             <div class="sidebar">
                 <div class="filter-group">
                     <div class="filter-header">Difficulty</div>
                     <label class="filter-option">
-                        <input type="checkbox" name="difficulty" value="easy" onchange="this.form.submit()" 
-                        {% if 'easy' in selected_difficulties %}checked{% endif %}>
+                        <input type="checkbox" name="difficulty" value="easy" onchange="this.form.submit()" {% if 'easy' in selected_difficulties %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
                         Easy
                     </label>
                     <label class="filter-option">
-                        <input type="checkbox" name="difficulty" value="medium" onchange="this.form.submit()" 
-                        {% if 'medium' in selected_difficulties %}checked{% endif %}>
+                        <input type="checkbox" name="difficulty" value="medium" onchange="this.form.submit()" {% if 'medium' in selected_difficulties %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
                         Medium
                     </label>
                     <label class="filter-option">
-                        <input type="checkbox" name="difficulty" value="hard" onchange="this.form.submit()" 
-                        {% if 'hard' in selected_difficulties %}checked{% endif %}>
+                        <input type="checkbox" name="difficulty" value="hard" onchange="this.form.submit()" {% if 'hard' in selected_difficulties %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
                         Hard
                     </label>
@@ -65,8 +56,7 @@
                     <div class="filter-header">Tags</div>
                     {% for tag in tags %}
                     <label class="filter-option">
-                        <input type="checkbox" name="tag" value="{{ tag.slug }}" onchange="this.form.submit()" 
-                        {% if tag.slug in selected_tags %}checked{% endif %}>
+                        <input type="checkbox" name="tag" value="{{ tag.slug }}" onchange="this.form.submit()" {% if tag.slug in selected_tags %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
                         {{ tag.name }}
                     </label>
@@ -76,4 +66,5 @@
         </div>
     </form>
 </main>
+{% include 'challenges/includes/infinite_scroll_script.html' %}
 {% endblock content %}

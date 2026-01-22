@@ -94,6 +94,25 @@
     border-color: var(--theme-blue-dark);
 }
 
+[data-theme="dark"] .challenge-nav {
+    background: var(--bg-panel);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .challenge-nav .nav-back-btn:hover {
+    color: var(--text-white);
+}
+
+[data-theme="dark"] .challenge-nav .nav-control-btn {
+    color: var(--text-dark);
+    /* White in dark mode */
+}
+
+[data-theme="dark"] .challenge-nav .nav-control-btn:hover {
+    background: var(--bg-app);
+    color: var(--theme-blue);
+}
+
 
 * {
     margin: 0;
@@ -177,6 +196,96 @@ a {
     color: var(--text-medium);
     justify-self: end;
 }
+
+/* --- Challenge Navigation Bar (New) --- */
+.challenge-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--bg-panel);
+    margin-bottom: 0;
+    /* Flush with main container */
+    position: sticky;
+    top: 0;
+    /* Below main navbar if needed, or replace it */
+    z-index: 90;
+    height: 60px;
+}
+
+.challenge-nav .nav-left,
+.challenge-nav .nav-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.challenge-nav .nav-right {
+    justify-content: flex-end;
+}
+
+.challenge-nav .nav-center {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.challenge-nav .nav-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-medium);
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.challenge-nav .nav-back-btn:hover {
+    color: var(--text-dark);
+}
+
+.challenge-nav .nav-control-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    background: transparent;
+    transition: all 0.1s;
+}
+
+.challenge-nav .nav-control-btn:hover {
+    background: var(--bg-app);
+    color: var(--theme-blue);
+}
+
+.challenge-nav .nav-control-btn.disabled {
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.challenge-nav .nav-icon-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text-medium);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.challenge-nav .nav-icon-btn:hover {
+    color: var(--text-dark);
+}
+
+/* Adjust Main Container for new Nav */
+.main-container {
+    height: calc(100vh - 140px);
+    /* Adjust height to account for navbars */
+}
+
 
 .stat-item i {
     margin-right: 8px;

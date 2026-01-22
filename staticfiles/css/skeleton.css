@@ -1,0 +1,70 @@
+
+/* --- Skeleton Loader --- */
+.skeleton-loader {
+    width: 100%;
+}
+.skeleton-loader.hidden {
+    display: none;
+}
+
+.problem-card.skeleton {
+    pointer-events: none;
+    border-color: transparent;
+    background: white; /* Will be overridden by theme usually but base needs color */
+}
+
+/* Shimmer Effect */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton-icon, .skeleton-title, .skeleton-meta, .skeleton-btn {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 8px;
+}
+
+/* Dark Mode Overrides for Skeleton */
+[data-theme="dark"] .skeleton-icon, 
+[data-theme="dark"] .skeleton-title, 
+[data-theme="dark"] .skeleton-meta, 
+[data-theme="dark"] .skeleton-btn {
+    background: linear-gradient(90deg, #2d383e 25%, #38464e 50%, #2d383e 75%);
+}
+
+.problem-card.skeleton .skeleton-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.problem-card.skeleton .problem-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 60%;
+}
+
+.skeleton-meta {
+    height: 20px;
+    width: 40%;
+}
+
+.skeleton-btn {
+    width: 80px;
+    height: 40px;
+    border-radius: 12px;
+}
+
+[data-theme="dark"] .problem-card.skeleton {
+    background: var(--bg-panel);
+    border-color: var(--border-color);
+}

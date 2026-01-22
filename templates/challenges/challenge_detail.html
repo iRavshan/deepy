@@ -3,22 +3,22 @@
 {% load static %}
 {% load humanize %}
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ challenge.title }} - Deepland</title>
     {% block mathjax %}
     <script>
-      window.MathJax = {
-        tex: {
-          inlineMath: [["$", "$"], ["\\(", "\\)"]],
-          displayMath: [["$$", "$$"], ["\\[", "\\]"]],
-        },
-        svg: {
-          fontCache: "global",
-        },        
-    };
+        window.MathJax = {
+            tex: {
+                inlineMath: [["$", "$"], ["\\(", "\\)"]],
+                displayMath: [["$$", "$$"], ["\\[", "\\]"]],
+            },
+            svg: {
+                fontCache: "global",
+            },
+        };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
     {% endblock %}
@@ -28,17 +28,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
-  </head>
-  <body>
-    {% include "shared/_header.html" %}
+</head>
+<body>
+    <div class="challenge-nav">
+        <div class="nav-left">
+            <a href="{% url 'challenge_list' %}" class="nav-back-btn">
+                <i class="fa-solid fa-list-ul"></i> All Challenges
+            </a>
+        </div>
+        <div class="nav-center">
+            <a href="{% if prev_challenge %}{% url 'challenge_detail' prev_challenge.slug %}{% else %}#{% endif %}"
+                class="nav-control-btn {% if not prev_challenge %}disabled{% endif %}" title="Previous Challenge">
+                <i class="fa-solid fa-chevron-left"></i>
+            </a>
+            <a href="{% url 'challenge_random' %}" class="nav-control-btn" title="Random Challenge">
+                <i class="fa-solid fa-shuffle"></i>
+            </a>
+            <a href="{% if next_challenge %}{% url 'challenge_detail' next_challenge.slug %}{% else %}#{% endif %}"
+                class="nav-control-btn {% if not next_challenge %}disabled{% endif %}" title="Next Challenge">
+                <i class="fa-solid fa-chevron-right"></i>
+            </a>
+        </div>
+        <div class="nav-right">
+            <!-- Placeholders for future tools -->
+            <button class="nav-icon-btn"><i class="fa-solid fa-gear"></i></button>
+        </div>
+    </div>
+
     <main class="main-container">
         <section class="panel left-panel" id="leftPanel">
             <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i> Description</button>
-                <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i> Note</button>
-                <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i> Hints</button>
-                <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i> Testcase</button>
-                <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i> Submissions</button>
+                <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i>Description</button>
+                <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i>Note</button>
+                <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i>Hints</button>
+                <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i>Testcase</button>
+                <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i>Submissions</button>
             </div>
 
             <div class="left-panel-content">
@@ -74,61 +98,63 @@
                         
                         {% for sample in challenge.sample_tests %}
                         <h3>Example {{ forloop.counter }}:</h3>
-                        <div class="example-box">
-                            <div><span class="label">Input:</span><span class="example-value">{{ sample.input }}</span></div>
-                            <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>
+                        <div class=" example-box">
+                                    <div><span class="label">Input:</span><span class="example-value">{{ sample.input }}</span></div>
+                                    <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div id="tab-note" class="tab-content">
+                        <div id="noteEditor" class="note-editor">
+                            <p>Start typing here...</p>
+                        </div>
+                    </div>
+
+                    <div id="tab-hints" class="tab-content">
+                        <h2 style="margin-bottom: 20px;">Hints</h2>
+                        {% for hint in challenge.hints.all %}
+                        <div class="hint-card">
+                            <i class="fa-solid fa-lightbulb hint-icon"></i>
+                            <div>
+                                <h4 style="margin-bottom: 5px;">#{{ forloop.counter }}</h4>
+                                <p style="margin: 0; font-size: 0.95rem; color: #555;">
+                                    {{ hint.text|safe }}
+                                </p>
+                            </div>
                         </div>
                         {% endfor %}
                     </div>
-                </div>
 
-                <div id="tab-note" class="tab-content">
-                    <div id="noteEditor" class="note-editor">
-                        <p>Start typing here...</p>
-                    </div>
-                </div>
+                    <div id="tab-tests" class="tab-content">
+                        <h2 style="margin-bottom: 20px;">Testcase</h2>
 
-                <div id="tab-hints" class="tab-content">
-                    <h2 style="margin-bottom: 20px;">Hints</h2>
-                    {% for hint in challenge.hints.all %}
-                    <div class="hint-card">
-                        <i class="fa-solid fa-lightbulb hint-icon"></i>
-                        <div>
-                            <h4 style="margin-bottom: 5px;">#{{ forloop.counter }}</h4>
-                            <p style="margin: 0; font-size: 0.95rem; color: #555;">
-                                {{ hint.text|safe }}
-                            </p>
+                        <div class="test-case-selector">
+                            {% for sample in challenge.sample_tests %}
+                            <div class="case-pill {% if forloop.counter == 1 %}active{% endif %}"
+                                onclick="switchTestCase({{ forloop.counter }})">Case {{ forloop.counter }}</div>
+                            {% endfor %}
                         </div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div id="tab-tests" class="tab-content">
-                    <h2 style="margin-bottom: 20px;">Testcase</h2>
-                    
-                    <div class="test-case-selector">
                         {% for sample in challenge.sample_tests %}
-                        <div class="case-pill {% if forloop.counter == 1 %}active{% endif %}" onclick="switchTestCase({{ forloop.counter }})">Case {{ forloop.counter }}</div>
+                        <div id="case-{{ forloop.counter }}"
+                            class="case-content {% if forloop.counter == 1 %}active{% endif %}">
+                            <div class="io-group">
+                                <span class="io-label">Input</span>
+                                <div class="io-box">{{ sample.input }}</div>
+                            </div>
+                            <div class="io-group">
+                                <span class="io-label">Expected Output</span>
+                                <div class="io-box">{{ sample.expected }}</div>
+                            </div>
+                        </div>
                         {% endfor %}
-                    </div>
-                    {% for sample in challenge.sample_tests %}
-                    <div id="case-{{ forloop.counter }}" class="case-content {% if forloop.counter == 1 %}active{% endif %}">
-                        <div class="io-group">
-                            <span class="io-label">Input</span>
-                            <div class="io-box">{{sample.input}}</div>
-                        </div>
-                        <div class="io-group">
-                            <span class="io-label">Expected Output</span>
-                            <div class="io-box">{{ sample.expected }}</div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    
-                </div>
 
-                <div id="tab-subs" class="tab-content">
-                    <h2 style="margin-bottom: 20px;">My Submissions</h2>
-                    {% if user.is_authenticated %}
+                    </div>
+
+                    <div id="tab-subs" class="tab-content">
+                        <h2 style="margin-bottom: 20px;">My Submissions</h2>
+                        {% if user.is_authenticated %}
                         {% if submissions %}
                         <div class="submission-item">
                             <div class="sub-status status-acc"><i class="fa-solid fa-check"></i> Accepted</div>
@@ -137,11 +163,11 @@
                         {% else %}
                         <p>You haven't submit any solution</p>
                         {% endif %}
-                    {% else %}
+                        {% else %}
                         <p>Please, <a href="{% url 'login' %}">log in</a> your account to see your submissions.</p>
-                    {%endif %}
+                        {%endif %}
+                    </div>
                 </div>
-            </div>
         </section>
 
         <div class="resizer" id="dragHandle"></div>
@@ -155,47 +181,16 @@
                     <option value="cpp">C++</option>
                 </select>
             </div>
-            <form action="#" method="post" style="display: contents;">
+            <form style="display: contents;">
                 {% csrf_token %}
-                <div class="editor-container-stack">
-                    <div class="gutter" id="line-numbers">1<br>2<br>3<br>4<br>5<br>6</div>
-                    <pre class="editor-layer language-python" id="highlighting-layer" aria-hidden="true" tabindex="0"><code class="language-python" id="highlighting-content"><span class="token keyword">class</span> <span class="token class-name">Solution</span><span class="token punctuation">:</span>
-                    <span class="token keyword">def</span> <span class="token function">twoSum</span><span class="token punctuation">(</span>self<span class="token punctuation">,</span> nums<span class="token punctuation">:</span> List<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span><span class="token punctuation">,</span> target<span class="token punctuation">:</span> <span class="token builtin">int</span><span class="token punctuation">)</span> <span class="token operator">-</span><span class="token operator">&gt;</span> List<span class="token punctuation">[</span><span class="token builtin">int</span><span class="token punctuation">]</span><span class="token punctuation">:</span>
-                    <span class="token comment"># Write your solution here</span>
-                    <span class="token keyword">return</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
-                    </code></pre>
-                    <textarea class="editor-layer" id="editing-layer" spellcheck="false">class Solution:
-                    def twoSum(self, nums: List[int], target: int) -&gt; List[int]:
-                        # Write your solution here
-                        return []
-                    </textarea>
-                </div>
+                <div class="editor-container-stack" id="monaco-editor-container"></div>
+                <input type="hidden" name="code" id="hidden_code">
                 <div class="buttons-row">
-                    <button class="btn-3d btn-blue" type="submit"><i class="fa-solid fa-play"></i>Run</button>
-                    <button class="btn-3d btn-green" onclick="triggerFeedback('success')"><i class="fa-solid fa-check"></i>Submit</button>
+                    <button type="button" class="btn-3d btn-blue" id="runBtn"><i class="fa-solid fa-play"></i>Run Code</button>
+                    <button type="button" class="btn-3d btn-green" id="submitBtn"><i class="fa-solid fa-check"></i>Submit</button>
                 </div>
             </form>
         </section>
-        <div id="feedback-overlay" class="feedback-overlay hidden">
-            <div id="confetti-container"></div>
-
-            <div id="card-success" class="feedback-card">
-                <div class="mascot-wrapper"><span class="mascot-jump">🤖</span></div>
-                <h2 class="feedback-title success-text">Nicely Done!</h2>
-                <p class="feedback-message">All test cases passed.</p>
-                <button class="duo-btn btn-continue" onclick="closeFeedback()">CONTINUE</button>
-            </div>
-
-            <div id="card-fail" class="feedback-card">
-                <div class="mascot-wrapper"><span class="mascot-sad">💥</span></div>
-                <h2 class="feedback-title failure-text">Not Quite...</h2>
-                <p class="feedback-message">
-                    Your code failed on <span style="font-weight:bold; color:#FF4B4B">Test Case 3</span>.<br>
-                    <span style="font-size:0.9em; color:#888;">Expected "Hello", got "Hi".</span>
-                </p>
-                <button class="duo-btn btn-retry" onclick="closeFeedback()">TRY AGAIN</button>
-            </div>
-        </div>
     </main>
     {% block extra_js %}{% endblock %}
     <style>
@@ -210,17 +205,22 @@
             font-family: 'Sora', sans-serif;
             color: var(--text-dark);
             height: 100vh;
-            display: flex; 
+            display: flex;
             flex-direction: column;
+            padding-bottom: 15px;
         }
+
         /* --- Main Layout (FLEXBOX for Resizing) --- */
         .main-container {
             flex-grow: 1;
-            max-width: 100%; /* Full width allowed */
-            margin: 0; 
-            padding: 0 25px;
-            display: flex; /* Changed from Grid to Flex */
-            align-items: stretch; /* Ensure equal height */
+            max-width: 100%;
+            /* Full width allowed */
+            margin: 0;
+            padding: 0 20px;
+            display: flex;
+            /* Changed from Grid to Flex */
+            align-items: stretch;
+            /* Ensure equal height */
             overflow: hidden;
         }
 
@@ -228,30 +228,39 @@
         .panel {
             background: var(--bg-panel);
             border: 2px solid var(--border-color);
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
+            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
             height: 100%;
             overflow: hidden;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
             /* Flex properties */
-            flex-shrink: 0; 
+            flex-shrink: 0;
         }
 
         /* LEFT PANEL SPECIFICS */
         .left-panel {
-            width: 50%; /* Initial Width */
-            min-width: 300px; /* Minimum width constraint */
+            width: 50%;
+            /* Initial Width */
+            min-width: 300px;
+            /* Minimum width constraint */
             padding: 0;
-            border-radius: var(--panel-radius) 0 0 var(--panel-radius); /* Rounded left, square right */
-            border-right: none; /* Merge border with resizer */
+            border-radius: var(--panel-radius) 0 0 var(--panel-radius);
+            /* Rounded left, square right */
+            border-right: none;
+            /* Merge border with resizer */
         }
 
         /* RIGHT PANEL SPECIFICS */
         .right-panel {
-            flex-grow: 1; /* Takes remaining space */
-            min-width: 400px; /* Minimum width constraint */
+            flex-grow: 1;
+            /* Takes remaining space */
+            min-width: 400px;
+            /* Minimum width constraint */
             padding: 30px;
-            border-radius: 0 var(--panel-radius) var(--panel-radius) 0; /* Square left, rounded right */
-            border-left: none; /* Merge border with resizer */
+            border-radius: 0 var(--panel-radius) var(--panel-radius) 0;
+            /* Square left, rounded right */
+            border-left: none;
+            /* Merge border with resizer */
         }
 
         /* --- RESIZER HANDLE --- */
@@ -267,8 +276,8 @@
             transition: background 0.2s;
             z-index: 10;
         }
-        
-        .resizer:hover, 
+
+        .resizer:hover,
         .resizer.active {
             background-color: var(--text-medium);
         }
@@ -283,8 +292,8 @@
             pointer-events: none;
         }
 
-        .resizer:hover::after { 
-            color: white; 
+        .resizer:hover::after {
+            color: white;
         }
 
 
@@ -304,53 +313,106 @@
             gap: 5px;
             flex-shrink: 0;
         }
+
         .tab-btn {
-            padding: 12px 20px; border: none; background: transparent;
-            font-family: 'Sora', sans-serif; font-weight: 700; color: var(--text-medium);
-            cursor: pointer; border-radius: 12px 12px 0 0; transition: all 0.2s;
-            position: relative; bottom: -2px;
-        }
-        .tab-btn:hover { background: rgba(0,0,0,0.05); color: var(--text-dark); }
-        .tab-btn.active {
-            background: var(--bg-panel); color: var(--theme-blue);
-            border: 2px solid var(--border-color); border-bottom: 2px solid var(--bg-panel);
+            padding: 12px 20px;
+            border: none;
+            background: transparent;
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            color: var(--text-medium);
+            cursor: pointer;
+            border-radius: 12px 12px 0 0;
+            transition: all 0.2s;
+            position: relative;
+            bottom: -2px;
         }
 
-        .tab-btn i{
+        .tab-btn:hover {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-dark);
+        }
+
+        .tab-btn.active {
+            background: var(--bg-panel);
+            color: var(--theme-blue);
+            border: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--bg-panel);
+        }
+
+        .tab-btn i {
             margin-right: 3px;
         }
 
         /* Tab Content Areas */
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.2s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
         /* --- Problem Description --- */
-        .problem-header { margin-bottom: 25px; border-bottom: 2px solid var(--border-color); padding-bottom: 20px;}
-        .problem-header h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 15px; }
-        .badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .problem-header {
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+        }
 
-        .badge.tag { 
-            background: var(--theme-blue-light); 
+        .problem-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge.tag {
+            background: var(--theme-blue-light);
             color: var(--theme-blue-dark);
-            font-weight: 500; 
+            font-weight: 500;
             font-size: 0.8rem;
         }
 
-        .problem-text p { 
-            margin-bottom: 20px; 
-            line-height: 1.6; 
-            font-size: 1.05rem; 
-            font-weight: 500; 
+        .problem-text p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            font-weight: 500;
         }
 
-        .problem-text .math-tex{
+        .problem-text .math-tex {
             font-family: 'Times New Roman', serif;
         }
 
-        .code-span { background: #f0f0f0; padding: 4px 8px; border-radius: 8px; font-family: monospace; font-weight: 700; color: var(--theme-blue-dark); }
-        
-        .input-output-box{
+        .code-span {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-weight: 700;
+            color: var(--theme-blue-dark);
+        }
+
+        .input-output-box {
             margin: 30px 0;
         }
 
@@ -360,99 +422,166 @@
         }
 
         .input-box .input-box-title,
-        .output-box .output-box-title{
+        .output-box .output-box-title {
             margin-bottom: 5px;
         }
 
         .example-box {
-            background: #f7f7f7; 
-            padding: 20px; 
+            background: #f7f7f7;
+            padding: 20px;
             border-radius: var(--btn-radius);
-            font-family: monospace; 
-            margin-bottom: 25px; 
+            font-family: monospace;
+            margin-bottom: 25px;
             border: 2px solid var(--border-color);
             margin-top: 12px;
         }
 
-        .example-box div { 
-            margin-bottom: 8px; 
+        .example-box div {
+            margin-bottom: 8px;
         }
 
-        .label { font-weight: 800; color: var(--text-dark); font-family: 'Sora'; margin-right: 5px;}
+        .label {
+            font-weight: 800;
+            color: var(--text-dark);
+            font-family: 'Sora';
+            margin-right: 5px;
+        }
 
-        .example-box .example-value{
+        .example-box .example-value {
             font-size: 16px;
         }
+
         /* --- Hints Styling --- */
         .hint-card {
-            background: #fff8e1; 
+            background: #fff8e1;
             border: 2px solid #ffe082;
-            padding: 15px; 
-            border-radius: 16px; 
+            padding: 15px;
+            border-radius: 16px;
             margin-bottom: 15px;
-            display: flex; 
-            gap: 15px; 
+            display: flex;
+            gap: 15px;
             align-items: start;
         }
 
-        .hint-card p{
+        .hint-card p {
             line-height: 25px;
         }
 
-        .hint-icon { 
-            color: var(--theme-orange); 
-            font-size: 1.2rem; 
-            margin-top: 3px; 
+        .hint-icon {
+            color: var(--theme-orange);
+            font-size: 1.2rem;
+            margin-top: 3px;
         }
 
         /* --- Test Cases UI (NEW) --- */
         .test-case-selector {
-            display: flex; gap: 10px; margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
+
         .case-pill {
-            padding: 8px 16px; background: #f0f0f0; border-radius: 20px;
-            font-weight: 700; cursor: pointer; border: 2px solid transparent;
-            font-size: 0.9rem; color: var(--text-medium); transition: all 0.2s;
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid transparent;
+            font-size: 0.9rem;
+            color: var(--text-medium);
+            transition: all 0.2s;
         }
-        .case-pill:hover { background: #e5e5e5; }
+
+        .case-pill:hover {
+            background: #e5e5e5;
+        }
+
         .case-pill.active {
-            background: var(--bg-app); border-color: var(--theme-blue); color: var(--theme-blue);
+            background: var(--bg-app);
+            border-color: var(--theme-blue);
+            color: var(--theme-blue);
         }
-        .case-content { display: none; }
-        .case-content.active { display: block; }
-        
-        .io-group { margin-bottom: 15px; }
-        .io-label { display: block; font-size: 0.85rem; font-weight: 800; color: var(--text-medium); margin-bottom: 5px; text-transform: uppercase; }
+
+        .case-content {
+            display: none;
+        }
+
+        .case-content.active {
+            display: block;
+        }
+
+        .io-group {
+            margin-bottom: 15px;
+        }
+
+        .io-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--text-medium);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
         .io-box {
-            background: #f7f7f7; padding: 15px; border-radius: 12px;
-            font-family: 'Courier New', monospace; border: 2px solid var(--border-color);
-            color: var(--text-dark); font-weight: 600;
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            border: 2px solid var(--border-color);
+            color: var(--text-dark);
+            font-weight: 600;
         }
-        
+
         /* --- Submissions Styling --- */
         .submission-item {
-            display: flex; 
-            justify-content: space-between; 
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            padding: 15px; 
+            padding: 15px;
             border-bottom: 2px solid var(--border-color);
         }
-        
-        .sub-status { font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        .status-acc { color: var(--theme-green); }
-        .status-err { color: var(--theme-red); }
-        .sub-time { color: var(--text-medium); font-size: 0.9rem; font-weight: 600; }
+
+        .sub-status {
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-acc {
+            color: var(--theme-green);
+        }
+
+        .status-err {
+            color: var(--theme-red);
+        }
+
+        .sub-time {
+            color: var(--text-medium);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
 
         /* --- Right Panel (Editor) --- */
         .editor-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 15px; flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-shrink: 0;
         }
 
         .lang-select {
-            padding: 10px 20px; border-radius: var(--btn-radius); border: 2px solid var(--border-color);
-            font-family: 'Sora'; font-weight: 700; color: var(--text-dark);
-            background: white; cursor: pointer; outline: none;
+            padding: 10px 20px;
+            border-radius: var(--btn-radius);
+            border: 2px solid var(--border-color);
+            font-family: 'Sora';
+            font-weight: 700;
+            color: var(--text-dark);
+            background: white;
+            cursor: pointer;
+            outline: none;
         }
 
         /* --- STACKED EDITOR CONTAINER --- */
@@ -470,171 +599,149 @@
         }
 
         .editor-layer {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            padding: 20px; padding-left: 55px; /* Space for line numbers */
-            margin: 0; width: 100%; height: 100%;
-            font-family: inherit; font-size: inherit; line-height: inherit;
-            white-space: pre-wrap; overflow: auto; border: none; box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 20px;
+            padding-left: 55px;
+            /* Space for line numbers */
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            white-space: pre-wrap;
+            overflow: auto;
+            border: none;
+            box-sizing: border-box;
         }
 
         #highlighting-layer {
-            z-index: 1; pointer-events: none; color: #f8f8f2;
+            z-index: 1;
+            pointer-events: none;
+            color: #f8f8f2;
         }
 
         #editing-layer {
-            z-index: 2; color: transparent; background: transparent;
-            caret-color: white; resize: none; outline: none;
+            z-index: 2;
+            color: transparent;
+            background: transparent;
+            caret-color: white;
+            resize: none;
+            outline: none;
         }
-        #editing-layer::selection { background: var(--editor-selection); color: transparent; }
+
+        #editing-layer::selection {
+            background: var(--editor-selection);
+            color: transparent;
+        }
 
         .gutter {
-            position: absolute; top: 0; left: 0; bottom: 0;
-            width: 45px; background: var(--editor-gutter); color: #888;
-            padding: 20px 5px; text-align: right; border-right: 1px solid #555;
-            z-index: 3; pointer-events: none; overflow: hidden;
-            font-family: inherit; font-size: inherit; line-height: inherit; user-select: none;
-        }
-        /* --- Buttons --- */
-        .buttons-row { display: flex; gap: 20px; flex-shrink: 0; }
-        .btn-3d {
-            flex: 1; padding: 15px; border: none; border-radius: var(--btn-radius);
-            font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.2rem;
-            color: white; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-blue { background: var(--theme-blue); box-shadow: 0 5px 0 var(--theme-blue-dark); }
-        .btn-green { background: var(--theme-green); box-shadow: 0 5px 0 var(--theme-green-dark); }
-        .btn-3d:active { transform: translateY(5px); box-shadow: none; }
-        /* Responsive */
-        @media (max-width: 900px) {
-            .main-container { flex-direction: column; }
-            .left-panel, .right-panel { width: 100%; border-radius: var(--panel-radius); border: 2px solid var(--border-color); }
-            .left-panel { height: 400px; margin-bottom: 20px; }
-            .resizer { display: none; } /* Hide resizer on mobile */
-            .panel { height: auto; }
-            .right-panel { height: 500px; }
-            body { height: auto; }
-        }
-
-        .feedback-overlay {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--duo-bg-overlay);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
+            bottom: 0;
+            width: 45px;
+            background: var(--editor-gutter);
+            color: #888;
+            padding: 20px 5px;
+            text-align: right;
+            border-right: 1px solid #555;
+            z-index: 3;
             pointer-events: none;
-            transition: opacity 0.2s ease;
-            backdrop-filter: blur(2px);
-        }
-        .feedback-overlay.active { opacity: 1; pointer-events: all; }
-
-        /* =========================================
-           3. THE CARD (Shared Styles)
-           ========================================= */
-        .feedback-card {
-            background: var(--duo-card-bg);
-            width: 90%;
-            max-width: 400px;
-            border-radius: 20px;
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-            z-index: 1002;
-            opacity: 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            /* Hidden by default */
-            display: none; 
+            overflow: hidden;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            user-select: none;
         }
 
-        .feedback-title { font-size: 2rem; margin: 0 0 10px 0; font-weight: 800; }
-        .feedback-message { color: var(--text-color); font-size: 1.1rem; margin: 0 0 30px 0; font-weight: 600; }
-        .mascot-wrapper { font-size: 5rem; margin-bottom: 10px; height: 80px; }
-
-        .feedback-card.is-success {
-            display: block; /* Show this card */
-            transform: scale(0.8) translateY(20px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-        }
-        .feedback-overlay.active .feedback-card.is-success {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
-        .success-text { color: var(--duo-green); }
-        .btn-continue { background-color: var(--duo-green); box-shadow: 0 6px 0 var(--duo-green-shadow); }
-        .btn-continue:active { box-shadow: 0 0 0 transparent; }
-
-        /* Animation: Jump */
-        .feedback-overlay.active .mascot-jump {
-            display: inline-block;
-            animation: jump 0.6s infinite alternate ease-in-out;
-        }
-        @keyframes jump {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-15px); }
+        /* --- Buttons --- */
+        .buttons-row {
+            display: flex;
+            gap: 20px;
+            flex-shrink: 0;
         }
 
-        /* --- FAILURE STATE --- */
-        .feedback-card.is-failure {
-            display: block; /* Show this card */
-            transform: scale(0.9);
-            transition: opacity 0.2s;
-        }
-        .feedback-overlay.active .feedback-card.is-failure {
-            transform: scale(1);
-            opacity: 1;
-            /* Shake animation on entrance */
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
-        }
-        
-        .failure-text { color: var(--duo-red); }
-        .btn-retry { background-color: var(--duo-red); box-shadow: 0 6px 0 var(--duo-red-shadow); }
-        .btn-retry:active { box-shadow: 0 0 0 transparent; }
-
-        /* Animation: Sad Shake/Dizzy */
-        .feedback-overlay.active .mascot-sad {
-            display: inline-block;
-            animation: dizzy 2s infinite linear;
-            filter: grayscale(0.5);
-        }
-        @keyframes dizzy {
-            0% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            75% { transform: rotate(10deg); }
-            100% { transform: rotate(0deg); }
-        }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
+        .btn-3d {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: var(--btn-radius);
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        /* Confetti Container */
-        #confetti-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; overflow: hidden; z-index: 1001;
+        .btn-blue {
+            background: var(--theme-blue);
+            box-shadow: 0 5px 0 var(--theme-blue-dark);
         }
-        .confetti { position: absolute; width: 12px; height: 12px; border-radius: 2px; top: -20px; }
-        @keyframes fall {
-            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 1; }
-            100% { top: 110%; transform: translateX(0) rotate(720deg); opacity: 0; }
+
+        .btn-green {
+            background: var(--theme-green);
+            box-shadow: 0 5px 0 var(--theme-green-dark);
+        }
+
+        .btn-3d:active {
+            transform: translateY(5px);
+            box-shadow: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .left-panel,
+            .right-panel {
+                width: 100%;
+                border-radius: var(--panel-radius);
+                border: 2px solid var(--border-color);
+            }
+
+            .left-panel {
+                height: 400px;
+                margin-bottom: 20px;
+            }
+
+            .resizer {
+                display: none;
+            }
+
+            /* Hide resizer on mobile */
+            .panel {
+                height: auto;
+            }
+
+            .right-panel {
+                height: 500px;
+            }
+
+            body {
+                height: auto;
+            }
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
     <script>
         // --- RESIZABLE LOGIC (NEW) ---
         const resizer = document.getElementById('dragHandle');
         const leftPanel = document.getElementById('leftPanel');
         const mainContainer = document.querySelector('.main-container');
-        
+
         let isResizing = false;
 
         resizer.addEventListener('mousedown', (e) => {
@@ -666,44 +773,20 @@
         });
 
 
-        // --- EDITOR LOGIC ---
-        const textarea = document.getElementById('editing-layer');
-        const highlightCode = document.getElementById('highlighting-content');
-        const lineNumbers = document.getElementById('line-numbers');
 
-        function update() {
-            let text = textarea.value;
-            if(text[text.length-1] == "\n") { text += " "; }
-            
-            highlightCode.textContent = text;
-            Prism.highlightElement(highlightCode);
-
-            const numberOfLines = textarea.value.split('\n').length;
-            lineNumbers.innerHTML = Array(numberOfLines).fill(0).map((_, i) => i + 1).join('<br>');
-        }
-
-        function syncScroll() {
-            document.getElementById('highlighting-layer').scrollTop = textarea.scrollTop;
-            document.getElementById('highlighting-layer').scrollLeft = textarea.scrollLeft;
-            lineNumbers.scrollTop = textarea.scrollTop;
-        }
-
-        textarea.addEventListener('input', update);
-        textarea.addEventListener('scroll', syncScroll);
-        update(); // Initial call
 
         // --- TABS LOGIC ---
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabName).classList.add('active');
-            
+
             const buttons = document.querySelectorAll('.tab-btn');
-            if(tabName === 'desc') buttons[0].classList.add('active');
-            if(tabName === 'note') buttons[1].classList.add('active');
-            if(tabName === 'hints') buttons[2].classList.add('active');
-            if(tabName === 'tests') buttons[3].classList.add('active');
-            if(tabName === 'subs') buttons[4].classList.add('active');
+            if (tabName === 'desc') buttons[0].classList.add('active');
+            if (tabName === 'note') buttons[1].classList.add('active');
+            if (tabName === 'hints') buttons[2].classList.add('active');
+            if (tabName === 'tests') buttons[3].classList.add('active');
+            if (tabName === 'subs') buttons[4].classList.add('active');
         }
 
         function switchTestCase(caseNum) {
@@ -716,113 +799,8 @@
             document.getElementById(`case-${caseNum}`).classList.add('active');
         }
     </script>
-    <script>
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        const ctx = new AudioContext();
-
-        function playSound(type) {
-            if (ctx.state === 'suspended') ctx.resume(); // Wake up audio context
-
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            
-            const now = ctx.currentTime;
-
-            if (type === 'success') {
-                // Happy Major Arpeggio
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, now);       // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
-                osc.frequency.setValueAtTime(1046.50, now + 0.3); // C6
-                
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                
-                osc.start(now);
-                osc.stop(now + 0.5);
-
-            } else {
-                // Sad "Womp Womp" (Sawtooth wave for harshness)
-                osc.type = 'sawtooth'; // "Buzzier" sound
-                
-                // Note 1: F# (lower)
-                osc.frequency.setValueAtTime(369.99, now); 
-                // Slide down to F
-                osc.frequency.linearRampToValueAtTime(349.23, now + 0.3);
-                
-                // Volume envelope
-                gain.gain.setValueAtTime(0.05, now);
-                gain.gain.linearRampToValueAtTime(0.05, now + 0.2); // Sustain briefly
-                gain.gain.linearRampToValueAtTime(0.001, now + 0.4); // Fade out
-
-                osc.start(now);
-                osc.stop(now + 0.4);
-            }
-        }
-
-        // =========================================
-        // LOGIC
-        // =========================================
-        
-        function triggerFeedback(type) {
-            const overlay = document.getElementById('feedback-overlay');
-            const successCard = document.getElementById('card-success');
-            const failCard = document.getElementById('card-fail');
-            
-            // 1. Reset Display
-            successCard.classList.remove('is-success');
-            failCard.classList.remove('is-failure');
-            overlay.classList.remove('hidden');
-
-            // 2. Determine which card to show
-            if (type === 'success') {
-                successCard.classList.add('is-success');
-                fireConfetti();
-                playSound('success');
-            } else {
-                failCard.classList.add('is-failure');
-                playSound('fail');
-            }
-
-            // 3. Show Overlay
-            requestAnimationFrame(() => {
-                overlay.classList.add('active');
-            });
-        }
-
-        function closeFeedback() {
-            const overlay = document.getElementById('feedback-overlay');
-            overlay.classList.remove('active');
-            
-            setTimeout(() => {
-                overlay.classList.add('hidden');
-                document.getElementById('confetti-container').innerHTML = '';
-                
-                // Clean up classes
-                document.getElementById('card-success').classList.remove('is-success');
-                document.getElementById('card-fail').classList.remove('is-failure');
-            }, 200);
-        }
-
-        function fireConfetti() {
-            const colors = ['#58CC02', '#FF9600', '#FF4B4B', '#1CB0F6', '#FFC800'];
-            const container = document.getElementById('confetti-container');
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti');
-                const bg = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.backgroundColor = bg;
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.animation = `fall ${Math.random() * 2 + 2}s linear forwards`;
-                container.appendChild(confetti);
-            }
-        }
-    </script>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
     <script>
         ClassicEditor
             .create(document.querySelector('#noteEditor'), {
@@ -851,5 +829,135 @@
                 console.error(error);
             });
     </script>
-  </body>
+    <script>
+        // --- MONACO EDITOR SETUP ---
+        let editor;
+
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+
+        require(['vs/editor/editor.main'], function () {
+            editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
+                value: `# Write your python code here\n\nclass Solution:\n    def solve(self):\n        pass`,
+                language: 'python',
+                theme: 'vs-dark', // Default to dark, logic below handles switch
+                automaticLayout: true,
+                minimap: { enabled: false },
+                fontSize: 14,
+                fontFamily: "'Fira Code', 'Consolas', monospace",
+                scrollBeyondLastLine: false,
+                padding: { top: 20 }
+            });
+
+            // Theme Handling
+            function updateEditorTheme() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                monaco.editor.setTheme(isDark ? 'vs-dark' : 'vs-light');
+            }
+
+            // Watch for theme changes (simple poll or observer if possible, doing manual check for now)
+            updateEditorTheme();
+
+            // Expose to global for button usage
+            window.editor = editor;
+
+            // Add observer for theme change
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.type === "attributes" && mutation.attributeName === "data-theme") {
+                        updateEditorTheme();
+                    }
+                });
+            });
+            observer.observe(document.documentElement, { attributes: true });
+        });
+
+        // --- AJAX EXECUTION ---
+        const runBtn = document.getElementById('runBtn');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Helper to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        async function executeCode(url, isSubmission) {
+            if (!editor) return;
+            const code = editor.getValue();
+
+            // Loading State
+            const btn = isSubmission ? submitBtn : runBtn;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: `code=${encodeURIComponent(code)}`
+                });
+
+                const data = await response.json();
+                handleResult(data, isSubmission);
+
+            } catch (error) {
+                console.error("Error:", error);
+                handleResult({ verdict: "System Error", error: "Network Error" }, isSubmission);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        runBtn.addEventListener('click', () => executeCode("{% url 'run_code' challenge.slug %}", false));
+        submitBtn.addEventListener('click', () => executeCode("{% url 'judge_submission' challenge.slug %}", true));
+
+
+        function handleResult(data, isSubmission) {
+            const successOverlay = document.getElementById('card-success');
+            const failOverlay = document.getElementById('card-fail');
+            const errorConsole = document.getElementById('error-console');
+
+            document.getElementById('feedback-overlay').classList.remove('hidden');
+            document.getElementById('feedback-overlay').style.display = 'flex'; // Ensure flex
+
+            // Reset
+            errorConsole.style.display = 'none';
+            errorConsole.textContent = '';
+
+            if (data.verdict === 'Accepted' || data.status === 'OK') {
+                triggerFeedback('success');
+                document.getElementById('success-msg').textContent = isSubmission ? "All tests passed! Challenge Solved." : "Sample tests passed!";
+            } else {
+                triggerFeedback('fail');
+                let msg = "";
+                if (data.verdict) msg += data.verdict;
+                if (data.status && data.status !== 'OK') msg += ": " + data.status;
+
+                document.getElementById('fail-msg').textContent = msg || "Check your logic.";
+
+                // Show error details if any
+                if (data.error || data.output) {
+                    errorConsole.style.display = 'block';
+                    errorConsole.textContent = data.error || data.output;
+                }
+            }
+        }
+    </script>
+</body>
 </html>

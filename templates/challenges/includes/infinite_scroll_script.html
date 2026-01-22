@@ -1,0 +1,56 @@
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let page = 2;
+        let hasNext = true;
+        let isLoading = false;
+        const container = document.getElementById('challenge-container');
+        const sentinel = document.getElementById('sentinel');
+        const loader = document.getElementById('loading-spinner');
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && hasNext && !isLoading) {
+                loadMoreChallenges();
+            }
+        }, { rootMargin: '200px' });
+
+        observer.observe(sentinel);
+
+        function loadMoreChallenges() {
+            isLoading = true;
+            loader.classList.remove('hidden');
+
+            // Construct current URL with new page parameter
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.html) {
+                        container.insertAdjacentHTML('beforeend', data.html);
+                        page++;
+                        hasNext = data.has_next;
+                    } else {
+                        hasNext = false;
+                    }
+                })
+                .catch(err => {
+                    console.error('Error fetching challenges:', err);
+                    // Stop trying if error
+                    hasNext = false;
+                })
+                .finally(() => {
+                    isLoading = false;
+                    loader.classList.add('hidden');
+                    if (!hasNext) {
+                        observer.unobserve(sentinel);
+                        sentinel.innerHTML = '<p style="text-align:center; color: var(--text-medium); margin-top: 20px;">You have reached the end.</p>';
+                    }
+                });
+        }
+    });
+</script>

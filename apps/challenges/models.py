@@ -83,6 +83,7 @@ class Challenge(models.Model):
     sample_tests = models.JSONField(default=list)  
     hidden_tests = models.JSONField(default=list)
     time_limit = models.FloatField(default=1.0)
+    time_limit = models.FloatField(default=1.0)
     memory_limit = models.IntegerField(default=256)
 
     tags = models.ManyToManyField(Tag, related_name="challenges", blank=True)

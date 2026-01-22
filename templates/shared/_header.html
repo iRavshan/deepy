@@ -19,7 +19,34 @@
         <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
             <i class="fa-solid fa-moon"></i>
         </button>
-        <div class="stat-item streak"><i class="fa-solid fa-fire"></i>15</div>
+        <div class="stat-item streak">
+            <i class="fa-solid fa-fire nav-icon"></i><span class="nav-count">{{ user.current_streak }}</span>
+
+            <!-- Redesigned Hover Panel 
+            <div class="streak-panel-v2">
+                <div class="panel-header-bg">
+                    <div class="fire-ring">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div class="streak-title">Daily Streak</div>
+                    <div class="streak-big-number">{{ user.current_streak }}</div>
+                </div>
+                <div class="panel-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Max Streak</div>
+                        <div class="stat-value">{{ user.max_streak }}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Next Goal</div>
+                        <div class="stat-value">7 Days</div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+                    Keep the flame alive! <i class="fa-solid fa-fire-flame-curved"></i>
+                </div>
+            </div>
+            -->
+        </div>
         <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
         <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
     </div>

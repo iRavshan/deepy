@@ -1,0 +1,18 @@
+<div class="problem-card">
+    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
+    <div class="problem-info">
+        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}.
+            {{ challenge.title }}</a>
+        <div class="problem-meta">
+            {% if challenge.difficulty == 'easy' %}
+            <span class="badge easy">Easy</span>
+            {% elif challenge.difficulty == 'medium' %}
+            <span class="badge medium">Med.</span>
+            {% else %}
+            <span class="badge hard">Hard</span>
+            {% endif %}
+            <span class="category-label"><i class="fa-solid fa-layer-group"></i> {{ challenge.topic }}</span>
+        </div>
+    </div>
+    <a href="{% url 'challenge_detail' challenge.slug %}" class="btn-action review">Solve</a>
+</div>
