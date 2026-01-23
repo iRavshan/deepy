@@ -5,23 +5,23 @@
 {% load i18n %}
 <main class="container">
     <div class="banner-row">
-            <div class="mode-banner banner-study">
-                <div class="banner-content">
-                    <h2>Study Mode</h2>
-                    <p>Review definitions at your own pace.</p>
-                    <a class="banner-btn btn-study-action btn-transform" href="{% url 'learning' %}">Start Learning</a>
-                </div>
-                <div class="banner-icon">📖</div>
+        <div class="mode-banner banner-study">
+            <div class="banner-content">
+                <h2>Study Mode</h2>
+                <p>Review definitions at your own pace.</p>
+                <a class="banner-btn btn-study-action btn-transform" href="{% url 'learning' %}">Start Learning</a>
             </div>
+            <div class="banner-icon">📖</div>
+        </div>
 
-            <div class="mode-banner banner-speed">
-                <div class="banner-content">
-                    <h2>Speed Run</h2>
-                    <p>Race against the clock to score points!</p>
-                    <a class="banner-btn btn-speed-action btn-transform" href="{% url 'speed_run' %}">Play Game</a>
-                </div>
-                <div class="banner-icon">🚀</div>
+        <div class="mode-banner banner-speed">
+            <div class="banner-content">
+                <h2>Speed Run</h2>
+                <p>Race against the clock to score points!</p>
+                <a class="banner-btn btn-speed-action btn-transform" href="{% url 'speed_run' %}">Play Game</a>
             </div>
+            <div class="banner-icon">🚀</div>
+        </div>
 
     </div>
     <div class="page-header-row">
@@ -31,8 +31,25 @@
             <input type="search" name="search" class="search-input" placeholder="Search terms..." value="{{ search_query|default:'' }}">
         </form>
     </div>
+
+    <!-- Topic Filter Pills -->
+    <div class="topic-filter-container">
+        <a href="{% url 'glossary' %}{% if search_query %}?search={{ search_query }}{% endif %}"
+            class="topic-pill {% if not selected_topic %}active{% endif %}">
+            <i class="fa-solid fa-border-all"></i> All Topics
+        </a>
+        {% for topic in topics %}
+        <a href="{% url 'glossary' %}?topic={{ topic.slug }}{% if search_query %}&search={{ search_query }}{% endif %}"
+            class="topic-pill {% if selected_topic == topic.slug %}active{% endif %}">
+            {% if topic.icon %}{{ topic.icon }}{% else %}<i class="fa-solid fa-tag"></i>{% endif %}
+            {{ topic.name }}
+            <span class="topic-count">{{ topic.terms.count }}</span>
+        </a>
+        {% endfor %}
+    </div>
+
     {% if search_query and not terms %}
-        <p class="search-results-title">No results found for "{{ search_query }}"</p>
+    <p class="search-results-title">No results found for "{{ search_query }}"</p>
     {% endif %}
     <section class="term-grid">
         {% for term in terms %}
@@ -40,4 +57,4 @@
         {% endfor %}
     </section>
 </main>
-{% endblock content %} 
+{% endblock content %}

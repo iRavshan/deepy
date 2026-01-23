@@ -14,48 +14,47 @@
         <a href="{% url 'glossary' %}" class="nav-link-item">Glossary</a>
     </div>
 
-    {% if user.is_authenticated %}
-    <div class="user-stats">
+    <div class="nav-links-right">
         <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
             <i class="fa-solid fa-moon"></i>
         </button>
-        <div class="stat-item streak">
-            <i class="fa-solid fa-fire nav-icon"></i><span class="nav-count">{{ user.current_streak }}</span>
+        {% if user.is_authenticated %}
+        <div class="user-stats">
+            <div class="stat-item streak">
+                <i class="fa-solid fa-fire nav-icon"></i><span class="nav-count">{{ user.current_streak }}</span>
 
-            <!-- Redesigned Hover Panel 
-            <div class="streak-panel-v2">
-                <div class="panel-header-bg">
-                    <div class="fire-ring">
-                        <i class="fa-solid fa-fire"></i>
+                <!-- Redesigned Hover Panel 
+                <div class="streak-panel-v2">
+                    <div class="panel-header-bg">
+                        <div class="fire-ring">
+                            <i class="fa-solid fa-fire"></i>
+                        </div>
+                        <div class="streak-title">Daily Streak</div>
+                        <div class="streak-big-number">{{ user.current_streak }}</div>
                     </div>
-                    <div class="streak-title">Daily Streak</div>
-                    <div class="streak-big-number">{{ user.current_streak }}</div>
-                </div>
-                <div class="panel-stats-grid">
-                    <div class="stat-box">
-                        <div class="stat-label">Max Streak</div>
-                        <div class="stat-value">{{ user.max_streak }}</div>
+                    <div class="panel-stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-label">Max Streak</div>
+                            <div class="stat-value">{{ user.max_streak }}</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Next Goal</div>
+                            <div class="stat-value">7 Days</div>
+                        </div>
                     </div>
-                    <div class="stat-box">
-                        <div class="stat-label">Next Goal</div>
-                        <div class="stat-value">7 Days</div>
+                    <div class="panel-footer">
+                        Keep the flame alive! <i class="fa-solid fa-fire-flame-curved"></i>
                     </div>
                 </div>
-                <div class="panel-footer">
-                    Keep the flame alive! <i class="fa-solid fa-fire-flame-curved"></i>
-                </div>
+                -->
             </div>
-            -->
+            <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
+            <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
         </div>
-        <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
-        <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
+        {% else %}
+        <a href="{% url 'login' %}" class="login-btn btn-transform">Log In</a>
+        {% endif %}
     </div>
-    {% else %}
-    <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
-        <i class="fa-solid fa-moon"></i>
-    </button>
-    <a href="{% url 'login' %}" class="login-btn btn-transform">Log In</a>
-    {% endif %}
 </nav>
 
 <script>
@@ -96,8 +95,8 @@
 
 <style>
     .theme-btn {
-        background: var(--bg-panel);
-        border: 2px solid var(--border-color);
+        background: transparent;
+        border: none;
         color: var(--text-medium);
         width: 45px;
         height: 45px;
@@ -109,16 +108,5 @@
         transition: all 0.2s;
         margin-right: 15px;
         justify-self: end;
-        box-shadow: 0 4px 0 var(--border-color);
-    }
-
-    .theme-btn:hover {
-        transform: translateY(2px);
-        box-shadow: 0 2px 0 var(--border-color);
-    }
-
-    .theme-btn:active {
-        transform: translateY(4px);
-        box-shadow: none;
     }
 </style>

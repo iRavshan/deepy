@@ -1,5 +1,13 @@
 <div class="term-card">
-    <a class="term-title" href="{% url 'term' term.slug %}">{{ term.term }}</a>
+    <div class="term-card-header">
+        <a class="term-title" href="{% url 'term' term.slug %}">{{ term.term }}</a>
+        {% if term.topic %}
+        <span class="term-topic-badge">
+            {% if term.topic.icon %}{{ term.topic.icon }}{% else %}<i class="fa-solid fa-tag"></i>{% endif %}
+            {{ term.topic.name }}
+        </span>
+        {% endif %}
+    </div>
     <div class="term-preview">{{ term.definition|safe }}</div>
     <div class="card-footer">
         <a class="read-btn btn-transform" href="{% url 'term' term.slug %}">Read Full</a>

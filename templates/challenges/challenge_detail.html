@@ -3,6 +3,7 @@
 {% load static %}
 {% load humanize %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -24,11 +25,14 @@
     {% endblock %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
 </head>
+
 <body>
     <div class="challenge-nav">
         <div class="nav-left">
@@ -50,19 +54,33 @@
             </a>
         </div>
         <div class="nav-right">
-            <!-- Placeholders for future tools -->
-            <button class="nav-icon-btn"><i class="fa-solid fa-gear"></i></button>
+            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            {% if user.is_authenticated %}
+            <div class="user-stats">
+                <div class="stat-item streak">
+                    <i class="fa-solid fa-fire nav-icon"></i><span class="nav-count">{{ user.current_streak }}</span>
+                </div>
+                <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
+                <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
+            </div>
+            {% else %}
+            <a href="{% url 'login' %}" class="login-btn btn-transform">Log In</a>
+            {% endif %}
         </div>
     </div>
 
     <main class="main-container">
         <section class="panel left-panel" id="leftPanel">
             <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i>Description</button>
+                <button class="tab-btn active" onclick="switchTab('desc')"><i
+                        class="fa-solid fa-file-lines"></i>Description</button>
                 <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i>Note</button>
                 <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i>Hints</button>
                 <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i>Testcase</button>
-                <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i>Submissions</button>
+                <button class="tab-btn" onclick="switchTab('subs')"><i
+                        class="fa-solid fa-clock-rotate-left"></i>Submissions</button>
             </div>
 
             <div class="left-panel-content">
@@ -177,8 +195,6 @@
                 <h3 style="font-weight: 800;">Code Editor</h3>
                 <select class="lang-select">
                     <option value="python">Python 3</option>
-                    <option value="java">Java</option>
-                    <option value="cpp">C++</option>
                 </select>
             </div>
             <form style="display: contents;">
@@ -186,8 +202,10 @@
                 <div class="editor-container-stack" id="monaco-editor-container"></div>
                 <input type="hidden" name="code" id="hidden_code">
                 <div class="buttons-row">
-                    <button type="button" class="btn-3d btn-blue" id="runBtn"><i class="fa-solid fa-play"></i>Run Code</button>
-                    <button type="button" class="btn-3d btn-green" id="submitBtn"><i class="fa-solid fa-check"></i>Submit</button>
+                    <button type="button" class="btn-3d btn-blue" id="runBtn"><i class="fa-solid fa-play"></i>Run
+                        Code</button>
+                    <button type="button" class="btn-3d btn-green" id="submitBtn"><i
+                            class="fa-solid fa-check"></i>Submit</button>
                 </div>
             </form>
         </section>
@@ -202,12 +220,92 @@
         }
 
         body {
-            font-family: 'Sora', sans-serif;
+            font-family: var(--secondary-font);
             color: var(--text-dark);
             height: 100vh;
             display: flex;
             flex-direction: column;
             padding-bottom: 15px;
+        }
+
+        /* --- Navbar Styles --- */
+        .challenge-nav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-medium);
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-weight: 700;
+            color: var(--text-medium);
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-item i {
+            margin-right: 8px;
+        }
+
+        .streak {
+            color: var(--theme-orange);
+        }
+
+        .gems {
+            color: var(--theme-blue);
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #ddd;
+            border: 2px solid var(--bg-panel);
+        }
+
+        .login-btn {
+            background: var(--theme-gold);
+            box-shadow: 0 4px 0 var(--theme-gold-dark);
+            color: #634c00;
+            border: none;
+            border-radius: var(--btn-radius);
+            font-family: 'Sora', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.1s;
+            padding: 12px 24px;
+            display: inline-block;
+        }
+
+        .login-btn:hover {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--theme-gold-dark);
+        }
+
+        .login-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
         /* --- Main Layout (FLEXBOX for Resizing) --- */
@@ -318,7 +416,6 @@
             padding: 12px 20px;
             border: none;
             background: transparent;
-            font-family: 'Sora', sans-serif;
             font-weight: 700;
             color: var(--text-medium);
             cursor: pointer;
@@ -326,6 +423,7 @@
             transition: all 0.2s;
             position: relative;
             bottom: -2px;
+            font-family: var(--secondary-font);
         }
 
         .tab-btn:hover {
@@ -376,6 +474,7 @@
         .problem-header h1 {
             font-size: 1.8rem;
             font-weight: 800;
+            font-family: var(--primary-font);
             margin-bottom: 15px;
         }
 
@@ -798,6 +897,41 @@
             document.querySelectorAll('.case-content').forEach(content => content.classList.remove('active'));
             document.getElementById(`case-${caseNum}`).classList.add('active');
         }
+
+        // --- DARK MODE TOGGLE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('theme-toggle');
+            const icon = toggleBtn.querySelector('i');
+            const html = document.documentElement;
+
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            let currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+
+            // Apply initial theme
+            if (currentTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                html.removeAttribute('data-theme'); // Default is light
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+
+            toggleBtn.addEventListener('click', () => {
+                // If currently dark, switch to light (remove attribute)
+                if (html.getAttribute('data-theme') === 'dark') {
+                    html.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                } else {
+                    // Switch to dark
+                    html.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                }
+            });
+        });
     </script>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
@@ -960,4 +1094,5 @@
         }
     </script>
 </body>
+
 </html>
