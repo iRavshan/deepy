@@ -1,0 +1,225 @@
+/* --- Course Path Page Styles --- */
+.course-path-wrapper {
+    display: flex;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.course-path {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Right Panel - Sticky */
+.right-panel {
+    width: 350px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    align-self: flex-start;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Unit Headers - Sticky with Swapping */
+.unit-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition: z-index 0.3s ease;
+}
+
+/* Course Card & Cheat Sheet - Base Styles */
+.course-card,
+.cheat-sheet,
+.stats-card,
+.motivational-tip {
+    background: var(--bg-panel);
+    border: 2px solid var(--border-color);
+    border-radius: var(--card-radius);
+    padding: 20px;
+    box-shadow: 0 4px 0 var(--border-color);
+}
+
+/* Stats Card */
+.stats-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+}
+
+.stats-header i {
+    color: var(--theme-blue);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 15px 10px;
+    background: var(--bg-app);
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--theme-blue);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Glossary Term Preview in Cheat Sheet */
+.glossary-term-preview {
+    padding: 10px 0;
+}
+
+.term-name {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--theme-blue);
+    margin-bottom: 10px;
+}
+
+.term-definition {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    margin-bottom: 15px;
+}
+
+.read-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--theme-blue);
+    color: white;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    box-shadow: 0 4px 0 var(--theme-blue-dark);
+    transition: all 0.1s;
+}
+
+.read-more-btn:hover {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--theme-blue-dark);
+}
+
+.read-more-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+/* Motivational Tip */
+.motivational-tip {
+    background: linear-gradient(135deg, var(--theme-gold-light) 0%, var(--theme-orange-light) 100%);
+    border-color: var(--theme-gold);
+    text-align: center;
+    padding: 25px 20px;
+}
+
+.tip-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.tip-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-style: italic;
+    line-height: 1.5;
+}
+
+/* Dark Mode Styles */
+[data-theme="dark"] .course-card,
+[data-theme="dark"] .cheat-sheet,
+[data-theme="dark"] .stats-card,
+[data-theme="dark"] .motivational-tip {
+    background: var(--bg-panel);
+    border-color: var(--border-color);
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .stat-box {
+    background: var(--bg-app);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .motivational-tip {
+    background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-app) 100%);
+    border-color: var(--theme-gold-dark);
+}
+
+[data-theme="dark"] .unit-header {
+    background: var(--bg-panel);
+}
+
+[data-theme="dark"] .certificate-gate {
+    background: var(--bg-panel);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .gate-glow {
+    opacity: 0.3;
+}
+
+[data-theme="dark"] .circle-btn {
+    background: var(--bg-panel);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .circle-btn:hover {
+    border-color: var(--theme-blue);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .course-path-wrapper {
+        flex-direction: column;
+    }
+    
+    .right-panel {
+        position: static;
+        width: 100%;
+        max-height: none;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .unit-header {
+        position: relative;
+    }
+}

@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from ..repositories.course_repository import CourseRepository
 from ..services.enrollment_service import EnrollmentService
 from ..services.progress_service import ProgressService
+from apps.glossary.services.term_service import TermService
 
 
 def course_list(request):
@@ -50,16 +51,29 @@ def course_enroll(request, slug):
 def course_path(request, slug):
     course_repo = CourseRepository()
     course = course_repo.get_with_sections(slug)
+    term_service = TermService()
+    
+    # Get random glossary term
+    random_term = term_service.get_all().order_by('?').first()
+    
+    # Calculate total lessons
+    total_lessons = sum(section.lessons.count() for section in course.sections.all())
+    
     context = {
         'course': course,
         'course_percentage': 0,
         'completed_lessons': [],
+        'random_term': random_term,
+        'total_lessons': total_lessons,
+        'lessons_completed': 0,
     }
 
     if request.user.is_authenticated:
         progress_service = ProgressService()
         course_percentage = progress_service.get_course_percentage(request.user, course.id)
+        completed_lessons_ids = progress_service.get_completed_lessons(request.user, course.id)
         context['course_percentage'] = course_percentage
-        context['completed_lessons'] = progress_service.get_completed_lessons(request.user, course.id)
+        context['completed_lessons'] = completed_lessons_ids
+        context['lessons_completed'] = len(completed_lessons_ids)
 
     return render(request, 'courses/course_path.html', context)
