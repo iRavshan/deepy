@@ -116,12 +116,11 @@
                         
                         {% for sample in challenge.sample_tests %}
                         <h3>Example {{ forloop.counter }}:</h3>
-                        <div class=" example-box">
-                                    <div><span class="label">Input:</span><span class="example-value">{{ sample.input }}</span></div>
-                                    <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>
-                            </div>
-                            {% endfor %}
+                        <div class="example-box">
+                            <div><span class="label">Input:</span><span class="example-value">{{ sample.input }}</span></div>
+                            <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>
                         </div>
+                        {% endfor %}
                     </div>
 
                     <div id="tab-note" class="tab-content">
@@ -147,7 +146,6 @@
 
                     <div id="tab-tests" class="tab-content">
                         <h2 style="margin-bottom: 20px;">Testcase</h2>
-
                         <div class="test-case-selector">
                             {% for sample in challenge.sample_tests %}
                             <div class="case-pill {% if forloop.counter == 1 %}active{% endif %}"
@@ -167,7 +165,6 @@
                             </div>
                         </div>
                         {% endfor %}
-
                     </div>
 
                     <div id="tab-subs" class="tab-content">
