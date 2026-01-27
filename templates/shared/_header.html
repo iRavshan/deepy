@@ -3,10 +3,10 @@
 {% load static %}
 {% load humanize %}
 <nav class="navbar">
-    <div class="logo">
+    <a href="{% url 'home' %}" class="logo">
         <i class="fa-solid fa-tree" style="color: var(--theme-green);"></i>
         Deepland
-    </div>
+    </a>
 
     <div class="nav-links-middle">
         <a href="{% url 'course_list' %}" class="nav-link-item">Courses</a>

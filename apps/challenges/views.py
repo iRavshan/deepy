@@ -64,22 +64,6 @@ def challenge_list(request):
     return render(request, 'challenges/challenge_list.html', context)
 
 
-
-def challenge_by_topic(request, slug):
-    challenges = Challenge.objects.filter(topic__slug=slug)
-    return render(request, 'challenges/challenge_by_topic.html', {'challenges': challenges,
-                                                                  'tags': Tag.objects.all(),
-                                                                  'topics': Topic.objects.all()})
-
-
-def challenge_by_tag(request, slug):
-    challenges = Challenge.objects.filter(tags__slug=slug)
-    tag = get_object_or_404(Tag, slug=slug)
-    return render(request, 'challenges/challenge_by_tag.html', {'challenges': challenges, 
-                                                                'tag': tag})
-
-
-
 def challenge_detail(request, slug):
     challenge = get_object_or_404(Challenge, slug=slug)
     form = ChallangeSubmissionForm()
@@ -119,14 +103,11 @@ def judge_submission_view(request, slug):
     challenge = Challenge.objects.get(slug=slug)
     code = request.POST.get('code')
     
-    # Use judge_submission which runs all tests
     result = judge_submission(code, challenge.hidden_tests, challenge.time_limit)
     
-    # Update user streak
     from apps.users.utils import update_user_streak
     update_user_streak(request.user)
     
-    # Create submission record
     submission = Submission.objects.create(
         challenge=challenge,
         submitted_by=request.user,
@@ -140,17 +121,11 @@ def judge_submission_view(request, slug):
 @login_required
 @require_POST
 def run_code_view(request, slug):
-    """
-    Runs the code against sample tests (public) just for checking logic.
-    Does NOT create a submission record.
-    """
     from .utils.code_runners.python.python_judge import judge_submission
     
     challenge = get_object_or_404(Challenge, slug=slug)
     code = request.POST.get('code')
     
-    # Run against sample tests primarily, or a subset
-    # For now, let's run against sample tests to give quick feedback
     result = judge_submission(code, challenge.sample_tests, challenge.time_limit)
     
     return JsonResponse(result)

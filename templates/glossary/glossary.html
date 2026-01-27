@@ -51,10 +51,10 @@
     {% if search_query and not terms %}
     <p class="search-results-title">No results found for "{{ search_query }}"</p>
     {% endif %}
-    <section class="term-grid">
+    <div class="term-grid">
         {% for term in terms %}
         {% include "glossary/includes/term_card.html" with term=term %}
         {% endfor %}
-    </section>
+    </div>
 </main>
 {% endblock content %}
