@@ -10,9 +10,9 @@ class Course(models.Model):
     slug = models.SlugField(unique=True, editable=False)
     description = models.TextField()
     level = models.CharField(max_length=50, choices=[
-        ('beginner', 'Beginner'),
-        ('intermediate', 'Intermediate'),
-        ('advanced', 'Advanced'),
+        ('beginner', "Boshlang'ich"),
+        ('intermediate', "O'rta"),
+        ('advanced', "Murakkab"),
     ])
 
     def save(self, *args, **kwargs):

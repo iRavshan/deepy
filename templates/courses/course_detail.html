@@ -11,8 +11,8 @@
                 <p>{{ course.description }}</p>
                 <div class="course-details">
                     <div class="course-detail"><i class="fa-solid fa-signal"></i> {{ course.get_level_display }}</div>
-                    <div class="course-detail"><i class="fa-solid fa-book-open"></i> {{ course.lessons_count }} Lessons</div>
-                    <div class="course-detail"><i class="fa-solid fa-code"></i> {{ course.quizzes_count }} Exercises</div>
+                    <div class="course-detail"><i class="fa-solid fa-book-open"></i> {{ course.lessons_count }} ta dars</div>
+                    <div class="course-detail"><i class="fa-solid fa-code"></i> {{ course.quizzes_count }} ta topshiriq</div>
                 </div>
                 {% if is_enrolled %}
                     <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold btn-transform">
@@ -41,35 +41,6 @@
                 </li>
                 {% endfor %}
             </ul>
-        </div>
-        <div class="content-card">
-            <h2 class="section-title">Nishonlar</h2>
-            <div class="badges-grid">
-                <div class="badge-item">
-                    <div class="badge-icon-bg b-gold">
-                        <i class="fa-solid fa-scroll"></i>
-                    </div>
-                    <span class="badge-label">Syntax Starter</span>
-                </div>
-                <div class="badge-item">
-                    <div class="badge-icon-bg b-purple">
-                        <i class="fa-solid fa-bug"></i>
-                    </div>
-                    <span class="badge-label">Bug Hunter I</span>
-                </div>
-                <div class="badge-item">
-                    <div class="badge-icon-bg b-locked">
-                        <i class="fa-solid fa-database"></i>
-                    </div>
-                    <span class="badge-label">Data Wrangler</span>
-                </div>
-                <div class="badge-item">
-                    <div class="badge-icon-bg b-locked">
-                        <i class="fa-solid fa-trophy"></i>
-                    </div>
-                    <span class="badge-label">Course Master</span>
-                </div>
-            </div>
         </div>
     </section>
 </main>
