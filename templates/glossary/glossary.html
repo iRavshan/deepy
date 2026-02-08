@@ -25,10 +25,10 @@
 
     </div>
     <div class="page-header-row">
-        <h1 class="page-title">Glossary</h1>
+        <h1 class="page-title">DEEPWIKI</h1>
         <form method="GET" action="{% url 'glossary' %}" class="search-container">
             <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="search" name="search" class="search-input" placeholder="Search terms..." value="{{ search_query|default:'' }}">
+            <input type="search" name="search" class="search-input" placeholder="Qidirish..." value="{{ search_query|default:'' }}">
         </form>
     </div>
 
@@ -36,7 +36,7 @@
     <div class="topic-filter-container">
         <a href="{% url 'glossary' %}{% if search_query %}?search={{ search_query }}{% endif %}"
             class="topic-pill {% if not selected_topic %}active{% endif %}">
-            <i class="fa-solid fa-border-all"></i> All Topics
+            <i class="fa-solid fa-border-all"></i> Barchasi
         </a>
         {% for topic in topics %}
         <a href="{% url 'glossary' %}?topic={{ topic.slug }}{% if search_query %}&search={{ search_query }}{% endif %}"
@@ -49,12 +49,114 @@
     </div>
 
     {% if search_query and not terms %}
-    <p class="search-results-title">No results found for "{{ search_query }}"</p>
+    <p class="search-results-title">"{{ search_query }}" so'roviga mos ma'lumot topilmadi</p>
     {% endif %}
-    <div class="term-grid">
+    <div class="term-grid" id="term-grid">
         {% for term in terms %}
         {% include "glossary/includes/term_card.html" with term=term %}
         {% endfor %}
     </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner" style="display: none;">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+    </div>
+    
+    <div id="end-message" style="display: none; text-align: center; color: var(--text-medium); margin-top: 20px;">
+        All terms loaded.
+    </div>
+
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... (Existing Infinite Scroll Logic) ...
+        let page = 1;
+        let hasNext = {{ terms.has_next|yesno:"true,false" }};
+        let isLoading = false;
+        const termGrid = document.getElementById('term-grid');
+        const spinner = document.getElementById('loading-spinner');
+        const endMessage = document.getElementById('end-message');
+        
+        // Infinite Scroll
+        window.addEventListener('scroll', () => {
+             if (isLoading || !hasNext) return;
+             
+             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                 loadMoreTerms();
+             }
+        });
+
+        function loadMoreTerms() {
+            isLoading = true;
+            spinner.style.display = 'block';
+            page++;
+            
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.html;
+                
+                Array.from(tempDiv.children).forEach((child, index) => {
+                     child.style.animationDelay = `${index * 0.1}s`;
+                     child.classList.add('slide-up-fade-in');
+                     termGrid.appendChild(child);
+                });
+                
+                hasNext = data.has_next;
+                if (!hasNext) {
+                    endMessage.style.display = 'block';
+                }
+            })
+            .catch(console.error)
+            .finally(() => {
+                isLoading = false;
+                spinner.style.display = 'none';
+            });
+        }
+
+        // Bookmark Logic
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.bookmark-btn');
+            if (!btn) return;
+
+            const slug = btn.dataset.slug;
+            const icon = btn.querySelector('i');
+
+            fetch('{% url "toggle_term_save" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ slug: slug })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.saved) {
+                    btn.classList.add('active');
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid');
+                } else {
+                    btn.classList.remove('active');
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
+                }
+                
+                // Animate
+                icon.style.transform = 'scale(1.2)';
+                setTimeout(() => icon.style.transform = 'scale(1)', 200);
+            })
+            .catch(console.error);
+        });
+    });
+</script>
 {% endblock content %}

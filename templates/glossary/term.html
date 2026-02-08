@@ -1,5 +1,5 @@
 {% extends '../shared/_base.html' %}
-{% block title %} Glossary {% endblock %}
+{% block title %} {{term.term}} {% endblock %}
 {% block content %}
 {% load static %}
 {% load i18n %}
@@ -7,13 +7,22 @@
     <div class="term-card-wrapper">
         <div class="term-card">
             <div class="term-header">
-                <h1>{{ term.term }}</h1>
-                <button class="audio-btn btn-transform" onclick="speakText()">
-                    <i class="fa-solid fa-volume-high"></i>
-                </button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <h1>{{ term.term }}</h1>
+                    <button class="audio-btn btn-transform" onclick="speakText()">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                </div>
+                <div class="header-actions" style="display: flex; gap: 10px;">
+                    {% if user.is_authenticated %}
+                    <button class="bookmark-btn {% if is_saved %}active{% endif %}" data-slug="{{ term.slug }}">
+                        <i class="{% if is_saved %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                    </button>
+                    {% endif %}
+                </div>
             </div>
             <div class="definition-text" id="defText">
-                {{ term.definition|safe }}
+                {{ term.short_definition }}
             </div>
         </div>
     </div>
@@ -33,5 +42,35 @@
                 alert("Text-to-speech not supported in this browser.");
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.querySelector('.bookmark-btn');
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    const slug = this.dataset.slug;
+                    const icon = this.querySelector('i');
+                    
+                    fetch('{% url "toggle_term_save" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({ slug: slug })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.saved) {
+                            icon.classList.remove('fa-regular');
+                            icon.classList.add('fa-solid');
+                        } else {
+                            icon.classList.remove('fa-solid');
+                            icon.classList.add('fa-regular');
+                        }
+                    })
+                    .catch(console.error);
+                });
+            }
+        });
 </script>
 {% endblock content %} 

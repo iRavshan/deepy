@@ -15,13 +15,6 @@ class ProgressRepository(BaseRepository[LessonProgress]):
         except LessonProgress.DoesNotExist:
             return None
 
-    def mark_started(self, user, lesson: Lesson) -> LessonProgress:
-        progress, created = LessonProgress.objects.get_or_create(
-            user=user,
-            lesson=lesson
-        )
-        return progress
-
     def mark_complete(self, user, lesson: Lesson) -> LessonProgress:
         progress, created = LessonProgress.objects.get_or_create(
             user=user,
@@ -34,16 +27,6 @@ class ProgressRepository(BaseRepository[LessonProgress]):
             progress.save()
             
         return progress
-
-    def mark_incomplete(self, user, lesson: Lesson) -> Optional[LessonProgress]:
-        try:
-            progress = LessonProgress.objects.get(user=user, lesson=lesson)
-            progress.completed = False
-            progress.completed_at = None
-            progress.save()
-            return progress
-        except LessonProgress.DoesNotExist:
-            return None
 
     def get_completed_lessons_count(self, user, course_id: int) -> int:
         if not user.is_authenticated:

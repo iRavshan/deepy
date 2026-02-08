@@ -12,11 +12,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 
-                        'https://web-production-b6552.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'https://deepland.uz']
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+
+CF_TURNSTILE_SECRET_KEY = os.environ.get('CF_TURNSTILE_SECRET_KEY')
+CF_TURNSTILE_SITE_KEY = os.environ.get('CF_TURNSTILE_SITE_KEY')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -93,7 +95,6 @@ CKEDITOR_CONFIGS = {
         'toolbar': 'full',
         'height': 200,
         'width': '100%',
-        
     },
     'math_editor': {
         'skin': 'moono-lisa',
@@ -113,7 +114,7 @@ CKEDITOR_CONFIGS = {
         'width': '100%',
         'extraPlugins': 'mathjax',  
         'mathJaxLib': 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS_HTML',
-        'removePlugins': 'exportpdf',  # Remove export to PDF if not needed
+        'removePlugins': 'exportpdf',  
         'allowedContent': True,
     },
     'basic_math': {
@@ -155,25 +156,7 @@ AUTHENTICATION_BACKENDS = [
 
 SITE_ID = 1
 
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'OAUTH_PKCE_ENABLED': True,
-    }
-}
-
-SOCIALACCOUNT_LOGIN_ON_GET=True
-SOCIALACCOUNT_AUTO_SIGNUP = True
-
-
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'success'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -187,4 +170,4 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

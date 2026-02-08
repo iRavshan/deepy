@@ -1,6 +1,7 @@
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
 from django.db import models
+from django.conf import settings
 
 
 class Topic(models.Model):
@@ -34,11 +35,11 @@ class Term(models.Model):
     term = models.CharField(max_length=100, unique=True)
     slug = models.SlugField(unique=True, editable=False)
     short_definition = models.CharField(max_length=255)
-    definition = RichTextField()
+    definition = RichTextField(null=True, blank=True)
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, blank=True, related_name='terms')
 
     class Meta:
-        ordering = ['topic__name', 'term']
+        ordering = ['term']
 
     
     def save(self, *args, **kwargs):
@@ -57,3 +58,15 @@ class Term(models.Model):
 
     def __str__(self):
         return self.term
+
+class SavedTerm(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_terms')
+    term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name='saved_by')
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'term')
+        ordering = ['-saved_at']
+
+    def __str__(self):
+        return f"{self.user} - {self.term}"

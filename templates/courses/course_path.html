@@ -5,86 +5,140 @@
 {% load i18n %}
 <main class="course-path-wrapper">
     <div class="course-path">
-            {% for section in course.sections.all %}
-            {% cycle 'theme-green' 'theme-blue' 'theme-purple' 'theme-orange' 'theme-brown' 'theme-pink' 'theme-red' as current_theme silent %}
-            <div class="unit-header {{ current_theme }}">
-                <div class="unit-info">
-                    <h2>Unit {{ section.order }}</h2>
-                    <p>{{ section.title }}</p>
-                </div>
-                <a class="unit-info-btn btn-transform"><i class="fa-solid fa-book"></i>Handbook</a>
+        {% for section in course.sections.all %}
+        {% cycle 'theme-green' 'theme-blue' 'theme-purple' 'theme-orange' 'theme-brown' 'theme-pink' 'theme-red' as current_theme silent %}
+        <div class="unit-header {{ current_theme }}">
+            <div class="unit-info">
+                <h2>Bo'lim {{ section.order }}</h2>
+                <p>{{ section.title }}</p>
             </div>
-            
-            <div class="path-nodes {{ current_theme }}">
-                {% for lesson in section.lessons.all %}
-                    <div class="level-row">
-                        <div class="level-item">
-                            <a class="circle-btn" href="{% url 'lesson_detail' course.slug lesson.slug %}">
-                                {% if lesson.id in completed_lessons %}
-                                    <i class="fa-solid fa-check"></i>
-                                {% else %}
-                                    <i class="fa-solid fa-o"></i>
-                                {% endif %}
-                            </a>
-                            <div class="tooltip">{{ lesson.title }}</div>
-                        </div>
-                    </div>
-                    {% if lesson.has_quiz %}
-                    <div class="level-row">
-                        <div class="level-item">
-                            <a class="circle-btn" href="#">
-                                <i class="fa-solid fa-code"></i>
-                            </a>
-                            <div class="tooltip">Exercise</div>
-                        </div>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-                <div style="position: absolute; left: 20px; top: 250px; z-index: -1; opacity: 1;">
-                    <img src="/statiac/img/nova.png" alt="" style="width: 220px;">
+            <a class="unit-info-btn btn-transform"><i class="fa-solid fa-book"></i>Qo'llanma</a>
+        </div>
+
+        <div class="path-nodes {{ current_theme }}">
+            {% for lesson in section.lessons.all %}
+            <div class="level-row">
+                <div class="level-item">
+                    <a class="circle-btn" href="{% url 'lesson_detail' course.slug lesson.slug %}">
+                        {% if lesson.id in completed_lessons %}
+                        <i class="fa-solid fa-check"></i>
+                        {% else %}
+                        <i class="fa-solid fa-o"></i>
+                        {% endif %}
+                    </a>
+                    <div class="tooltip">{{ lesson.title }}</div>
                 </div>
             </div>
             {% endfor %}
-            <div class="certificate-gate locked">
-                <div class="gate-glow"></div>
-                    <div class="gate-content">
-                        <div class="trophy-icon">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </div>
-                        <h3>Course Certificate</h3>
-                        <p>Complete all levels to unlock your certification</p>
-                        <div class="gate-lock-btn">
-                            <i class="fa-solid fa-lock"></i> <span>Locked</span>
-                        </div>
-                    </div>
+            <div style="position: absolute; left: 20px; top: 250px; z-index: -1; opacity: 1;">
+                <img src="/statiac/img/nova.png" alt="" style="width: 220px;">
             </div>
+        </div>
+        {% endfor %}
+        <div class="certificate-gate locked">
+            <div class="gate-glow"></div>
+            <div class="gate-content">
+                <div class="trophy-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h3>Course Certificate</h3>
+                <p>Complete all levels to unlock your certification</p>
+                <div class="gate-lock-btn">
+                    <i class="fa-solid fa-lock"></i> <span>Locked</span>
+                </div>
+            </div>
+        </div>
     </div>
 
     <aside class="right-panel">
-            <div class="course-card">
-                <div class="card-header">
-                    <div class="course-name">{{ course.title }}</div>
-                    <div class="percent-badge">{{ course_percentage }}%</div>
+        <div class="course-card">
+            <div class="card-header">
+                <div class="course-name">{{ course.title }}</div>
+                <div class="percent-badge">{{ course_percentage }}%</div>
+            </div>
+            {% include "courses/includes/progress_bar.html" with course_percentage=course_percentage %}
+            <div class="cert-section">
+                <div class="cert-icon">📜</div>
+                <div class="cert-details">
+                    <span class="cert-title">Course Certificate</span>
+                    <span class="cert-status">Finish course to unlock</span>
                 </div>
-                {% include "courses/includes/progress_bar.html" with course_percentage=course_percentage %}
-                <div class="cert-section">
-                    <div class="cert-icon">📜</div>
-                    <div class="cert-details">
-                        <span class="cert-title">Course Certificate</span>
-                        <span class="cert-status">Finish course to unlock</span>
-                    </div>
-                </div>
-
             </div>
 
-            <div class="card cheat-sheet">
-                <div class="cheat-header">
-                    <span><i class="fa-solid fa-lightbulb"></i></span>
-                    <span>Cheat Sheet</span>
-                </div>
-                <p class="note-text">
-                </p>
+        </div>
+
+        <div class="card cheat-sheet">
+            <div class="cheat-header">
+                <span>Deepwiki</span>
+                <button id="refresh-term-btn" class="refresh-btn" title="New Random Term">
+                    <i class="fa-solid fa-sync"></i>
+                </button>
             </div>
+            <div id="term-content" class="term-card-content">
+                {% if random_term %}
+                <div class="term-data">
+                    <div class="term-title"><b>{{ random_term.term }}</b> - {{ random_term.short_definition }}</div>
+                    <a href="{% url 'term' random_term.slug %}" class="read-more-btn">
+                        Batafsil <i class="fa-solid fa-arrow-right-long"></i>
+                    </a>
+                </div>
+                {% else %}
+                <div class="term-data">
+                    <p class="term-def">No terms available.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </aside>
 </main>
-{% endblock content %} 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const refreshBtn = document.getElementById('refresh-term-btn');
+        const termContent = document.getElementById('term-content');
+
+        refreshBtn.addEventListener('click', function() {
+            // Add rotation animation
+            const icon = this.querySelector('i');
+            icon.style.transition = 'transform 0.5s ease';
+            icon.style.transform = 'rotate(180deg)';
+            
+            // Initial fade out
+            termContent.style.opacity = '0.5';
+
+            fetch('{% url "random_term_api" %}')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.term) {
+                        const html = `
+                            <div class="term-data fade-in">
+                                <div class="term-title"><b>${data.term}</b> - ${data.short_definition}</div>
+                                <a href="/deepwiki/term/${data.slug}" class="read-more-btn">
+                                    Batafsil <i class="fa-solid fa-arrow-right-long"></i>
+                                </a>
+                            </div>
+                        `;
+                        termContent.innerHTML = html;
+                    }
+                    // Reset opacity
+                    termContent.style.opacity = '1';
+                    
+                    // Reset icon rotation after delay
+                    setTimeout(() => {
+                        icon.style.transform = 'rotate(0deg)';
+                    }, 500);
+                })
+                .catch(error => {
+                    console.error('Error fetching random term:', error);
+                    termContent.style.opacity = '1';
+                    icon.style.transform = 'rotate(0deg)';
+                });
+        });
+    });
+</script>
+{% endblock content %}

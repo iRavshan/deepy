@@ -97,6 +97,26 @@
     border-color: var(--theme-blue-dark);
 }
 
+.term-grid .term-card .bookmark-btn,
+.term-card-wrapper .term-card .bookmark-btn,
+.problem-card .bookmark-btn {
+    background: none;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--theme-blue);
+}
+
+[data-theme="dark"] .term-grid .term-card .bookmark-btn,
+[data-theme="dark"] .term-card-wrapper .term-card .bookmark-btn {
+    color: var(--text-white);
+}
+
+.problem-card .bookmark-btn {
+    color: var(--theme-green);
+}
+
 [data-theme="dark"] .challenge-nav .nav-back-btn:hover {
     color: var(--text-white);
 }
@@ -153,6 +173,11 @@ ul {
 
 a {
     text-decoration: none;
+}
+
+.loading-spinner{
+    text-align: center;
+    margin-top: 25px;
 }
 
 .btn-transform:active {
@@ -429,6 +454,12 @@ a {
 .problem-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 7px 0 rgba(0, 0, 0, 0.05);
+}
+
+.problem-card .problem-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .status-icon {
@@ -815,7 +846,7 @@ a {
 }
 
 .course-content-area .course-banner {
-    background: var(--theme-blue);
+    background: var(--theme-blue-dark);
     border-radius: var(--card-radius);
     padding: 30px 30px 0px 30px;
     color: white;
@@ -834,6 +865,7 @@ a {
     font-size: 2rem;
     font-weight: 800;
     margin-bottom: 10px;
+    font-family: var(--primary-font);
 }
 
 .course-content-area .course-banner .banner-content p {
@@ -903,10 +935,15 @@ a {
     margin-bottom: 40px;
 }
 
+[data-theme="dark"] .course-content-area .content-card{
+    background-color: var(--bg-input);
+}
+
 .course-content-area .content-card .section-title {
     font-size: 1.5rem;
     font-weight: 800;
     margin-bottom: 25px;
+    text-align: left;
 }
 
 .course-content-area .content-card .learning-list li {
@@ -981,12 +1018,11 @@ a {
 [data-theme="dark"] .course-path-wrapper .right-panel .course-card {
     background: var(--bg-panel);
     border-color: var(--border-color);
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 0 var(--border-color);
 }
 
 [data-theme="dark"] .course-path-wrapper .right-panel .card.cheat-sheet {
     background-color: var(--bg-panel);
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.4);
 }
 
 .course-path-wrapper .right-panel .course-card .card-header {
@@ -1066,15 +1102,17 @@ a {
     flex-direction: column;
     gap: 20px;
     border-color: #fcd34d;
-    margin-top: 20px;
+    box-shadow: 0 4px 0 var(--theme-gold);
 }
 
 .course-path-wrapper .right-panel .card.cheat-sheet .cheat-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    font-weight: 600;
+    font-weight: 700;
     color: #d39e00;
+    text-transform: uppercase;
 }
 
 .course-path-wrapper .right-panel .card.cheat-sheet .note-text {
@@ -1097,6 +1135,7 @@ a {
     transition: all 0.1s;
     padding: 12px 24px;
     box-shadow: 0 4px 0 var(--theme-green-dark);
+    margin-bottom: 60px;
 }
 
 .course-path-wrapper .course-path {
@@ -1959,6 +1998,8 @@ section {
     font-size: 0.9rem;
 }
 
+
+
 .login-container .login-card .btn-login,
 .login-container .login-card .btn-signup {
     width: 100%;
@@ -1975,6 +2016,14 @@ section {
     box-shadow: 0 4px 0 var(--theme-blue-dark);
     transition: transform 0.1s, box-shadow 0.1s;
     margin-bottom: 25px;
+}
+
+.login-container .login-card form .cf-turnstile {
+    margin-bottom: 15px;
+}
+
+.login-container .login-card form .cf-turnstile div iframe {
+    width: 100%;
 }
 
 .login-container .login-card .btn-signup {
@@ -2336,8 +2385,8 @@ section {
     background: var(--theme-blue);
     border: none;
     cursor: pointer;
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     border-radius: 16px;
     display: flex;
     align-items: center;
@@ -2345,32 +2394,25 @@ section {
     box-shadow: 0 4px 0 var(--theme-blue-dark);
     transition: all 0.1s;
     flex-shrink: 0;
-    margin-left: 15px;
 }
 
 .term-card .term-header .audio-btn i {
     color: white;
-    font-size: 1.2rem;
 }
 
 /* --- Course Path Page Styles --- */
-.course-path-wrapper {
-    
-}
-
 .course-path {
     flex: 1;
     min-width: 0;
 }
 
-.right-panel {
+.course-path-wrapper .right-panel {
     width: 350px;
     flex-shrink: 0;
     position: sticky;
     top: 100px; /* Accounts for navbar height */
     align-self: flex-start;
     max-height: calc(100vh - 120px);
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -2439,25 +2481,30 @@ section {
     color: var(--text-medium);
 }
 
-/* Cheat Sheet Card */
-.cheat-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    font-size: 1.1rem;
-    color: var(--text-dark);
-    margin-bottom: 15px;
+.cheat-header button{
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--theme-gold-dark);
 }
 
-.cheat-header i {
-    color: var(--theme-gold);
+.cheat-sheet .term-card-content {
+    display: grid;
+    gap: 15px;
 }
 
-.cheat-sheet .note-text {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: var(--text-medium);
+.cheat-sheet .term-card-content .term-title {
+    background-color: #fff9e6;
+    border-radius: 5px;
+    padding: 10px;
+    border-left: 5px solid var(--theme-gold);
+    color: var(--theme-brown-dark);
+    margin-bottom: 20px;
+}
+
+.term-card-content .read-more-btn {
+    color: #d39e00;
 }
 
 /* --- Course Path DARK MODE Overrides --- */
@@ -2488,7 +2535,6 @@ section {
     color: var(--text-medium);
 }
 
-/* Unit Header Dark Mode (from course_path.html) */
 [data-theme="dark"] .unit-header {
     background: var(--bg-panel);
     border-color: var(--border-color);

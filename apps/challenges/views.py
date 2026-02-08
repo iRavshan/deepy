@@ -30,24 +30,21 @@ def challenge_list(request):
     if selected_tags:
         challenges = challenges.filter(tags__slug__in=selected_tags).distinct()
 
-    # Annotate with is_saved for the current user
-    if request.user.is_authenticated:
-        saved_subquery = SavedChallenge.objects.filter(
-            user=request.user,
-            challenge=OuterRef('pk')
-        )
-        challenges = challenges.annotate(is_saved=Exists(saved_subquery))
+    all_tags = Tag.objects.all()
 
-    # Infinite Scroll
-    page = int(request.GET.get('page', 1))
-    per_page = 10
-    start = (page - 1) * per_page
-    end = start + per_page
+    context = {
+        'tags': all_tags,
+        'selected_difficulties': difficulties,
+        'selected_tags': selected_tags,
+        'search_query': search_query,
+    }
+
+    # Pagination
+    paginator = Paginator(challenges, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
-    total_challenges = challenges.count()
-    has_next = end < total_challenges
-    
-    challenges_page = challenges[start:end]
+    context['challenges'] = page_obj
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         html = render_to_string('challenges/includes/challenge_card.html', {'challenges': page_obj}, request=request)

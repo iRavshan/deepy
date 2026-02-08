@@ -80,6 +80,7 @@ class Lesson(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, editable=False)
     speech = models.TextField()  
+    content = RichTextField()
     order = models.PositiveIntegerField()
 
     class Meta:
@@ -98,14 +99,6 @@ class Lesson(models.Model):
             self.slug = slug
 
         super().save(*args, **kwargs)
-
-    @property
-    def has_quiz(self):
-        return hasattr(self, 'quiz')
-    
-    @property
-    def is_started(self):
-        return self.progress is not None
 
     def __str__(self):
         return f"{self.section.title}: {self.title}"
@@ -130,13 +123,11 @@ class Enrollment(models.Model):
 class LessonProgress(models.Model):
     user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='lesson_progress')
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress')
-    started_at = models.DateTimeField(auto_now_add=True)
     completed = models.BooleanField(default=False)
-    completed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ('user', 'lesson')
-        ordering = ['completed_at']
+        ordering = ['lesson']
 
     def __str__(self):
         return f"{self.user} - {self.lesson} - {'Done' if self.completed else 'Not done'}"

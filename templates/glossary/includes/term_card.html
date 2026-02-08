@@ -8,8 +8,13 @@
         </span>
         {% endif %}
     </div>
-    <div class="term-preview">{{ term.definition|safe }}</div>
+    <div class="term-preview">{{ term.short_definition }}</div>
     <div class="card-footer">
-        <a class="read-btn btn-transform" href="{% url 'term' term.slug %}">Read Full</a>
+        <a class="read-btn btn-transform" href="{% url 'term' term.slug %}">Batafsil</a>
+        {% if user.is_authenticated %}
+        <button class="bookmark-btn {% if term.is_saved %}active{% endif %}" data-slug="{{ term.slug }}">
+            <i class="{% if term.is_saved %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+        </button>
+        {% endif %}
     </div>
 </div>

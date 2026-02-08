@@ -1,15 +1,15 @@
 {% extends '../shared/_base.html' %}
-{% block title %} Challenges {% endblock %}
+{% block title %} Masalalar {% endblock %}
 {% block content %}
 {% load static %}
 {% load i18n %}
 <main class="container">
     <form action="." method="GET">
         <div class="page-header-row">
-            <h1 class="page-title">Challenges</h1>
+            <h1 class="page-title">Masalalar</h1>
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="search" name="q" class="search-input" placeholder="Search challenges..."
+                <input type="search" name="q" class="search-input" placeholder="Qidirish..."
                     value="{{ search_query }}">
             </div>
         </div>
@@ -18,42 +18,32 @@
                 {% for challenge in challenges%}
                 {% include 'challenges/includes/challenge_card.html' %}
                 {% empty %}
-                <p>No challenges found</p>
+                <p>Masalalar topilmadi</p>
                 {% endfor %}
-
-                <!-- Loading Skeleton (Hidden by default) -->
-                <!-- Loading Spinner (Three Dots) -->
-                <div id="loading-spinner" class="loading-spinner hidden">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-
-                <div id="sentinel" style="height: 20px; margin-top: 20px;"></div>
             </div>
 
             <div class="sidebar">
                 <div class="filter-group">
-                    <div class="filter-header">Difficulty</div>
+                    <div class="filter-header">Qiyinlik darajasi</div>
                     <label class="filter-option">
                         <input type="checkbox" name="difficulty" value="easy" onchange="this.form.submit()" {% if 'easy' in selected_difficulties %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
-                        Easy
+                        Oson
                     </label>
                     <label class="filter-option">
                         <input type="checkbox" name="difficulty" value="medium" onchange="this.form.submit()" {% if 'medium' in selected_difficulties %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
-                        Medium
+                        O'rta
                     </label>
                     <label class="filter-option">
                         <input type="checkbox" name="difficulty" value="hard" onchange="this.form.submit()" {% if 'hard' in selected_difficulties %}checked{% endif %}>
                         <div class="checkbox-visual"></div>
-                        Hard
+                        Qiyin
                     </label>
                 </div>
 
                 <div class="filter-group">
-                    <div class="filter-header">Tags</div>
+                    <div class="filter-header">Mavzular</div>
                     {% for tag in tags %}
                     <label class="filter-option">
                         <input type="checkbox" name="tag" value="{{ tag.slug }}" onchange="this.form.submit()" {% if tag.slug in selected_tags %}checked{% endif %}>
@@ -66,5 +56,4 @@
         </div>
     </form>
 </main>
-{% include 'challenges/includes/infinite_scroll_script.html' %}
 {% endblock content %}

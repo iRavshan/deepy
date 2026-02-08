@@ -4,7 +4,7 @@
 {% load static %}
 {% load i18n %}
 <main class="container">
-    <section class="course-content-area">
+    <div class="course-content-area">
         <div class="course-banner">
             <div class="banner-content">
                 <h1>{{ course.title }}</h1>
@@ -16,25 +16,23 @@
                 </div>
                 {% if is_enrolled %}
                     <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold btn-transform">
-                        Continue
+                        Davom etish 
                     </a>
                 {% elif user.is_authenticated %}
                     <form action="{% url 'course_enroll' course.slug %}" method="post" class="course-enroll-form">
                         {% csrf_token %}
-                        <button type="submit" class="btn-3d btn-gold btn-transform">
-                            Start the journey
-                        </button>
+                        <button type="submit" class="btn-3d btn-gold btn-transform">Sayohatni boshlash</button>
                     </form>
                 {% else %}
                     <a href="{% url 'course_path' course.slug %}" class="btn-3d btn-gold btn-transform">
-                        Start the journey
+                        Sayohatni boshlash
                     </a>
                 {% endif %}
             </div>
             <img src="/static/img/banner-image.png" alt="" class="banner-image">
         </div>
         <div class="content-card">
-            <h2 class="section-title">What you'll learn</h2>
+            <h2 class="section-title">Nimalarni o'rganasiz</h2>
             <ul class="learning-list">
                 {% for learning_detail in course.learning_details.all %}
                 <li>
@@ -45,7 +43,7 @@
             </ul>
         </div>
         <div class="content-card">
-            <h2 class="section-title">Badges</h2>
+            <h2 class="section-title">Nishonlar</h2>
             <div class="badges-grid">
                 <div class="badge-item">
                     <div class="badge-icon-bg b-gold">

@@ -7,15 +7,15 @@
   {% if user.is_authenticated %}
     
     {% if enrolled_courses %}
-      <h1 class="page-title">Your courses</h1>
+      <h1 class="page-title">Kurslaringiz</h1>
       <div class="course-grid">
         {% for course in enrolled_courses %}
-          {% include "courses/includes/course_card.html" with course=course button_text="Continue" show_progress=True %}
+          {% include "courses/includes/course_card.html" with course=course button_text="Davom etish" show_progress=True %}
         {% endfor %}
       </div>
     {% endif %}
 
-    <h1 class="page-title">{% if enrolled_courses %}Other courses{% else %}All courses{% endif %}</h1>
+    <h1 class="page-title">{% if enrolled_courses %}Boshqa kurslar{% else %}Barcha kurslar{% endif %}</h1>
     <div class="course-grid">
       {% for course in unenrolled_courses %}
         {% include "courses/includes/course_card.html" with course=course %}
@@ -27,7 +27,7 @@
     </div>
 
   {% else %}
-    <h1 class="page-title">All courses</h1>
+    <h1 class="page-title">Barcha kurslar</h1>
     <div class="course-grid">
       {% for course in unenrolled_courses %}
         {% include "courses/includes/course_card.html" with course=course %}

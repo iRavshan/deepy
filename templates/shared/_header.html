@@ -9,9 +9,9 @@
     </a>
 
     <div class="nav-links-middle">
-        <a href="{% url 'course_list' %}" class="nav-link-item">Courses</a>
-        <a href="{% url 'challenge_list' %}" class="nav-link-item">Challenges</a>
-        <a href="{% url 'glossary' %}" class="nav-link-item">Glossary</a>
+        <a href="{% url 'course_list' %}" class="nav-link-item">Kurslar</a>
+        <a href="{% url 'challenge_list' %}" class="nav-link-item">Masalalar</a>
+        <a href="{% url 'glossary' %}" class="nav-link-item">Deepwiki</a>
     </div>
 
     <div class="nav-links-right">
@@ -52,7 +52,7 @@
             <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
         </div>
         {% else %}
-        <a href="{% url 'login' %}" class="login-btn btn-transform">Log In</a>
+        <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
         {% endif %}
     </div>
 </nav>

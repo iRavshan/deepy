@@ -1,6 +1,7 @@
 from django.db import models
-from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+from django.db import models
+from django.conf import settings
 
 
 class Tag(models.Model):
@@ -131,3 +132,15 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"Submission by {self.submitted_by.email} for {self.task.title} - {self.status}"
+
+class SavedChallenge(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_challenges')
+    challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name='saved_by')
+    saved_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'challenge')
+        ordering = ['-saved_at']
+
+    def __str__(self):
+        return f"{self.user} - {self.challenge}"
