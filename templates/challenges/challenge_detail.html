@@ -37,7 +37,7 @@
     <div class="challenge-nav">
         <div class="nav-left">
             <a href="{% url 'challenge_list' %}" class="nav-back-btn">
-                <i class="fa-solid fa-list-ul"></i> All Challenges
+                <i class="fa-solid fa-list-ul"></i> Barcha masalalar
             </a>
         </div>
         <div class="nav-center">
@@ -66,7 +66,7 @@
                 <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
             </div>
             {% else %}
-            <a href="{% url 'login' %}" class="login-btn btn-transform">Log In</a>
+            <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
             {% endif %}
         </div>
     </div>
@@ -74,13 +74,11 @@
     <main class="main-container">
         <section class="panel left-panel" id="leftPanel">
             <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('desc')"><i
-                        class="fa-solid fa-file-lines"></i>Description</button>
-                <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i>Note</button>
-                <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i>Hints</button>
-                <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i>Testcase</button>
-                <button class="tab-btn" onclick="switchTab('subs')"><i
-                        class="fa-solid fa-clock-rotate-left"></i>Submissions</button>
+                <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i>Izoh</button>
+                <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i>Qaydlar</button>
+                <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i>Yordam</button>
+                <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i>Sinovlar</button>
+                <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i>Urinishlar</button>
             </div>
 
             <div class="left-panel-content">
@@ -105,17 +103,17 @@
 
                         <div class="input-output-box">
                             <div class="input-box">
-                                <h3 class="input-box-title">Input:</h3>
+                                <h3 class="input-box-title">Kiruvchi ma'lumot:</h3>
                                 {{ challenge.input_description|safe }}
                             </div>
                             <div class="output-box">
-                                <h3 class="output-box-title"">Output:</h3>
+                                <h3 class="output-box-title"">Chiquvchi ma'lumot:</h3>
                                 {{ challenge.output_description|safe }}
                             </div>
                         </div>
                         
                         {% for sample in challenge.sample_tests %}
-                        <h3>Example {{ forloop.counter }}:</h3>
+                        <h3>Namuna {{ forloop.counter }}:</h3>
                         <div class="example-box">
                             <div><span class="label">Input:</span><span class="example-value">{{ sample.input }}</span></div>
                             <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>

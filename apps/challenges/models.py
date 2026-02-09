@@ -1,7 +1,7 @@
 from django.db import models
 from ckeditor.fields import RichTextField
-from django.db import models
 from django.conf import settings
+from django.utils.text import slugify
 
 
 class Tag(models.Model):
@@ -12,11 +12,16 @@ class Tag(models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Tag.objects.get(pk=self.pk)
+            if old_instance.name != self.name:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
-            while Tag.objects.filter(slug=slug).exists():
+            while Tag.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
@@ -35,11 +40,16 @@ class Topic(models.Model):
         ordering = ['name']
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Topic.objects.get(pk=self.pk)
+            if old_instance.name != self.name:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
-            while Topic.objects.filter(slug=slug).exists():
+            while Topic.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
@@ -94,11 +104,16 @@ class Challenge(models.Model):
         ordering = ['id']
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Challenge.objects.get(pk=self.pk)
+            if old_instance.title != self.title:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
-            while Challenge.objects.filter(slug=slug).exists():
+            while Challenge.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug

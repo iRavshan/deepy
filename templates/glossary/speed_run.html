@@ -1,539 +1,365 @@
-{% load i18n %}
-<!DOCTYPE html>
+{% extends '../shared/_blank.html' %}
 {% load static %}
-{% load humanize %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Speed Run | Pink Edition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static '/css/style.css' %}" />
-    <style>
-        * { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+{% block title %} Speed Run Game {% endblock %}
+{% block content %}
+<div class="app-container">
+    
+    <!-- Header: Score & Music -->
+    <button class="header-btn btn-exit" onclick="window.location.href='{% url 'speed_run_setup' %}'">
+        <i class="fa-solid fa-xmark"></i> Yakunlash
+    </button>
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Nunito', sans-serif;
-            background-color: var(--bg-app);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
-
-        /* --- MAIN APP CONTAINER --- */
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            padding: 90px 24px 30px 24px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            
-            /* Flat, Clean White Panel */
-            background: var(--bg-panel);
-            
-            margin: 20px;
-        }
-
-        /* --- HEADER ELEMENTS (Fixed Top) --- */
-        
-        /* Common Header Widget Style */
-        .header-widget, .btn-music, .score-board {
-            position: absolute;
-            top: 24px;
-            background: var(--bg-panel);
-            border: 2px solid var(--border-color);
-            padding: 10px 16px;
-            border-radius: 25px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-            box-shadow: 0 4px 0 var(--border-color);
-            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* 1. Music Button (Top Left) */
-        .btn-music {
-            color: var(--text-medium);
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-        .btn-music:hover { transform: translateY(-2px); background: var(--theme-pink-light); border-color: var(--theme-pink); color: var(--theme-pink); }
-        .btn-music:active { transform: translateY(2px); box-shadow: none; border-bottom-width: 2px; margin-top: 2px; }
-        
-        .btn-music.active { 
-            border-color: var(--theme-pink); 
-            color: var(--theme-pink); 
-            background: var(--theme-pink-light);
-            box-shadow: 0 4px 0 var(--theme-pink);
-        }
-
-        /* 2. Score Board (Top Right) */
-        .score-board {
-            display: none;
-            right: 24px;
-            color: var(--theme-blue);
-            font-size: 1.1rem;
-            border-color: var(--border-color);
-        }
-
-        /* --- TYPOGRAPHY --- */
-        h1 { 
-            font-size: 2.6rem; 
-            margin: 0; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px; 
-            color: var(--theme-pink); /* Pink Title */
-            text-shadow: 0 4px 0 var(--theme-pink-dark);
-            transform: skew(-2deg);
-            text-align: center;
-        }
-        h2 { 
-            margin: 10px 0; 
-            color: var(--text-dark); 
-        }
-
-        h2 i{
-            margin-right: 7px;
-            font-size: 53px;
-        }
-
-        p { color: var(--text-medium); font-size: 1.2rem; line-height: 1.6; text-align: center; font-weight: 700; }
-
-        /* --- BUTTONS --- */
-        .btn {
-            width: 100%;
-            padding: 18px;
-            border-radius: var(--btn-radius);
-            border: none;
-            font-size: 1.3rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: white;
-            cursor: pointer;
-            transition: filter 0.2s, transform 0.1s, box-shadow 0.1s;
-            position: relative;
-            letter-spacing: 1px;
-        }
-        
-        .btn:hover { filter: brightness(1.05); transform: translateY(-2px); }
-        .btn:active { transform: translateY(4px) !important; box-shadow: none !important; margin-top: 4px; border-bottom-width: 0; }
-
-        /* Primary is now PINK */
-        .btn-primary { 
-            background: var(--theme-pink); 
-            border-bottom: 4px solid var(--theme-pink-dark);
-            margin-bottom: 4px; /* Space for border */
-        }
-
-        .btn-correct { 
-            background: var(--theme-green); 
-            border-bottom: 4px solid var(--theme-green-dark);
-            margin-bottom: 4px; /* Space for border */
-        }
-        
-        .btn-blue { 
-            background: var(--theme-blue); 
-            border-bottom: 4px solid var(--theme-blue-dark);
-            margin-bottom: 4px;
-        }
-        
-        .btn-red { 
-            background: var(--theme-red); 
-            border-bottom: 4px solid var(--theme-red-dark);
-            margin-bottom: 4px;
-        }
-        
-        /* Feedback Grid */
-        .feedback-grid {
-            display: flex;
-            gap: 15px;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        /* --- SCREENS --- */
-        .screen {
-            width: 100%;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-        .screen.active { display: flex; }
-
-        /* --- START SCREEN COMPONENTS --- */
-        .config-box {
-            background: var(--theme-blue-light);
-            padding: 24px;
-            border-radius: var(--card-radius);
-            width: 100%;
-            margin: 35px 0;
-            border: 2px solid var(--theme-blue);
-            box-shadow: 0 6px 0 var(--theme-blue);
-        }
-
-        .toggle-wrapper {
-            background: var(--theme-gray);
-            border-radius: 16px;
-            padding: 4px;
-            display: flex;
-            position: relative;
-            cursor: pointer;
-            margin-top: 12px;
-        }
-        .toggle-bg {
-            position: absolute;
-            top: 4px;
-            left: 4px;
-            width: calc(50% - 4px);
-            height: calc(100% - 8px);
-            background: var(--theme-blue);
-            border-radius: 12px;
-            transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            z-index: 0;
-            box-shadow: 0 2px 0 var(--theme-blue-dark);
-        }
-        .toggle-option {
-            flex: 1; text-align: center; padding: 12px;
-            z-index: 1; font-weight: 900; color: var(--text-medium); font-size: 1rem;
-            transition: color 0.3s; text-transform: uppercase;
-        }
-        .toggle-option.selected { color: white; text-shadow: 0 1px 0 rgba(0,0,0,0.1); }
-
-        /* --- GAME SCREEN COMPONENTS --- */
-        .timer-track {
-            width: 100%; height: 20px;
-            background: var(--theme-gray); 
-            border-radius: 10px;
-            margin-bottom: 30px; overflow: hidden;
-            margin-top: 25px;
-        }
-        .timer-bar {
-            height: 100%; width: 100%;
-            background: var(--theme-pink); /* Pink Timer */
-            border-radius: 10px;
-            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
-        }
-
-        .card-scene {
-            perspective: 1000px;
-            width: 100%; height: 360px;
-            margin-bottom: 25px;
-        }
-        .card {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border-radius: var(--card-radius);
-            box-shadow: 0 10px 0 var(--theme-pink-dark);
-        }
-
-        .card.flipped { 
-            transform: rotateY(180deg); 
-            box-shadow: 0 10px 0 var(--theme-pink);
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border-radius: var(--card-radius);
-            color: var(--theme-pink-dark);
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-align: center;
-            padding: 30px;
-            border: 2px solid var(--theme-pink-dark);
-        }
-        .card-back { 
-            transform: rotateY(180deg); 
-            background: var(--theme-pink-light); /* Light Pink Back */
-            color: var(--theme-pink-dark); 
-            font-size: 1.6rem;
-            border-color: var(--theme-pink);
-        }
-
-        /* --- UTILS --- */
-        @keyframes popIn { 
-            0% { transform: scale(0.9) translateY(20px); opacity: 0; } 
-            100% { transform: scale(1) translateY(0); opacity: 1; } 
-        }
-        .hidden { display: none !important; }
-
-    </style>
-</head>
-<body>
-
-    <audio id="bgMusic" loop>
-        <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_1f2343f739.mp3?filename=upbeat-energetic-pop-123985.mp3" type="audio/mpeg">
-    </audio>
-
-    <div class="app-container">
-        
-        <button class="btn-music" id="musicBtn" onclick="toggleMusic()">
-            <span>🎵</span> <span id="musicText">Music Off</span>
-        </button>
-
-        <div class="score-board" id="scoreBoard">
-            <span><i class="fa-solid fa-gem"></i></span> <span id="scoreDisplay">0</span>
-        </div>
-
-
-        <div id="startScreen" class="screen active">
-            <h1>Speed Run</h1>
-            <p>Score points for every correct answer!</p>
-
-            <div class="config-box">
-                <div style="font-weight: 900; color: var(--theme-blue-dark); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">Game Mode</div>
-                <div class="toggle-wrapper" onclick="toggleMode()">
-                    <div class="toggle-bg" id="toggleBg"></div>
-                    <div class="toggle-option selected" id="optTerm">Terms</div>
-                    <div class="toggle-option" id="optDef">Definitions</div>
-                </div>
-            </div>
-
-            <button class="btn btn-primary" onclick="startGame()">Start Challenge</button>
-        </div>
-
-        <div id="gameScreen" class="screen">
-            <div class="timer-track">
-                <div class="timer-bar" id="timerBar"></div>
-            </div>
-
-            <div class="card-scene" onclick="flipCard()">
-                <div class="card" id="cardObj">
-                    <div class="card-face card-front" id="txtFront">Front</div>
-                    <div class="card-face card-back" id="txtBack">Back</div>
-                </div>
-            </div>
-
-            <button class="btn btn-blue" id="btnFlip" onclick="flipCard()">Show Answer</button>
-
-            <div class="feedback-grid hidden" id="feedbackArea">
-                <button class="btn btn-red" onclick="handleResult(false)"><i class="fa-solid fa-xmark"></i></button>
-                <button class="btn btn-correct" onclick="handleResult(true)"><i class="fa-solid fa-check"></i></button>
-            </div>
-        </div>
-
-        <div id="resultScreen" class="screen">
-            <h1 id="resultTitle">Finished!</h1>
-            <h2 style="font-size: 4rem; color: var(--theme-blue); margin: 10px 0; text-shadow: 0 2px 0 var(--theme-blue-dark);"><i class="fa-solid fa-gem"></i><span id="finalScore">0</span></h2>
-            <p id="resultMsg" style="font-size: 1.5rem;">Points Earned</p>
-            <button class="btn btn-primary" onclick="resetGame()" style="margin-top: 30px;">Play Again</button>
-        </div>
-
+    <div class="score-board">
+        <span><i class="fa-solid fa-gem"></i></span> <span id="scoreDisplay">0</span>
     </div>
 
-    <script>
-        // --- DATA ---
-        const deck = [
-            { term: "Boolean", def: "True or False values" },
-            { term: "Integer", def: "Whole numbers without decimals" },
-            { term: "String", def: "Text enclosed in quotes" },
-            { term: "Array", def: "Ordered list of values" },
-            { term: "Object", def: "Collection of key-value pairs" },
-            { term: "Function", def: "Block of reusable code" }
-        ];
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="screen active">
+        
+        <!-- Timer (Only visible for Timed Mode) -->
+        <div class="timer-track" id="timerTrack" style="opacity: 0;">
+            <div class="timer-bar" id="timerBar"></div>
+        </div>
+        
+        <!-- Progress (Only visible for Survival Mode) -->
+        <div class="progress-track" id="progressTrack" style="opacity: 0;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
 
-        // --- STATE ---
+        <div class="card-scene" onclick="flipCard()">
+            <div class="card" id="cardObj">
+                <div class="card-face card-front">
+                    <div id="txtFront">Yuklanmoqda...</div>
+                </div>
+                <div class="card-face card-back">
+                    <div id="txtBack">...</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-blue" id="btnFlip" onclick="flipCard()">Javobni ko'rsatish</button>
+
+        <div class="feedback-grid hidden" id="feedbackArea">
+            <button class="btn btn-red" onclick="handleResult(false)">
+                <i class="fa-solid fa-xmark"></i> Noto'g'ri
+            </button>
+            <button class="btn btn-correct" onclick="handleResult(true)">
+                <i class="fa-solid fa-check"></i> To'g'ri
+            </button>
+        </div>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="resultScreen" class="screen">
+        <h1 id="resultTitle">O'yin tugadi!</h1>
+        
+        <div class="final-score-box">
+            <h2 class="big-score"><i class="fa-solid fa-gem"></i><span id="finalScore">0</span></h2>
+            <p>Jami ochkolar</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box correct">
+                <i class="fa-solid fa-check"></i>
+                <span id="countCorrect">0</span>
+                <label>To'g'ri</label>
+            </div>
+            <div class="stat-box incorrect">
+                <i class="fa-solid fa-xmark"></i>
+                <span id="countIncorrect">0</span>
+                <label>Noto'g'ri</label>
+            </div>
+            <div class="stat-box skipped">
+                <i class="fa-solid fa-forward"></i>
+                <span id="countSkipped">0</span>
+                <label>Javob berilmadi</label>
+            </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="window.location.reload()" style="margin-top: 30px;">Yana boshlash</button>
+        <button class="btn btn-secondary" onclick="window.location.href='{% url 'speed_run_setup' %}'" style="margin-top: 10px;">Yangi o'yin</button>
+    </div>
+
+</div>
+
+<style>
+    /* Styling */
+    body {
+        margin: 0; padding: 0;
+        font-family: 'Nunito', sans-serif;
+        background-color: var(--bg-app);
+        display: flex; justify-content: center; align-items: center;
+        min-height: 100vh;
+    }
+
+    .app-container {
+        width: 100%; max-width: 500px;
+        padding: 80px 20px 20px 20px;
+        background: var(--bg-panel);
+        min-height: 100vh;
+        display: flex; flex-direction: column; align-items: center;
+        position: relative;
+    }
+
+    /* Header */
+    .header-btn, .score-board {
+        position: absolute; top: 20px;
+        background: var(--bg-app);
+        border: 2px solid var(--border-color);
+        padding: 8px 16px; border-radius: 20px;
+        font-weight: 800; display: flex; align-items: center; gap: 8px;
+        box-shadow: 0 4px 0 var(--border-color);
+        color: var(--text-medium);
+        cursor: pointer;
+        font-family: var(--secondary-font);
+    }
+    .header-btn { left: 20px; transition: all 0.2s; }
+    .header-btn:hover { color: var(--theme-red); border-color: var(--theme-red); }
+    
+    .score-board { right: 20px; color: var(--theme-blue); border-color: var(--theme-blue-light); }
+
+    /* Game Screen */
+    .screen { width: 100%; display: none; flex-direction: column; align-items: center; animation: fadeIn 0.5s; }
+    .screen.active { display: flex; }
+
+    /* Bars */
+    .timer-track, .progress-track {
+        width: 100%; height: 16px; background: var(--border-color);
+        border-radius: 8px; margin-bottom: 30px; overflow: hidden; position: relative;
+    }
+    .timer-bar {
+        height: 100%; width: 100%; background: var(--theme-pink); border-radius: 8px;
+        transition: width 1s linear;
+    }
+    .progress-bar {
+        height: 100%; width: 0%; background: var(--theme-blue); border-radius: 8px;
+        transition: width 0.3s ease;
+    }
+
+    /* Card */
+    .card-scene { perspective: 1000px; width: 100%; height: 350px; margin-bottom: 25px; }
+    .card {
+        width: 100%; height: 100%; position: relative; transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: var(--card-radius); cursor: pointer;
+        box-shadow: 0 10px 0 rgba(0,0,0,0.1);
+    }
+    .card.flipped { transform: rotateY(180deg); }
+
+    .card-face {
+        position: absolute; width: 100%; height: 100%;
+        backface-visibility: hidden; display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        background: var(--bg-panel); border: 2px solid var(--border-color);
+        border-radius: var(--card-radius); padding: 30px; text-align: center;
+        font-size: 1.8rem; font-weight: 800; color: var(--text-dark);
+    }
+    .card-back { transform: rotateY(180deg); background: #fff5f8; border-color: var(--theme-pink); }
+
+    /* Buttons */
+    .btn {
+        width: 100%; padding: 18px; border-radius: var(--btn-radius); border: none;
+        font-size: 1.2rem; font-weight: 900; color: white; cursor: pointer;
+        box-shadow: 0 6px 0 rgba(0,0,0,0.1); margin-bottom: 10px;
+        transition: all 0.2s;
+        font-family: var(--secondary-font);
+    }
+    .btn:active { transform: translateY(4px); box-shadow: none; margin-bottom: 14px; }
+    
+    .btn-blue { background: var(--theme-blue); box-shadow: 0 6px 0 var(--theme-blue-dark); }
+    .btn-red { background: var(--theme-red); box-shadow: 0 6px 0 var(--theme-red-dark); }
+    .btn-correct { background: var(--theme-green); box-shadow: 0 6px 0 var(--theme-green-dark); }
+    .btn-primary { background: var(--theme-pink); box-shadow: 0 6px 0 var(--theme-pink-dark); }
+    .btn-secondary { background: var(--theme-gray); color: var(--text-dark); box-shadow: 0 6px 0 #ccc; }
+
+    .feedback-grid { display: flex; gap: 15px; width: 100%; }
+    .hidden { display: none !important; }
+
+    /* Results */
+    .final-score-box { text-align: center; margin-bottom: 40px; }
+    .big-score { font-size: 4rem; margin: 0; color: var(--theme-pink); }
+    
+    .stats-grid { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
+    .stat-box {
+        flex: 1; padding: 15px; border-radius: 15px; text-align: center;
+        border: 2px solid var(--border-color);
+        display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .stat-box i { font-size: 1.5rem; margin-bottom: 5px; }
+    .stat-box span { font-size: 1.5rem; font-weight: 900; }
+    .stat-box label { font-size: 0.8rem; font-weight: 700; color: var(--text-medium); }
+    
+    .stat-box.correct { color: var(--theme-green); border-color: var(--theme-green-light); background: var(--theme-green-light); }
+    .stat-box.incorrect { color: var(--theme-red); border-color: var(--theme-red-light); background: var(--theme-red-light); }
+    .stat-box.skipped { color: var(--text-medium); }
+
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Game Config ---
+        const terms = {{ terms_json|safe }};
+        const startSide = "{{ start_side }}"; // 'term' or 'definition'
+        const mode = "{{ mode }}"; // 'survival' or 'timed'
+        let duration = parseInt("{{ duration }}");
+        const totalCount = {{ total_count }};
+        
+        // --- State ---
         let currentIndex = 0;
-        let isTermFirst = true;
-        let isMusicPlaying = false;
-        let gameTimer;
         let score = 0;
-        const TIME_LIMIT = 30; // Seconds
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let gameTimer;
+        let isGameActive = true;
 
-        // --- DOM REFS ---
-        const startScreen = document.getElementById('startScreen');
-        const gameScreen = document.getElementById('gameScreen');
-        const resultScreen = document.getElementById('resultScreen');
-        
-        const musicBtn = document.getElementById('musicBtn');
-        const musicText = document.getElementById('musicText');
-        const audio = document.getElementById('bgMusic');
-        
-        const toggleBg = document.getElementById('toggleBg');
-        const optTerm = document.getElementById('optTerm');
-        const optDef = document.getElementById('optDef');
-
+        // --- Elements ---
         const cardObj = document.getElementById('cardObj');
         const txtFront = document.getElementById('txtFront');
         const txtBack = document.getElementById('txtBack');
-        
         const btnFlip = document.getElementById('btnFlip');
         const feedbackArea = document.getElementById('feedbackArea');
-        
-        const timerBar = document.getElementById('timerBar');
         const scoreDisplay = document.getElementById('scoreDisplay');
-        const finalScore = document.getElementById('finalScore');
+        const timerTrack = document.getElementById('timerTrack');
+        const timerBar = document.getElementById('timerBar');
+        const progressTrack = document.getElementById('progressTrack');
+        const progressBar = document.getElementById('progressBar');
 
-        // --- CONFIGURATION ---
-        function toggleMode() {
-            isTermFirst = !isTermFirst;
-            if(isTermFirst) {
-                toggleBg.style.transform = "translateX(0)";
-                optTerm.classList.add('selected');
-                optDef.classList.remove('selected');
-            } else {
-                toggleBg.style.transform = "translateX(100%)";
-                optTerm.classList.remove('selected');
-                optDef.classList.add('selected');
-            }
-        }
-
-        function toggleMusic() {
-            if(isMusicPlaying) {
-                audio.pause();
-                musicBtn.classList.remove('active');
-                musicText.innerText = "Music Off";
-            } else {
-                audio.volume = 0.4;
-                audio.play().catch(e => console.warn("Audio block"));
-                musicBtn.classList.add('active');
-                musicText.innerText = "Music On";
-            }
-            isMusicPlaying = !isMusicPlaying;
-        }
-
-        // --- GAME LOGIC ---
-        function startGame() {
-            document.getElementById('scoreBoard').style.display = 'flex';
-            // Audio check
-            if(!isMusicPlaying) {
-                // Try to start music on first user interaction
-                audio.volume = 0.4;
-                audio.play().then(() => {
-                    isMusicPlaying = true;
-                    musicBtn.classList.add('active');
-                    musicText.innerText = "Music On";
-                }).catch(() => {});
-            }
-
-            // Reset State
-            currentIndex = 0;
-            score = 0;
-            updateScoreUI();
-            switchScreen('game');
-            renderCard();
+        // --- Init ---
+        if (mode === 'timed') {
+            timerTrack.style.opacity = '1';
             startTimer();
+        } else {
+            progressTrack.style.opacity = '1';
         }
 
-        function renderCard() {
-            const item = deck[currentIndex];
-            cardObj.classList.remove('flipped');
-            
-            if(isTermFirst) {
-                txtFront.innerText = item.term;
-                txtBack.innerText = item.def;
-            } else {
-                txtFront.innerText = item.def;
-                txtBack.innerText = item.term;
-            }
-
-            // Reset Buttons
-            btnFlip.classList.remove('hidden');
-            feedbackArea.classList.add('hidden');
+        if (terms.length === 0) {
+            alert("No terms found for these topics!");
+            window.location.href = "{% url 'speed_run_setup' %}";
+            return;
         }
 
-        function flipCard() {
-            if(cardObj.classList.contains('flipped')) return; // prevent double flip
+        renderCard();
+
+        // --- Logic ---
+        window.flipCard = function() {
+            if (!isGameActive || cardObj.classList.contains('flipped')) return;
             cardObj.classList.add('flipped');
             btnFlip.classList.add('hidden');
-            feedbackArea.classList.remove('hidden'); // Show Got it / Missed
-        }
+            feedbackArea.classList.remove('hidden');
+        };
 
-        function handleResult(isCorrect) {
+        window.handleResult = function(isCorrect) {
+            if (!isGameActive) return;
+
             if (isCorrect) {
                 score += 10;
-                updateScoreUI();
+                correctCount++;
+                // Bonus for speed? Maybe later
+            } else {
+                incorrectCount++;
             }
+            updateUI();
             nextCard();
-        }
+        };
 
         function nextCard() {
             currentIndex++;
-            if(currentIndex < deck.length) {
-                renderCard();
+            
+            // Check End Conditions
+            if (mode === 'survival' && currentIndex >= terms.length) {
+                endGame(true);
+                return;
+            }
+            // For timed mode, we loop or just stop if out of terms? 
+            // Let's loop if we run out of terms in timed mode
+            if (mode === 'timed' && currentIndex >= terms.length) {
+                currentIndex = 0; // Loop deck
+            }
+
+            renderCard();
+        }
+
+        function renderCard() {
+            // Reset Card State
+            cardObj.classList.remove('flipped');
+            btnFlip.classList.remove('hidden');
+            feedbackArea.classList.add('hidden');
+            
+            // Wait small delay for flip back animation if needed, 
+            // but for speed run instant is better for flow.
+            // However, we need to swap text while hidden/flipping? 
+            // Let's just update content immediately for snap feel
+            
+            const term = terms[currentIndex];
+            if (startSide === 'term') {
+                txtFront.textContent = term.term;
+                txtBack.textContent = term.definition;
             } else {
-                finishGame(true);
+                txtFront.textContent = term.definition;
+                txtBack.textContent = term.term;
+            }
+            
+            // Update Progress Bar
+            if (mode === 'survival') {
+                const pct = (currentIndex / totalCount) * 100;
+                progressBar.style.width = `${pct}%`;
             }
         }
 
-        function updateScoreUI() {
-            scoreDisplay.innerText = score;
+        function updateUI() {
+            scoreDisplay.textContent = score;
         }
 
-        // --- TIMER ---
         function startTimer() {
-            timerBar.style.transition = 'none';
-            timerBar.style.width = '100%';
-            void timerBar.offsetWidth; // Force Reflow
-            timerBar.style.transition = `width ${TIME_LIMIT}s linear`;
-            timerBar.style.width = '0%';
-
-            clearTimeout(gameTimer);
-            gameTimer = setTimeout(() => {
-                finishGame(false);
-            }, TIME_LIMIT * 1000);
+            const startTime = Date.now();
+            const endTime = startTime + (duration * 1000);
+            
+            gameTimer = setInterval(() => {
+                const now = Date.now();
+                const remaining = endTime - now;
+                
+                if (remaining <= 0) {
+                    timerBar.style.width = '0%';
+                    endGame(false);
+                } else {
+                    const pct = (remaining / (duration * 1000)) * 100;
+                    timerBar.style.width = `${pct}%`;
+                }
+            }, 100);
         }
 
-        function finishGame(win) {
-            clearTimeout(gameTimer);
+        function endGame(completed) {
+            isGameActive = false;
+            clearInterval(gameTimer);
+            
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('resultScreen').classList.add('active');
+            
             const title = document.getElementById('resultTitle');
-            const msg = document.getElementById('resultMsg');
-
-            finalScore.innerText = score;
-            document.getElementById('scoreBoard').style.display = 'none';
-            document.getElementById('musicBtn').style.display = 'none';
-
-            if(win) {
-                title.innerText = "Challenge Complete!";
-                title.style.color = "var(--theme-pink)";
-                title.style.textShadow = "0 4px 0 var(--theme-pink-dark)";
+            if (completed) {
+                title.textContent = "Challenge Complete!";
+                title.style.color = "var(--theme-green)";
             } else {
-                title.innerText = "Time's Up!";
-                title.style.color = "var(--theme-red)";
-                title.style.textShadow = "0 4px 0 var(--theme-red-dark)";
+                title.textContent = "Vaqt tugadi!";
+                title.style.color = "var(--theme-pink)";
             }
-            switchScreen('result');
+            
+            // Stats
+            document.getElementById('finalScore').textContent = score;
+            document.getElementById('countCorrect').textContent = correctCount;
+            document.getElementById('countIncorrect').textContent = incorrectCount;
+            
+            // Unanswered: Total available - (correct + incorrect) 
+            // Only valid for survival really. In timed mode, unanswered is infinite?
+            // Let's show skipped as (total deck - answered) if survival
+            let answered = correctCount + incorrectCount;
+            let skipped = 0;
+            if (mode === 'survival') {
+                skipped = totalCount - answered;
+            }
+            document.getElementById('countSkipped').textContent = skipped;
         }
-
-        function resetGame() {
-            document.getElementById('musicBtn').style.display = 'flex';
-            switchScreen('start');
-        }
-
-        function switchScreen(name) {
-            startScreen.classList.remove('active');
-            gameScreen.classList.remove('active');
-            resultScreen.classList.remove('active');
-
-            if(name === 'start') startScreen.classList.add('active');
-            if(name === 'game') gameScreen.classList.add('active');
-            if(name === 'result') resultScreen.classList.add('active');
-        }
-    </script>
-</body>
-</html>
+    });
+</script>
+{% endblock content %}

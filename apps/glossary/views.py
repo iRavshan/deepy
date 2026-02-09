@@ -89,17 +89,92 @@ def term_view(request, slug):
     }
     return render(request, 'glossary/term.html', context)
 
-def speed_run_view(request):
+def speed_run_setup_view(request):
     term_service = TermService()
     context = {
-        'terms': term_service.get_all()
+        'topics': term_service.get_all_topics()
+    }
+    return render(request, 'glossary/speed_run_setup.html', context)
+
+def speed_run_view(request):
+    term_service = TermService()
+    
+    # Get parameters
+    topic_slugs = request.GET.getlist('topics')
+    mode = request.GET.get('mode', 'survival')
+    start_side = request.GET.get('side', 'term')
+    duration = request.GET.get('duration', '60')
+    
+    # Filter terms
+    terms = term_service.get_all()
+    
+    if topic_slugs and 'all' not in topic_slugs:
+        terms = terms.filter(topic__slug__in=topic_slugs)
+        
+    # Always shuffle for Speed Run
+    terms = terms.order_by('?')
+        
+    # Serialize terms for JS
+    terms_data = []
+    for term in terms:
+        terms_data.append({
+            'id': term.id,
+            'term': term.term,
+            'definition': term.short_definition,
+            'topic': term.topic.name if term.topic else 'General',
+        })
+    
+    context = {
+        'terms_json': json.dumps(terms_data),
+        'start_side': start_side,
+        'mode': mode,
+        'duration': duration,
+        'total_count': terms.count()
     }
     return render(request, 'glossary/speed_run.html', context)
 
-def learning_view(request):
+def learning_setup_view(request):
     term_service = TermService()
     context = {
-        'terms': term_service.get_all()
+        'topics': term_service.get_all_topics()
+    }
+    return render(request, 'glossary/learning_setup.html', context)
+
+def learning_view(request):
+    term_service = TermService()
+    
+    # Get parameters
+    topic_slugs = request.GET.getlist('topics')
+    order = request.GET.get('order', 'random')
+    start_side = request.GET.get('side', 'term')
+    
+    # Filter terms
+    terms = term_service.get_all()
+    
+    if topic_slugs and 'all' not in topic_slugs:
+        terms = terms.filter(topic__slug__in=topic_slugs)
+        
+    if order == 'random':
+        terms = terms.order_by('?')
+    else:
+        terms = terms.order_by('term')
+        
+    # Serialize terms for JS
+    terms_data = []
+    for term in terms:
+        terms_data.append({
+            'id': term.id,
+            'term': term.term,
+            'definition': term.short_definition,
+            'full_definition': term.definition,
+            'topic': term.topic.name if term.topic else 'General',
+            'slug': term.slug
+        })
+    
+    context = {
+        'terms_json': json.dumps(terms_data),
+        'start_side': start_side,
+        'total_count': terms.count()
     }
     return render(request, 'glossary/learning_mode.html', context)
 

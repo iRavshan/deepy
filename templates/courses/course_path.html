@@ -26,7 +26,6 @@
                         <i class="fa-solid fa-o"></i>
                         {% endif %}
                     </a>
-                    <div class="tooltip">{{ lesson.title }}</div>
                 </div>
             </div>
             {% endfor %}
@@ -41,7 +40,7 @@
                 <div class="trophy-icon">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <h3>Course Certificate</h3>
+                <h3>Kurs sertifikati</h3>
                 <p>Complete all levels to unlock your certification</p>
                 <div class="gate-lock-btn">
                     <i class="fa-solid fa-lock"></i> <span>Locked</span>
@@ -60,7 +59,7 @@
             <div class="cert-section">
                 <div class="cert-icon">📜</div>
                 <div class="cert-details">
-                    <span class="cert-title">Course Certificate</span>
+                    <span class="cert-title">Kurs sertifikati</span>
                     <span class="cert-status">Finish course to unlock</span>
                 </div>
             </div>
@@ -93,7 +92,9 @@
 </main>
 
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
+
         const refreshBtn = document.getElementById('refresh-term-btn');
         const termContent = document.getElementById('term-content');
 

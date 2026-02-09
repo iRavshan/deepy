@@ -1276,19 +1276,8 @@ a {
     justify-content: center;
 }
 
-.course-path .path-nodes .level-row .level-item:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-    transform: scale(1);
-}
-
 .course-path .path-nodes .level-row .level-item .circle-btn {
     color: white;
-}
-
-.course-path .path-nodes .level-row .level-item .circle-btn:hover {
-    transform: translateY(4px);
-    box-shadow: none;
 }
 
 .course-path .path-nodes.theme-green .level-row .level-item .circle-btn {
@@ -1327,72 +1316,6 @@ a {
 }
 
 
-.tooltip::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    margin-top: -6px;
-    border-width: 6px;
-    border-style: solid;
-}
-
-.level-row:nth-child(4n+1) .tooltip::after,
-.level-row:nth-child(4n+2) .tooltip::after,
-.level-row:nth-child(4n+3) .tooltip::after,
-.level-row:nth-child(4n+4) .tooltip::after {
-    right: 100%;
-}
-
-.course-path .path-nodes.theme-green .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-green .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-green .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-green .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-green) transparent transparent;
-}
-
-.course-path .path-nodes.theme-blue .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-blue .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-blue .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-blue .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-blue) transparent transparent;
-}
-
-.course-path .path-nodes.theme-purple .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-purple .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-purple .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-purple .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-purple) transparent transparent;
-}
-
-.course-path .path-nodes.theme-red .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-red .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-red .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-red .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-red) transparent transparent;
-}
-
-.course-path .path-nodes.theme-orange .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-orange .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-orange .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-orange .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-orange) transparent transparent;
-}
-
-.course-path .path-nodes.theme-pink .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-pink .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-pink .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-pink .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-pink) transparent transparent;
-}
-
-.course-path .path-nodes.theme-brown .level-row:nth-child(4n+1) .tooltip::after,
-.course-path .path-nodes.theme-brown .level-row:nth-child(4n+2) .tooltip::after,
-.course-path .path-nodes.theme-brown .level-row:nth-child(4n+3) .tooltip::after,
-.course-path .path-nodes.theme-brown .level-row:nth-child(4n+4) .tooltip::after {
-    border-color: transparent var(--theme-brown) transparent transparent;
-}
-
-
 .course-path .path-nodes .level-row .level-item .circle-btn {
     width: 70px;
     height: 65px;
@@ -1407,68 +1330,9 @@ a {
     transition: transform 0.1s;
 }
 
-.course-path .path-nodes .level-row .level-item .tooltip {
-    position: absolute;
-    background: white;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 15px;
-    color: var(--text-white);
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transform: scale(0.8);
-    transition: all 0.2s;
-    pointer-events: none;
-    z-index: 10;
-}
-
-.course-path .path-nodes.theme-green .level-row .level-item .tooltip {
-    background-color: var(--theme-green);
-}
-
-.course-path .path-nodes.theme-blue .level-row .level-item .tooltip {
-    background-color: var(--theme-blue);
-}
-
-.course-path .path-nodes.theme-purple .level-row .level-item .tooltip {
-    background-color: var(--theme-purple);
-}
-
-.course-path .path-nodes.theme-red .level-row .level-item .tooltip {
-    background-color: var(--theme-red);
-}
-
-.course-path .path-nodes.theme-brown .level-row .level-item .tooltip {
-    background-color: var(--theme-brown);
-}
-
-.course-path .path-nodes.theme-orange .level-row .level-item .tooltip {
-    background-color: var(--theme-orange);
-}
-
-.course-path .path-nodes.theme-pink .level-row .level-item .tooltip {
-    background-color: var(--theme-pink);
-}
-
-.course-path .path-nodes.theme-green .level-row .level-item .tooltip {
-    background-color: var(--theme-green);
-}
-
-.level-item:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
-}
-
-.level-row:nth-child(4n+1) .tooltip,
-.level-row:nth-child(4n+2) .tooltip,
-.level-row:nth-child(4n+3) .tooltip,
-.level-row:nth-child(4n+4) .tooltip {
-    left: 95px;
-    top: 15px;
+.course-path .path-nodes .level-row .level-item .circle-btn:hover {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0;
 }
 
 .course-path .certificate-gate {

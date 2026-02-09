@@ -28,14 +28,10 @@
     </div>
 </main>
 <script>
-        // Simple Text to Speech Logic
         function speakText() {
             const title = document.querySelector('h1').innerText;
-            const text = document.getElementById('defText').innerText;
-            
-            // Check browser support
             if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(title + ". " + text);
+                const utterance = new SpeechSynthesisUtterance(title);
                 utterance.lang = 'en-US';
                 window.speechSynthesis.speak(utterance);
             } else {

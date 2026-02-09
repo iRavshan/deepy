@@ -1,0 +1,222 @@
+{% extends '../shared/_base.html' %}
+{% block title %} Learning Setup {% endblock %}
+{% block content %}
+<main class="container">
+    <div class="setup-card">
+        <h1 class="page-title text-center">Learning Setup</h1>
+        <p class="subtitle text-center">Customize your review session</p>
+
+        <form action="{% url 'learning' %}" method="GET" class="setup-form">
+            
+            <div class="form-section">
+                <h3><i class="fa-solid fa-list-ul"></i>Mavzularni tanlang</h3>
+                <div class="topic-selection-grid">
+                    <label class="topic-checkbox special-all">
+                        <input type="checkbox" name="topics" value="all" checked id="all-topics">
+                        <span class="checkbox-visual"><i class="fa-solid fa-check"></i></span>
+                        <span class="topic-name">Barcha mavzular</span>
+                    </label>
+                    {% for topic in topics %}
+                    <label class="topic-checkbox">
+                        <input type="checkbox" name="topics" value="{{ topic.slug }}" class="single-topic">
+                        <span class="checkbox-visual"><i class="fa-solid fa-check"></i></span>
+                        <span class="topic-name">{{ topic.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-section half">
+                    <h3><i class="fa-solid fa-layer-group"></i>Avval ko'rsatilsin</h3>
+                    <div class="radio-group">
+                        <label class="custom-radio">
+                            <input type="radio" name="side" value="term" checked>
+                            <span class="radio-content">
+                                <span class="radio-icon"><i class="fa-solid fa-font"></i></span>
+                                <span class="radio-text">Termin</span>
+                            </span>
+                        </label>
+                        <label class="custom-radio">
+                            <input type="radio" name="side" value="definition">
+                            <span class="radio-content">
+                                <span class="radio-icon"><i class="fa-solid fa-align-left"></i></span>
+                                <span class="radio-text">Ta'rif</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-section half">
+                    <h3><i class="fa-solid fa-shuffle"></i> Tartib</h3>
+                    <div class="radio-group">
+                        <label class="custom-radio">
+                            <input type="radio" name="order" value="random" checked>
+                            <span class="radio-content">
+                                <span class="radio-icon"><i class="fa-solid fa-dice"></i></span>
+                                <span class="radio-text">Tasodifiy</span>
+                            </span>
+                        </label>
+                        <label class="custom-radio">
+                            <input type="radio" name="order" value="alphabetical">
+                            <span class="radio-content">
+                                <span class="radio-icon"><i class="fa-solid fa-arrow-down-a-z"></i></span>
+                                <span class="radio-text">A-Z</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-start btn-transform">
+                Boshlash <i class="fa-solid fa-play"></i>
+            </button>
+        </form>
+    </div>
+</main>
+
+<style>
+    .setup-card {
+        background: var(--bg-panel);
+        border-radius: var(--panel-radius);
+        padding: 40px;
+        width: 800px;
+        margin: 40px auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 2px solid var(--border-color);
+    }
+
+    .setup-card .page-title {
+        color: var(--theme-green);
+    }
+    
+    .text-center { text-align: center; }
+    .subtitle { color: var(--text-medium); margin-bottom: 40px; }
+    
+    .form-section { margin-bottom: 30px; }
+    .form-section h3 { 
+        margin-bottom: 15px; 
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-row {
+        display: flex;
+        gap: 20px;
+    }
+    .half { flex: 1; }
+    
+    /* Checkbox & Radio Styles */
+    .topic-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+    }
+    
+    .topic-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .topic-checkbox:hover { border-color: var(--theme-blue); }
+    
+    .topic-checkbox input { display: none; }
+    
+    .checkbox-visual {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.2s;
+    }
+    
+    .topic-checkbox input:checked + .checkbox-visual {
+        background: var(--theme-blue);
+    }
+    
+    .topic-checkbox.special-all input:checked + .checkbox-visual {
+        background: var(--theme-purple);
+    }
+    
+    /* Radio Cards */
+    .radio-group { display: flex; gap: 10px; }
+    
+    .custom-radio { flex: 1; cursor: pointer; }
+    .custom-radio input { display: none; }
+    
+    .radio-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+    
+    .custom-radio input:checked + .radio-content {
+        border-color: var(--theme-green);
+        background: var(--theme-green-light);
+        color: var(--theme-green-dark);
+    }
+    
+    .btn-start {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        border: none;
+        border-radius: var(--btn-radius);
+        background: var(--theme-green);
+        color: white;
+        cursor: pointer;
+        margin-top: 20px;
+        box-shadow: 0 4px 0 var(--theme-green-dark);
+        font-family: var(--primary-font);
+    }
+
+    .btn-start i{
+        margin-left: 5px;
+    }
+    
+    /* Dark mode overrides (basic) */
+    [data-theme="dark"] .setup-card {
+        background: var(--bg-panel);
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const allCheckbox = document.getElementById('all-topics');
+        const otherCheckboxes = document.querySelectorAll('.single-topic');
+        
+        allCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                otherCheckboxes.forEach(cb => cb.checked = false);
+            }
+        });
+        
+        otherCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => {
+                if (cb.checked) {
+                    allCheckbox.checked = false;
+                }
+            });
+        });
+    });
+</script>
+{% endblock content %}

@@ -16,12 +16,17 @@ class Course(models.Model):
     ])
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Course.objects.get(pk=self.pk)
+            if old_instance.title != self.title:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
 
-            while Course.objects.filter(slug=slug).exists():
+            while Course.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
 
@@ -56,12 +61,17 @@ class Section(models.Model):
         ordering = ['order']
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Section.objects.get(pk=self.pk)
+            if old_instance.title != self.title:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
 
-            while Section.objects.filter(slug=slug).exists():
+            while Section.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
 
@@ -80,19 +90,24 @@ class Lesson(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, editable=False)
     speech = models.TextField()  
-    content = RichTextField()
+    content = RichTextField(config_name='math_editor')
     order = models.PositiveIntegerField()
 
     class Meta:
         ordering = ['section', 'order']
 
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Lesson.objects.get(pk=self.pk)
+            if old_instance.title != self.title:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.title)
             slug = base_slug
             counter = 1
 
-            while Lesson.objects.filter(slug=slug).exists():
+            while Lesson.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
 

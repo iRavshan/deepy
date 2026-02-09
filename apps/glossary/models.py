@@ -14,12 +14,17 @@ class Topic(models.Model):
         ordering = ['name']
     
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Topic.objects.get(pk=self.pk)
+            if old_instance.name != self.name:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.name)
             slug = base_slug
             counter = 1
             
-            while Topic.objects.filter(slug=slug).exists():
+            while Topic.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             
@@ -43,12 +48,17 @@ class Term(models.Model):
 
     
     def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Term.objects.get(pk=self.pk)
+            if old_instance.term != self.term:
+                self.slug = ""
+
         if not self.slug:
             base_slug = slugify(self.term)
             slug = base_slug
             counter = 1
 
-            while Term.objects.filter(slug=slug).exists():
+            while Term.objects.filter(slug=slug).exclude(pk=self.pk).exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
 
