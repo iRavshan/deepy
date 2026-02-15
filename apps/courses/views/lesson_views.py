@@ -32,9 +32,7 @@ def lesson_quiz(request, course_slug, lesson_slug):
     lesson = lesson_repo.get_by_slug(course_slug, lesson_slug)
     course = course_repo.get_by_field(slug=course_slug)
     
-    # Check if lesson has quiz
     if not hasattr(lesson, 'quiz'):
-        # Fallback or redirect if no quiz
         return redirect('lesson_detail', course_slug=course_slug, lesson_slug=lesson_slug)
 
     context = {
@@ -43,4 +41,4 @@ def lesson_quiz(request, course_slug, lesson_slug):
         'quiz': lesson.quiz,
     }
 
-    return render(request, 'courses/lesson_test.html', context)
+    return render(request, 'courses/lesson_quiz.html', context)

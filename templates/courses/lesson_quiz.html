@@ -10,9 +10,7 @@
     <title>{{ lesson.title }} - Quiz</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
@@ -63,81 +61,72 @@
             color: var(--text-dark);
         }
 
-        .progress-container {
+        .quiz-nav {
             flex: 1;
-            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
             margin: 0 20px;
-            height: 16px;
-            background: var(--theme-gray);
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
         }
 
-        .progress-bar {
-            height: 100%;
-            background: var(--theme-green);
-            width: 0%; /* Dynamic */
-            border-radius: 8px;
-            transition: width 0.3s ease;
-            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.1);
+        .nav-step-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: white;
+            color: var(--text-medium);
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .nav-step-btn.current {
+            border-color: var(--theme-blue);
+            color: var(--theme-blue);
+            box-shadow: 0 0 0 2px var(--theme-blue-light);
+        }
+
+        .nav-step-btn.correct {
+            background-color: var(--theme-green);
+            border-color: var(--theme-green);
+            color: white;
+        }
+
+        .nav-step-btn.incorrect {
+            background-color: var(--theme-red);
+            border-color: var(--theme-red);
+            color: white;
+        }
+
+        .nav-step-btn:disabled {
+            cursor: default;
+            opacity: 0.5;
         }
         
         /* Layout Grid */
         .quiz-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            max-width: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            height: calc(100vh - 70px);
+            height: calc(100vh - 170px); /* 70px nav + 100px footer */
             margin-top: 70px;
             padding: 20px;
-            gap: 40px;
         }
         
-        /* Mascot Area (Left) */
-        .mascot-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .mascot-img {
-            max-width: 250px;
-            margin-bottom: 20px;
-        }
-        
-        .mascot-bubble {
-            background: white;
-            border: 2px solid var(--border-color);
-            padding: 15px 25px;
-            border-radius: 15px;
-            font-weight: 700;
-            color: var(--text-dark);
-            position: relative;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
-        }
-        
-        .mascot-bubble::after {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 0 10px 10px 10px;
-            border-style: solid;
-            border-color: transparent transparent var(--border-color) transparent;
-        }
-
-        /* Quiz Interface (Right) */
+        /* Quiz Interface */
         .quiz-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
-            padding-bottom: 100px; /* Space for footer */
         }
         
         .question-text {
@@ -146,6 +135,7 @@
             color: var(--text-dark);
             margin-bottom: 30px;
             line-height: 1.4;
+            text-align: center;
         }
         
         .answers-grid {
@@ -166,32 +156,40 @@
             transition: all 0.1s;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 0 var(--border-color);
+            box-shadow: 0 4px 0 var(--border-color); /* Matches button style */
         }
         
         .answer-option:hover {
             background-color: var(--theme-gray);
+            transform: translateY(-2px);
+        }
+
+        .answer-option:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 0 var(--border-color);
         }
         
         .answer-option.selected {
             border-color: var(--theme-blue);
             background-color: var(--theme-blue-light);
             color: var(--theme-blue-dark);
-            box-shadow: 0 2px 0 var(--theme-blue);
+            box-shadow: 0 4px 0 var(--theme-blue);
         }
         
         .answer-option.correct {
             border-color: var(--theme-green);
             background-color: var(--theme-green-light);
             color: var(--theme-green-dark);
-            box-shadow: 0 2px 0 var(--theme-green);
+            box-shadow: 0 4px 0 var(--theme-green);
+            pointer-events: none;
         }
         
         .answer-option.incorrect {
             border-color: var(--theme-red);
             background-color: var(--theme-red-light);
             color: var(--theme-red-dark);
-            box-shadow: 0 2px 0 var(--theme-red);
+            box-shadow: 0 4px 0 var(--theme-red);
+            pointer-events: none;
         }
         
         .input-hidden {
@@ -201,22 +199,23 @@
         .keyboard-shortcut {
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: var(--text-medium);
             margin-right: 15px;
             font-weight: 700;
+            background: white;
         }
         
         .answer-option.selected .keyboard-shortcut {
              border-color: var(--theme-blue);
              color: var(--theme-blue);
         }
-
+        
         /* Footer */
         .quiz-footer {
             position: fixed;
@@ -233,15 +232,11 @@
             z-index: 100;
         }
         
-        .quiz-footer.hidden {
-            display: none;
-        }
-        
         .check-btn {
             background: var(--theme-green);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 40px;
             border-radius: 16px;
             font-size: 1.1rem;
             font-weight: 800;
@@ -250,7 +245,10 @@
             cursor: pointer;
             box-shadow: 0 4px 0 var(--theme-green-dark);
             transition: all 0.1s;
-            margin-left: auto; /* Push to right */
+            margin-left: auto; 
+            width: 100%;
+            max-width: 200px;
+            font-family: var(--secondary-font);
         }
         
         .check-btn:active {
@@ -264,25 +262,6 @@
             box-shadow: none;
             cursor: default;
             transform: none;
-        }
-
-        .skip-btn {
-            background: white;
-            border: 2px solid var(--border-color);
-            color: var(--text-medium);
-            padding: 12px 30px;
-            border-radius: 16px;
-            font-size: 1.1rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 var(--border-color);
-            transition: all 0.1s;
-        }
-        
-        .skip-btn:hover {
-            background: var(--theme-gray);
         }
 
         /* Result Feedback Overlay */
@@ -300,6 +279,7 @@
             padding: 0 15%;
             transform: translateY(100%);
             transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            border-top: 2px solid transparent;
         }
         
         .feedback-overlay.show {
@@ -309,11 +289,13 @@
         .feedback-overlay.correct {
             background-color: var(--theme-green-light);
             color: var(--theme-green-dark);
+            border-color: var(--theme-green);
         }
         
         .feedback-overlay.incorrect {
             background-color: var(--theme-red-light);
             color: var(--theme-red-dark);
+            border-color: var(--theme-red);
         }
         
         .feedback-content {
@@ -323,21 +305,22 @@
         }
         
         .feedback-icon {
-            font-size: 3rem;
+            font-size: 2rem;
             background: white;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 80px;
+            height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.05);
         }
         
         .continue-btn {
              background: var(--theme-green);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 40px;
             border-radius: 16px;
             font-size: 1.1rem;
             font-weight: 800;
@@ -345,16 +328,23 @@
             letter-spacing: 1px;
             cursor: pointer;
             box-shadow: 0 4px 0 var(--theme-green-dark);
+            transition: transform 0.1s;
+            font-family: var(--secondary-font);
+        }
+
+        .continue-btn:active {
+            transform: translateY(4px);
+            box-shadow: none;
         }
         
         .feedback-overlay.incorrect .continue-btn {
              background: var(--theme-red);
              box-shadow: 0 4px 0 var(--theme-red-dark);
+             font-family: var(--secondary-font);
         }
         
     </style>
 </head>
-
 <body>
 
     <nav class="navbar">
@@ -362,29 +352,26 @@
             <i class="fa-solid fa-xmark"></i>
         </a>
         
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
+        <div class="quiz-nav">
+            {% for question in quiz.questions.all %}
+            <button class="nav-step-btn {% if forloop.first %}current{% endif %}" data-index="{{ forloop.counter0 }}">
+                {{ forloop.counter }}
+            </button>
+            {% endfor %}
         </div>
     </nav>
     
     <div class="quiz-wrapper">
-        <div class="mascot-area">
-             <!-- Static for now, can be an animation later -->
-             <img src="{% static 'img/nova.png' %}" class="mascot-img" alt="Mascot">
-             <div class="mascot-bubble">Good Luck!</div>
-        </div>
-        
         <div class="quiz-container" id="quiz-area">
-            <!-- Questions will be injected here via JS (or loop logic if simpler) -->
             {% for question in quiz.questions.all %}
             <div class="question-step" data-step="{{ forloop.counter }}" style="display: {% if forloop.first %}flex{% else %}none{% endif %}; flex-direction: column;">
                 <h2 class="question-text">{{ question.text|safe }}</h2>
                 
                 <div class="answers-grid">
                     {% for answer in question.answers.all %}
-                    <label class="answer-option">
+                    <label class="answer-option" id="opt-{{ answer.id }}">
                         <input type="radio" name="q{{ question.id }}" value="{{ answer.id }}" data-correct="{{ answer.is_correct|yesno:'true,false' }}" class="input-hidden">
-                        <span class="keyboard-shortcut">{{ forloop.counter }}</span>
+                        <span class="keyboard-shortcut">{% cycle 'A' 'B' 'C' 'D' 'E' 'F' %}</span>
                         {{ answer.text|safe }}
                     </label>
                     {% endfor %}
@@ -392,19 +379,19 @@
             </div>
             {% endfor %}
             <div class="completion-step" style="display: none; text-align: center;">
-                 <h2>Lesson Complete!</h2>
-                 <p>You have finished the quiz.</p>
-                 <form action="{% url 'lesson_complete' course.slug lesson.slug %}" method="post">
+                 <h2 style="font-size: 2rem; margin-bottom: 10px;">Dars yakunlandi!</h2>
+                 <p style="color: var(--text-medium); margin-bottom: 30px;">Siz quizni tugatdingiz.</p>
+                 <form action="#" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="continue-btn" style="margin-top: 20px;">Finish</button>
+                    <button type="submit" class="continue-btn" style="width: 100%; max-width: 300px;">Yakunlash</button>
                 </form>
             </div>
         </div>
     </div>
     
     <div class="quiz-footer">
-        <button class="skip-btn">Skip</button>
-        <button class="check-btn disabled" id="check-btn">Check</button>
+        <!-- Removed Skip Button -->
+        <button class="check-btn disabled" id="check-btn">Tekshirish</button>
     </div>
     
     <div class="feedback-overlay" id="feedback-overlay">
@@ -417,7 +404,7 @@
                 <p id="feedback-msg" style="margin:5px 0 0 0; font-weight:600;"></p>
             </div>
         </div>
-        <button class="continue-btn" id="next-btn">Continue</button>
+        <button class="continue-btn" id="next-btn">Davom etish</button>
     </div>
 
     <script>
@@ -428,18 +415,97 @@
             const checkBtn = document.getElementById('check-btn');
             const nextBtn = document.getElementById('next-btn');
             const feedbackOverlay = document.getElementById('feedback-overlay');
-            const progressBar = document.getElementById('progress-bar');
+            const navButtons = document.querySelectorAll('.nav-step-btn');
+            const quizFooter = document.querySelector('.quiz-footer');
             
             let selectedAnswer = null;
+            let selectedOptionElement = null;
 
-            function updateProgress() {
-                const percentage = ((currentStep) / totalSteps) * 100;
-                progressBar.style.width = percentage + '%';
+            // Initialize Nav Buttons
+            function updateNav() {
+                navButtons.forEach((btn, idx) => {
+                    if (idx === currentStep) {
+                        btn.classList.add('current');
+                    } else {
+                        btn.classList.remove('current');
+                    }
+                    
+                    // Allow clicking only if already answered (visited) or current? 
+                    // User requirement: "user can get back to the questions by clicking"
+                    // We can allow clicking any button, but if it's future, it might be weird.
+                    // Usually we only allow navigation to previously seen questions.
+                    // For now, let's allow all, but maybe lock future ones visually if needed.
+                    // But typically jumping ahead to unanswered is "Allowed" or "Blocked". 
+                    // Given "No skip", we should probably BLOCK clicking forward to *unanswered* questions.
+                    
+                    // Simple logic: If button has 'correct' or 'incorrect' class, it's clickable.
+                    // Also 'current' is clickable. others disabled.
+                    if (btn.classList.contains('correct') || btn.classList.contains('incorrect') || idx === currentStep) {
+                        btn.disabled = false;
+                    } else {
+                        btn.disabled = true; // Enable as we go
+                    }
+                });
             }
+
+            // Bind Nav Button Clicks
+            navButtons.forEach((btn, idx) => {
+                btn.addEventListener('click', () => {
+                    if (btn.disabled) return;
+                    
+                    // Hide current
+                    steps[currentStep].style.display = 'none';
+                    
+                    // Update index
+                    currentStep = idx;
+                    
+                    // Show new
+                    steps[currentStep].style.display = 'flex';
+                    
+                    // Hide feedback if jumping
+                    feedbackOverlay.classList.remove('show');
+                    
+                    // Update Nav UI
+                    updateNav();
+                    
+                    // Check if this step is already answered
+                    const stepGrid = steps[currentStep].querySelector('.answers-grid');
+                    if (stepGrid.style.pointerEvents === 'none') {
+                        // Already answered
+                        quizFooter.style.display = 'none';
+                    } else {
+                        // Not answered
+                        quizFooter.style.display = 'flex';
+                        // Reset check button state specific to this step?
+                        // We need to check if there is a selected answer in this step
+                        const selectedInStep = steps[currentStep].querySelector('.answer-option.selected input');
+                        if (selectedInStep) {
+                            checkBtn.classList.remove('disabled');
+                            selectedAnswer = selectedInStep;
+                            selectedOptionElement = selectedInStep.closest('.answer-option');
+                        } else {
+                            checkBtn.classList.add('disabled');
+                            selectedAnswer = null;
+                            selectedOptionElement = null;
+                        }
+                    }
+                });
+            });
+            
+            // Initial call
+            updateNav();
+            
+            // Limit forward nav initially: only 0 is enabled. (already handled by styling logic?)
+            // Actually, in updateNav, we enable based on class. classes are added on check. 
+            // So initially only 0 is 'current', so only 0 is enabled. Correct.
+
             
             // Enable Check button when option selected
             document.querySelectorAll('.answer-option').forEach(option => {
                 option.addEventListener('click', function(e) {
+                    // Prevent changing selection if answered
+                    if (this.closest('.answers-grid').style.pointerEvents === 'none') return;
+
                     // Remove selected from siblings
                     const parent = this.closest('.answers-grid');
                     parent.querySelectorAll('.answer-option').forEach(opt => opt.classList.remove('selected'));
@@ -451,6 +517,7 @@
                     const input = this.querySelector('input');
                     input.checked = true;
                     selectedAnswer = input;
+                    selectedOptionElement = this;
                     
                     checkBtn.classList.remove('disabled');
                     
@@ -463,27 +530,50 @@
                 
                 const isCorrect = selectedAnswer.dataset.correct === 'true';
                 
-                // Show feedback
+                // Disable options interaction immediately
+                const currentGrid = steps[currentStep].querySelector('.answers-grid');
+                currentGrid.style.pointerEvents = 'none';
+                
+                // Visual Feedback on Options
+                if (isCorrect) {
+                     selectedOptionElement.classList.add('correct');
+                     selectedOptionElement.classList.remove('selected');
+                     navButtons[currentStep].classList.add('correct'); // Update nav
+                } else {
+                     selectedOptionElement.classList.add('incorrect');
+                     selectedOptionElement.classList.remove('selected');
+                     navButtons[currentStep].classList.add('incorrect'); // Update nav
+                     
+                     // Highlight the actual correct answer
+                     const correctOption = currentGrid.querySelector('input[data-correct="true"]').closest('.answer-option');
+                     correctOption.classList.add('correct');
+                }
+                
+                // Show feedback overlay
                 feedbackOverlay.className = 'feedback-overlay show ' + (isCorrect ? 'correct' : 'incorrect');
                 const title = document.getElementById('feedback-title');
                 const icon = document.getElementById('feedback-icon');
+                const msg = document.getElementById('feedback-msg');
                 
                 if (isCorrect) {
-                     title.textContent = 'Excellent!';
-                     icon.innerHTML = '<i class="fa-solid fa-check" style="color:var(--theme-green)"></i>';
+                     title.textContent = 'Bravo!';
+                     msg.textContent = '';
+                     icon.innerHTML = '<i class="fa-solid fa-check" style="color:var(--theme-green); font-size: 2.5rem;"></i>';
                 } else {
-                     title.textContent = 'Correct solution:';
-                     // Ideally find the correct answer text to show here
-                     const correctOption = selectedAnswer.closest('.answers-grid').querySelector('input[data-correct="true"]');
-                     const correctText = correctOption.parentElement.innerText.replace(/^\d+\s*/, ''); // Remove index
-                     document.getElementById('feedback-msg').textContent = correctText;
+                     title.textContent = 'Xatolik!';
+                     // Get correct text
+                     const correctOption = currentGrid.querySelector('input[data-correct="true"]');
+                     const correctText = correctOption.parentElement.innerText.replace(/^[A-Z]\s*/, ''); 
+                     msg.textContent = correctText;
                      
-                     icon.innerHTML = '<i class="fa-solid fa-xmark" style="color:var(--theme-red)"></i>';
+                     icon.innerHTML = '<i class="fa-solid fa-xmark" style="color:var(--theme-red); font-size: 2.5rem;"></i>';
                 }
                 
-                // Disable options interaction
-                const currentGrid = steps[currentStep].querySelector('.answers-grid');
-                currentGrid.style.pointerEvents = 'none';
+                // Hide footer check button
+                quizFooter.style.display = 'none';
+                
+                // Enable next button in nav if needed, but we handle that in updateNav
+                updateNav();
             });
             
             nextBtn.addEventListener('click', () => {
@@ -494,7 +584,9 @@
                 steps[currentStep].style.display = 'none';
                 
                 currentStep++;
-                updateProgress();
+                
+                // Show footer again
+                quizFooter.style.display = 'flex';
                 
                 if (currentStep < totalSteps) {
                     // Show next step
@@ -504,12 +596,13 @@
                     
                     // Reset variable
                     selectedAnswer = null;
+                    selectedOptionElement = null;
                 } else {
-                    // Show completion
+                    // Show completion (Hide nav too maybe? or keep it)
                     document.querySelector('.completion-step').style.display = 'block';
                     document.querySelector('.quiz-footer').style.display = 'none';
-                    progressBar.style.width = '100%';
                 }
+                updateNav();
             });
             
         });

@@ -33,10 +33,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-dracula.min.css" rel="stylesheet"/>
-    <link
-      href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.css"
-      rel="stylesheet"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/prismjs/plugins/line-numbers/prism-line-numbers.css" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static '/css/style.css' %}" />
     <style>
       body {
@@ -606,6 +603,32 @@
         background-color: var(--bg-panel);
         color: var(--text-dark);
       }
+      
+      .start-quiz-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--theme-blue);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-decoration: none;
+        transition: all 0.2s;
+        box-shadow: 0 4px 15px rgba(28, 176, 246, 0.3);
+      }
+      
+      .start-quiz-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(28, 176, 246, 0.4);
+        color: white;
+      }
+      
+      .start-quiz-btn:active {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(28, 176, 246, 0.3);
+      }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
@@ -624,12 +647,7 @@
             titleClone.style.color = '#000'; // Ensure black text for PDF
             
             const contentClone = content.cloneNode(true);
-            
-            // Fix code blocks for PDF (Monaco doesn't render well in html2pdf usually, better to revert to text or simple pre)
-            // But let's try raw html2pdf first. If monaco fails, we might need to handle it. 
-            // html2pdf uses canvas, so it might capture the visual state of monaco if we are lucky.
-            // If not, we might need to replace monaco instances in clone with simple pre blocks.
-            
+          
             element.appendChild(titleClone);
             element.appendChild(contentClone);
             
@@ -730,7 +748,12 @@
         </div>
         <hr class="lesson-divider" />
         <div class="lesson-content">{{ lesson.content|safe }}</div>
-        <a href="#" class="btn-transform">Topshiriqqa o'tish</a>
+        
+        <div class="quiz-action-area" style="margin-top: 50px; text-align: center; margin-bottom: 50px;">
+            <a href="{% url 'lesson_quiz' course.slug lesson.slug %}" class="start-quiz-btn">
+                Start Quiz <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
       </div>
     </div>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
@@ -744,7 +767,6 @@
         overlay.classList.toggle("active");
       }
 
-      // Initialize Monaco Editor for code blocks
       require.config({
         paths: {
           vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs",

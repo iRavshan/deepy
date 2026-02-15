@@ -35,7 +35,7 @@ def course_detail(request, slug):
         
     return render(request, 'courses/course_detail.html', context)
 
-
+    
 @login_required
 @require_POST
 def course_enroll(request, slug):

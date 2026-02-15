@@ -2,6 +2,7 @@ from django.db import models
 from ckeditor.fields import RichTextField
 from django.conf import settings
 from django.utils.text import slugify
+from django.urls import reverse
 
 
 class Tag(models.Model):
@@ -121,6 +122,9 @@ class Challenge(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('challenge_detail', kwargs={'slug': self.slug})
     
 
 

@@ -97,7 +97,6 @@ def challenge_random(request):
 
 
 @login_required
-@login_required
 @require_POST
 def judge_submission_view(request, slug):
     challenge = Challenge.objects.get(slug=slug)

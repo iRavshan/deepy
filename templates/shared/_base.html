@@ -4,10 +4,59 @@
 {% load humanize %}
 <html lang="en">
   <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D8MZ25N2J1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-D8MZ25N2J1');
+    </script>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}AI Learning Platform{% endblock %} - Deepland</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}Learn AI, Python, and Data Science through interactive challenges and courses on Deepland.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}AI, Python, Data Science, Programming, Coding Challenges, Education, Machine Learning, Deep Learning, Data Analysis, tutorials, courses, challenges, deepland, dasturlash, darslar, masalalar, algoritm{% endblock %}">
+    <meta name="author" content="Deepland Team">
+    <meta name="theme-color" content="#1cb0f6">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}{{ block.super }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ block.super }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% static 'img/og-image.png' %}{% endblock %}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}{{ block.super }}{% endblock %}">
+    <meta property="twitter:image" content="{% block twitter_image %}{% static 'img/twitter-image.png' %}{% endblock %}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'img/apple-touch-icon.png' %}">
+    <!-- Schema.org -->
+    {% block schema %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Deepland",
+      "url": "{{ request.scheme }}://{{ request.get_host }}",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ request.scheme }}://{{ request.get_host }}/challenges/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    {% endblock %}
+
     {% block mathjax %}
     <script>
       window.MathJax = {

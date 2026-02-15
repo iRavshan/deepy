@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+from django.urls import reverse
 
 
 
@@ -36,6 +37,9 @@ class Course(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('course_detail', kwargs={'slug': self.slug})
     
 
 class LearningDetail(models.Model):
@@ -83,8 +87,6 @@ class Section(models.Model):
         return f"{self.course.title} / {self.title}"
 
 
-
-
 class Lesson(models.Model):
     section = models.ForeignKey(Section, related_name="lessons", on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -119,7 +121,6 @@ class Lesson(models.Model):
         return f"{self.section.title}: {self.title}"
     
 
-
 class Enrollment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     course = models.ForeignKey('courses.Course', on_delete=models.CASCADE, related_name='enrollments')
@@ -134,7 +135,6 @@ class Enrollment(models.Model):
         return f"{self.user.email} → {self.course.title}"
     
 
-
 class LessonProgress(models.Model):
     user = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='lesson_progress')
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='progress')
@@ -147,7 +147,6 @@ class LessonProgress(models.Model):
     def __str__(self):
         return f"{self.user} - {self.lesson} - {'Done' if self.completed else 'Not done'}"
     
-
 
 class Quiz(models.Model):
     lesson = models.OneToOneField(Lesson, on_delete=models.CASCADE, related_name='quiz')

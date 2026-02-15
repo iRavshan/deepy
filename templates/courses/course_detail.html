@@ -1,5 +1,27 @@
 {% extends '../shared/_base.html' %}
 {% block title %} {{ course.title }} {% endblock %}
+
+{% block schema %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Course",
+  "name": "{{ course.title }}",
+  "description": "{{ course.description|escapejs }}",
+  "provider": {
+    "@type": "Organization",
+    "name": "Deepland",
+    "sameAs": "{{ request.scheme }}://{{ request.get_host }}"
+  },
+  "url": "{{ request.build_absolute_uri }}",
+  "hasCourseInstance": {
+    "@type": "CourseInstance",
+    "courseMode": "online",
+    "courseWorkload": "PT{{ course.lessons_count }}H" 
+  }
+}
+</script>
+{% endblock %}
 {% block content %}
 {% load static %}
 {% load i18n %}

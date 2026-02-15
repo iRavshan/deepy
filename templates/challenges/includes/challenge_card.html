@@ -1,7 +1,7 @@
 <div class="problem-card">
     <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
     <div class="problem-info">
-        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}.
+        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ forloop.counter }}.
             {{ challenge.title }}</a>
         <div class="problem-meta">
             {% if challenge.difficulty == 'easy' %}

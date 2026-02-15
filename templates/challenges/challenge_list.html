@@ -9,8 +9,7 @@
             <h1 class="page-title">Masalalar</h1>
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="search" name="q" class="search-input" placeholder="Qidirish..."
-                    value="{{ search_query }}">
+                <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
             </div>
         </div>
         <div class="problem-list">
@@ -20,8 +19,10 @@
                 {% empty %}
                 <p>Masalalar topilmadi</p>
                 {% endfor %}
+                <div id="loading-spinner" style="display: none; text-align: center; width: 100%; padding: 20px;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--theme-blue);"></i>
+                </div>
             </div>
-
             <div class="sidebar">
                 <div class="filter-group">
                     <div class="filter-header">Qiyinlik darajasi</div>
@@ -57,3 +58,74 @@
     </form>
 </main>
 {% endblock content %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let page = 1;
+        let hasNext = {{ challenges.has_next|yesno:"true,false" }};
+        let isLoading = false;
+        const container = document.getElementById('challenge-container');
+        const spinner = document.getElementById('loading-spinner');
+        
+        // Infinite Scroll
+        window.addEventListener('scroll', () => {
+             if (isLoading || !hasNext) return;
+             
+             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                 loadMoreChallenges();
+             }
+        });
+
+        function loadMoreChallenges() {
+            isLoading = true;
+            spinner.style.display = 'block';
+            page++;
+            
+            const url = new URL(window.location.href);
+            url.searchParams.set('page', page);
+            
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = data.html;
+                
+                Array.from(tempDiv.children).forEach((child, index) => {
+                     // Add animation class if you have one, or just append
+                     child.style.animation = `fadeInUp 0.5s ease forwards ${index * 0.1}s`;
+                     child.style.opacity = '0'; // Start hidden for animation
+                     container.appendChild(child);
+                });
+                
+                hasNext = data.has_next;
+            })
+            .catch(console.error)
+            .finally(() => {
+                isLoading = false;
+                spinner.style.display = 'none';
+            });
+        }
+    });
+
+    // Add keyframes for animation if not exists
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}
