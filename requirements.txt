@@ -16,6 +16,8 @@ django-allauth==65.13.1
 django-cf-turnstile==0.1.0
 django-ckeditor==6.7.3
 django-js-asset==3.1.2
+django-modeltranslation==0.19.19
+django-nested-admin==4.1.6
 docker==7.1.0
 et_xmlfile==2.0.0
 gunicorn==23.0.0
@@ -28,10 +30,12 @@ psycopg2==2.9.11
 pycparser==2.23
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
+python-monkey-business==1.1.0
 redis==7.1.0
 requests==2.32.5
 six==1.17.0
 sqlparse==0.5.5
+typing_extensions==4.15.0
 tzdata==2025.3
 tzlocal==5.3.1
 urllib3==2.6.3

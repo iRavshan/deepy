@@ -7,11 +7,14 @@
     <div class="term-card-wrapper">
         <div class="term-card">
             <div class="term-header">
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <h1>{{ term.term }}</h1>
-                    <button class="audio-btn btn-transform" onclick="speakText()">
-                        <i class="fa-solid fa-volume-high"></i>
-                    </button>
+                <div style="display: flex; flex-direction: column;">
+                    <h1 id="termTitle">{{ term.term }}</h1>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <h6 class="term-subtitle" id="termSubtitle" style="font-size: 1.3rem; color: var(--text-medium); margin-top: 5px; margin-bottom: 10px;">{{ term.term_en }}</h6>
+                        <button class="audio-btn btn-transform" onclick="speakText()">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="header-actions" style="display: flex; gap: 10px;">
                     {% if user.is_authenticated %}
@@ -29,7 +32,7 @@
 </main>
 <script>
         function speakText() {
-            const title = document.querySelector('h1').innerText;
+            const title = document.querySelector('#termSubtitle').innerText;
             if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(title);
                 utterance.lang = 'en-US';

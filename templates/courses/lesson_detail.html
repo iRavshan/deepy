@@ -665,7 +665,7 @@
 </head>
   <body>
     <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>  
-    <div class="course-sidebar" id="sidebar">
+    <aside class="course-sidebar" id="sidebar">
       <div class="sidebar-header">
         <h3 class="sidebar-title">{{ course.title }}</h3>
         <button class="close-btn" onclick="toggleSidebar()">
@@ -706,7 +706,7 @@
         </div>
         {% endfor %}
       </div>
-    </div>
+    </aside>
 
     <nav class="navbar">
       <a class="nav-close-btn" title="Exit Lesson" href="{% url 'course_path' course.slug  %}">
@@ -723,7 +723,7 @@
       </button>
     </nav>
 
-    <div class="container">
+    <main class="container">
       <div class="left-panel">
         <div class="mascot-area">
           <div>
@@ -755,7 +755,7 @@
             </a>
         </div>
       </div>
-    </div>
+    </main>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
     <script>

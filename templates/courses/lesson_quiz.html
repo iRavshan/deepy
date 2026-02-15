@@ -84,12 +84,12 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            font-family: var(--primary-font);
         }
 
         .nav-step-btn.current {
             border-color: var(--theme-blue);
             color: var(--theme-blue);
-            box-shadow: 0 0 0 2px var(--theme-blue-light);
         }
 
         .nav-step-btn.correct {
@@ -361,7 +361,7 @@
         </div>
     </nav>
     
-    <div class="quiz-wrapper">
+    <main class="quiz-wrapper">
         <div class="quiz-container" id="quiz-area">
             {% for question in quiz.questions.all %}
             <div class="question-step" data-step="{{ forloop.counter }}" style="display: {% if forloop.first %}flex{% else %}none{% endif %}; flex-direction: column;">
@@ -387,7 +387,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </main>
     
     <div class="quiz-footer">
         <!-- Removed Skip Button -->

@@ -1688,7 +1688,10 @@ section {
 /* Logo specific fix */
 .navbar .logo {
     text-decoration: none;
-    color: inherit;
+    color: var(--theme-green-dark);
+    font-family: var(--primary-font);
+    width: 30px;
+    height: 30px;
 }
 
 [data-theme="dark"] .btn-secondary {
@@ -2249,15 +2252,17 @@ section {
     background: var(--theme-blue);
     border: none;
     cursor: pointer;
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
     border-radius: 16px;
+    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 0 var(--theme-blue-dark);
     transition: all 0.1s;
     flex-shrink: 0;
+    margin-bottom: 6px;
 }
 
 .term-card .term-header .audio-btn i {

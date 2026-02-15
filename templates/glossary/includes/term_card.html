@@ -1,6 +1,9 @@
 <div class="term-card">
     <div class="term-card-header">
-        <a class="term-title" href="{% url 'term' term.slug %}">{{ term.term }}</a>
+        <div>
+            <a class="term-title" href="{% url 'term' term.slug %}">{{ term.term }}</a>
+            <div class="term-subtitle" style="font-size: 0.9rem; color: var(--text-medium); margin-top: 2px;">{{ term.term_en }}</div>
+        </div>
         {% if term.topic %}
         <span class="term-topic-badge">
             {% if term.topic.icon %}{{ term.topic.icon }}{% else %}<i class="fa-solid fa-tag"></i>{% endif %}

@@ -3,7 +3,6 @@
 {% load static %}
 {% load humanize %}
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -56,9 +55,8 @@
     }
     </script>
 </head>
-
 <body>
-    <div class="challenge-nav">
+    <nav class="challenge-nav">
         <div class="nav-left">
             <a href="{% url 'challenge_list' %}" class="nav-back-btn">
                 <i class="fa-solid fa-list-ul"></i> Barcha masalalar
@@ -93,7 +91,7 @@
             <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
             {% endif %}
         </div>
-    </div>
+    </nav>
 
     <main class="main-container">
         <section class="panel left-panel" id="leftPanel">

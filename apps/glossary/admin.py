@@ -2,6 +2,8 @@ from django.contrib import admin
 from .models import Term, Topic
 
 
+from modeltranslation.admin import TranslationAdmin
+
 @admin.register(Topic)
 class TopicAdmin(admin.ModelAdmin):
     list_display = ['name', 'icon', 'description', 'term_count']
@@ -13,8 +15,16 @@ class TopicAdmin(admin.ModelAdmin):
 
 
 @admin.register(Term)
-class TermAdmin(admin.ModelAdmin):
+class TermAdmin(TranslationAdmin):
     list_display = ['term', 'topic', 'short_definition']
     list_filter = ['topic']
     search_fields = ['term', 'short_definition', 'definition']
     list_select_related = ['topic']
+    
+    group_fieldsets = True # Groups translations by field type
+    
+    # We don't need to manually exclude 'term' etc because TranslationAdmin
+    # handles the form construction, but if we want to be explicit:
+    # exclude = ('term', 'short_definition', 'definition')
+    # However, usually just using TranslationAdmin is enough to make the UX better (tabbed or grouped).
+    # Let's try group_fieldsets = True which makes it much cleaner (tabs).
