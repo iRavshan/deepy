@@ -1,0 +1,376 @@
+{% extends '../shared/_base.html' %}
+{% load i18n %}
+{% block title %} Saqlanganlar {% endblock %}
+{% block content %}
+<main class="container">
+    <div class="bookmarks-wrapper">
+        <h1 class="bookmarks-title"><i class="fa-solid fa-bookmark"></i> Saqlanganlar</h1>
+        
+        <div class="bookmarks-layout">
+            <div class="bookmarks-sidebar">
+                <div class="bookmarks-tabs">
+                    <button class="tab-pill active" data-target="challenges-tab"><i class="fa-solid fa-code"></i> Masalalar <span class="badge">{{ saved_challenges|length }}</span></button>
+                    <button class="tab-pill" data-target="terms-tab"><i class="fa-solid fa-book"></i> Terminlar <span class="badge">{{ saved_terms|length }}</span></button>
+                </div>
+            </div>
+
+            <div class="bookmarks-content">
+                <!-- Challenges Tab -->
+                <div class="bookmarks-card tab-content active" id="challenges-tab">
+                    <h2 class="card-title"><i class="fa-solid fa-code"></i> Saqlangan masalalar</h2>
+                    
+                    {% if saved_challenges %}
+                        <div class="items-grid">
+                            {% for saved in saved_challenges %}
+                                <a href="{% url 'challenge_detail' saved.challenge.slug %}" class="grid-item">
+                                    <div class="item-icon">
+                                        <i class="fa-solid fa-laptop-code"></i>
+                                    </div>
+                                    <div class="item-details">
+                                        <h3>{{ saved.challenge.title }}</h3>
+                                        <div class="item-meta">
+                                            <span class="difficulty {{ saved.challenge.difficulty }}">{{ saved.challenge.get_difficulty_display }}</span>
+                                            {% if saved.challenge.topic %}
+                                                <span class="topic">{{ saved.challenge.topic.name }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-right chevron-icon"></i>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <p>Hali hech qanday masala saqlanmagan.</p>
+                            <a href="{% url 'challenge_list' %}" class="btn-primary">Masalalar oynasiga o'tish</a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Terms Tab -->
+                <div class="bookmarks-card tab-content" id="terms-tab">
+                    <h2 class="card-title"><i class="fa-solid fa-book"></i> Saqlangan terminlar</h2>
+                    
+                    {% if saved_terms %}
+                        <div class="terms-grid">
+                            {% for saved in saved_terms %}
+                                <div class="term-item">
+                                    <div class="term-header">
+                                        <h3>{{ saved.term.term }}</h3>
+                                    </div>
+                                    <p class="term-definition">{{ saved.term.short_definition }}</p>
+                                    <a href="{% url 'term' saved.term.slug %}" class="term-link">Batafsil <i class="fa-solid fa-arrow-right"></i></a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fa-regular fa-folder-open"></i>
+                            <p>Hali hech qanday termin saqlanmagan.</p>
+                            <a href="{% url 'glossary' %}" class="btn-primary">Deepwikiga o'tish</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab-pill');
+        const contents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.getAttribute('data-target');
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+    });
+</script>
+
+<style>
+    .bookmarks-wrapper {
+        max-width: 900px;
+    }
+    .bookmarks-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .bookmarks-title i {
+        color: var(--theme-purple);
+    }
+    .bookmarks-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    @media (min-width: 768px) {
+        .bookmarks-layout {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+    }
+    .bookmarks-sidebar {
+        min-width: 250px;
+        flex-shrink: 0;
+    }
+    .bookmarks-content {
+        flex-grow: 1;
+        width: 100%;
+    }
+    .bookmarks-tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: var(--bg-panel);
+        padding: 15px;
+        border-radius: var(--card-radius);
+        border: 2px solid var(--border-color);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .tab-pill {
+        padding: 14px 20px;
+        background: transparent;
+        border: none;
+        border-radius: var(--btn-radius);
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        color: var(--text-medium);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-family: inherit;
+    }
+    .tab-pill .fa-solid {
+        margin-right: 5px;
+    }
+    .badge {
+        background: var(--border-color);
+        color: var(--text-dark);
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    }
+    .tab-pill.active {
+        background: var(--theme-purple);
+        color: white;
+        box-shadow: 0 4px 0 var(--theme-purple-dark, #6c5ce7);
+        transform: translateY(-2px);
+    }
+    .tab-pill.active .badge {
+        background: rgba(255,255,255,0.2);
+        color: white;
+    }
+    .tab-pill.active:active {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+    .tab-pill:hover:not(.active) {
+        background: var(--bg-app);
+        color: var(--text-dark);
+    }
+    
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.4s ease forwards;
+        opacity: 0;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .bookmarks-card {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: var(--card-radius);
+        padding: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--border-color);
+    }
+    #challenges-tab .card-title i {
+        color: var(--theme-blue);
+    }
+    #terms-tab .card-title i {
+        color: var(--theme-green);
+    }
+    
+    /* Grid Items */
+    .items-grid, .terms-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .grid-item {
+        display: flex;
+        align-items: center;
+        padding: 20px;
+        background: var(--bg-app);
+        border: 2px solid var(--border-color);
+        border-radius: var(--card-radius);
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s ease;
+    }
+    .grid-item:hover {
+        border-color: var(--theme-blue);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .item-icon {
+        width: 50px;
+        height: 50px;
+        background: var(--theme-blue-light, rgba(61, 133, 198, 0.1));
+        color: var(--theme-blue);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-right: 20px;
+        flex-shrink: 0;
+    }
+    .item-details {
+        flex-grow: 1;
+    }
+    .item-details h3 {
+        margin: 0 0 8px 0;
+        font-size: 1.1rem;
+        color: var(--text-dark);
+        font-weight: 800;
+    }
+    .item-meta {
+        display: flex;
+        gap: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+    }
+    .difficulty {
+        padding: 3px 10px;
+        border-radius: 12px;
+    }
+    .difficulty.easy { background: var(--theme-green-light, #eafaf1); color: var(--theme-green); }
+    .difficulty.medium { background: var(--theme-orange-light, #fef5e7); color: var(--theme-orange); }
+    .difficulty.hard { background: var(--theme-red-light, #fdedec); color: var(--theme-red); }
+    .topic {
+        color: var(--text-medium);
+        display: flex;
+        align-items: center;
+    }
+    .topic::before {
+        content: '•';
+        margin-right: 10px;
+        opacity: 0.5;
+    }
+    .chevron-icon {
+        color: var(--text-medium);
+        font-size: 1.2rem;
+        transition: transform 0.3s;
+    }
+    .grid-item:hover .chevron-icon {
+        color: var(--theme-blue);
+        transform: translateX(5px);
+    }
+    
+    /* Term Items */
+    .term-item {
+        padding: 20px;
+        background: var(--bg-app);
+        border: 2px solid var(--border-color);
+        border-radius: var(--card-radius);
+    }
+    .term-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+    }
+    .term-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        font-weight: 800;
+    }
+    .term-definition {
+        color: var(--text-medium);
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 15px;
+    }
+    .term-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--theme-green);
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 0.9rem;
+        transition: gap 0.2s;
+    }
+    .term-link:hover {
+        gap: 12px;
+    }
+    
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--text-medium);
+    }
+    .empty-state i {
+        font-size: 4rem;
+        color: var(--border-color);
+        margin-bottom: 15px;
+    }
+    .empty-state p {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 25px;
+    }
+    .btn-primary {
+        display: inline-block;
+        background: var(--theme-blue);
+        color: white;
+        padding: 12px 25px;
+        border-radius: var(--btn-radius);
+        text-decoration: none;
+        font-weight: 800;
+        box-shadow: 0 4px 0 var(--theme-blue-dark);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:active {
+        transform: translateY(4px);
+        box-shadow: none;
+    }
+</style>
+{% endblock %}

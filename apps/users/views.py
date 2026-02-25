@@ -75,3 +75,23 @@ def settings_view(request):
         'profile_form': profile_form,
         'password_form': password_form,
     })
+
+
+@login_required
+def bookmarks_view(request):
+    try:
+        from apps.challenges.models import SavedChallenge
+        saved_challenges = SavedChallenge.objects.filter(user=request.user).select_related('challenge', 'challenge__topic')
+    except ImportError:
+        saved_challenges = []
+        
+    try:
+        from apps.glossary.models import SavedTerm
+        saved_terms = SavedTerm.objects.filter(user=request.user).select_related('term')
+    except ImportError:
+        saved_terms = []
+
+    return render(request, 'users/bookmarks.html', {
+        'saved_challenges': saved_challenges,
+        'saved_terms': saved_terms
+    })
