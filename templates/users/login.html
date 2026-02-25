@@ -16,22 +16,58 @@
       </div>
       <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+          <div style="color: var(--theme-red); background: var(--theme-red-light); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-weight: 700; font-size: 0.9rem; text-align: center;">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <div class="form-group">
           <div class="input-wrapper">
             {{ form.username }}
             <i class="fa-regular fa-envelope input-icon"></i>
           </div>
+          {% if form.username.errors %}
+            <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 5px; font-weight: 700;">{{ form.username.errors.0 }}</div>
+          {% endif %}
         </div>
+        
         <div class="form-group" style="margin-bottom: 10px">
           <div class="input-wrapper">
             {{ form.password }}
             <i class="fa-solid fa-lock input-icon"></i>
           </div>
+          {% if form.password.errors %}
+            <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 5px; font-weight: 700;">{{ form.password.errors.0 }}</div>
+          {% endif %}
         </div>
+        
         <a href="#" class="forgot-pass">Parolni unutdingizmi?</a>
-        <div class="cf-turnstile" data-sitekey="0x4AAAAAACXctAclxgTNx4Cl" data-theme="light"></div>
+        
+        <!-- The vital widget -->
+        <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="light" style="margin-bottom: 15px;"></div>
+        
+        {% if form.cf_turnstile.errors %}
+          <div style="color: var(--theme-red); font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; font-weight: 700;">
+            Kaptcha xatoligi: Iltimos, qaytadan urinib ko'ring ({{ form.cf_turnstile.errors.0 }})
+          </div>
+        {% endif %}
+        
+        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+        
         <button type="submit" class="btn-login btn-transform">Kirish</button>
       </form>
+      
+      <!-- Hidden debug panel if there are hidden errors -->
+      {% if form.errors and not form.non_field_errors and not form.username.errors and not form.password.errors and not form.cf_turnstile.errors %}
+      <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 10px;">
+        Noma'lum xatolik: {{ form.errors }}
+      </div>
+      {% endif %}
+
       <div class="divider">
         <span>yoki</span>
       </div>
