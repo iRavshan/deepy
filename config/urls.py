@@ -22,6 +22,7 @@ urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
     path('_nested_admin/', include('nested_admin.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 handler404 = 'config.views.custom_404'

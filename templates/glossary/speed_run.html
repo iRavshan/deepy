@@ -292,12 +292,17 @@
             // Let's just update content immediately for snap feel
             
             const term = terms[currentIndex];
+            let termDisplay = term.term;
+            if (term.term_en) {
+                termDisplay += `<div style="font-size: 0.6em; color: var(--text-medium); margin-top: 5px; font-weight: normal;">${term.term_en}</div>`;
+            }
+
             if (startSide === 'term') {
-                txtFront.textContent = term.term;
+                txtFront.innerHTML = termDisplay;
                 txtBack.textContent = term.definition;
             } else {
                 txtFront.textContent = term.definition;
-                txtBack.textContent = term.term;
+                txtBack.innerHTML = termDisplay;
             }
             
             // Update Progress Bar

@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.contrib import messages
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-from .forms import UserSignupForm, EmailLoginForm
+from .forms import UserSignupForm, EmailLoginForm, UserSettingsForm
 import requests
 
 
@@ -81,3 +83,33 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+@login_required
+def settings_view(request):
+    user = request.user
+    profile_form = UserSettingsForm(instance=user)
+    password_form = PasswordChangeForm(user)
+
+    if request.method == "POST":
+        action = request.POST.get('action')
+        
+        if action == 'profile_update':
+            profile_form = UserSettingsForm(request.POST, instance=user)
+            if profile_form.is_valid():
+                profile_form.save()
+                messages.success(request, 'Shaxsiy ma\'lumotlar muvaffaqiyatli saqlandi!')
+                return redirect('settings')
+        
+        elif action == 'password_update':
+            password_form = PasswordChangeForm(user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)  # Important to keep user logged in!
+                messages.success(request, 'Parol muvaffaqiyatli yangilandi!')
+                return redirect('settings')
+
+    return render(request, 'users/settings.html', {
+        'profile_form': profile_form,
+        'password_form': password_form,
+    })

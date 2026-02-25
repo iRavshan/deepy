@@ -20,33 +20,46 @@
             <div class="stat-item streak">
                 <i class="fa-solid fa-fire nav-icon"></i><span class="nav-count">{{ user.current_streak }}</span>
 
-                <!-- Redesigned Hover Panel 
-                <div class="streak-panel-v2">
+                <div class="streak-hover-panel">
                     <div class="panel-header-bg">
                         <div class="fire-ring">
                             <i class="fa-solid fa-fire"></i>
                         </div>
-                        <div class="streak-title">Daily Streak</div>
-                        <div class="streak-big-number">{{ user.current_streak }}</div>
+                        <div class="streak-title">Muntazamlik</div>
+                        <div class="streak-big-number">{{ user.current_streak }} kun</div>
                     </div>
-                    <div class="panel-stats-grid">
-                        <div class="stat-box">
-                            <div class="stat-label">Max Streak</div>
-                            <div class="stat-value">{{ user.max_streak }}</div>
-                        </div>
-                        <div class="stat-box">
-                            <div class="stat-label">Next Goal</div>
-                            <div class="stat-value">7 Days</div>
-                        </div>
+                    
+                    <div class="streak-week-container" id="streakWeekContainer" 
+                         data-streak="{{ user.current_streak }}" 
+                         data-last-activity="{{ user.last_activity_date|date:'Y-m-d'|default:'' }}">
                     </div>
+
                     <div class="panel-footer">
-                        Keep the flame alive! <i class="fa-solid fa-fire-flame-curved"></i>
+                        Olovni o'chirmang! <i class="fa-solid fa-fire-flame-curved"></i>
                     </div>
                 </div>
-                -->
             </div>
             <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
-            <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
+            <div class="user-dropdown-container" id="userDropdownContainer">
+                <img src="https://i.pravatar.cc/100?img=4" alt="User Avatar" class="avatar" id="navProfileImg" style="cursor: pointer;">
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="dropdown-user-name">{{ user.first_name }} {{ user.last_name }}</div>
+                        <div class="dropdown-user-email">{{ user.email }}</div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item">
+                        <i class="fa-solid fa-user"></i> Profil
+                    </a>
+                    <a href="{% url 'settings' %}" class="dropdown-item">
+                        <i class="fa-solid fa-gear"></i> Sozlamalar
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a href="{% url 'logout' %}" class="dropdown-item item-logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
+                    </a>
+                </div>
+            </div>
         </div>
         {% else %}
         <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
@@ -87,6 +100,71 @@
                 icon.classList.replace('fa-moon', 'fa-sun');
             }
         });
+
+        // User Dropdown Toggle
+        const profileImg = document.getElementById('navProfileImg');
+        const dropdownMenu = document.getElementById('userDropdownMenu');
+        
+        if (profileImg && dropdownMenu) {
+            profileImg.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevents immediate closing
+                dropdownMenu.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!profileImg.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                    dropdownMenu.classList.remove('active');
+                }
+            });
+        }
+
+        // Streak Week Generation
+        const streakContainer = document.getElementById('streakWeekContainer');
+        if (streakContainer) {
+            const streak = parseInt(streakContainer.getAttribute('data-streak')) || 0;
+            const lastActivityStr = streakContainer.getAttribute('data-last-activity');
+            
+            const daysArr = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'];
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            let activeDates = [];
+            if (streak > 0 && lastActivityStr) {
+                const parts = lastActivityStr.split('-');
+                if (parts.length === 3) {
+                    const lastActDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                    lastActDate.setHours(0,0,0,0);
+                    for (let i = 0; i < streak; i++) {
+                        const d = new Date(lastActDate);
+                        d.setDate(d.getDate() - i);
+                        activeDates.push(d.getTime());
+                    }
+                }
+            }
+            
+            let htmlHTML = '';
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(d.getDate() - i);
+                
+                const dayName = daysArr[d.getDay()];
+                const dTime = d.getTime();
+                
+                const isActive = activeDates.includes(dTime);
+                const className = isActive ? 'week-day active' : 'week-day';
+                
+                htmlHTML += `
+                    <div class="week-day-col">
+                        <div class="day-literal">${dayName}</div>
+                        <div class="${className}">
+                            ${isActive ? '<i class="fa-solid fa-fire"></i>' : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            streakContainer.innerHTML = htmlHTML;
+        }
     });
 </script>
 
@@ -105,5 +183,232 @@
         transition: all 0.2s;
         margin-right: 15px;
         justify-self: end;
+    }
+
+    /* User Dropdown Styles */
+    .user-dropdown-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .user-dropdown-menu {
+        position: absolute;
+        top: 63px;
+        right: 0;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        width: 220px;
+        padding: 10px 0;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: none;
+        flex-direction: column;
+        z-index: 1000;
+        animation: fadeInDown 0.2s ease forwards;
+    }
+
+    .user-dropdown-menu.active {
+        display: flex;
+    }
+
+    .dropdown-header {
+        padding: 10px 15px;
+        color: var(--text-dark);
+    }
+
+    .dropdown-user-name {
+        font-weight: 800;
+        font-size: 1rem;
+    }
+
+    .dropdown-user-email {
+        font-size: 0.8rem;
+        color: var(--text-medium);
+        margin-top: 4px;
+        word-break: break-all;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background: var(--border-color);
+        margin: 5px 0;
+    }
+
+    .dropdown-item {
+        padding: 10px 20px;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s;
+    }
+
+    .dropdown-item:hover {
+        background: var(--bg-app);
+        color: var(--theme-blue);
+    }
+
+    .dropdown-item i {
+        color: var(--text-medium);
+        font-size: 1.1rem;
+        width: 20px;
+        text-align: center;
+        transition: color 0.2s;
+    }
+
+    .dropdown-item:hover i {
+        color: var(--theme-blue);
+    }
+
+    .item-logout {
+        color: var(--theme-red);
+    }
+
+    .item-logout i {
+        color: var(--theme-red);
+    }
+
+    .item-logout:hover {
+        color: #ff3b3b;
+        background: rgba(255, 71, 87, 0.1);
+    }
+    
+    .item-logout:hover i {
+        color: #ff3b3b;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Streak Hover Styles */
+    .stat-item.streak {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .streak-hover-panel {
+        position: absolute;
+        top: 53px;
+        right: -80px; 
+        width: 280px;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        display: none;
+        flex-direction: column;
+        z-index: 1000;
+        animation: fadeInDown 0.2s ease forwards;
+        overflow: hidden;
+        cursor: default;
+    }
+
+    /* Quick hack to expand the hover hit area if top is large */
+    .stat-item.streak::before {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        height: 40px; 
+    }
+    
+    .stat-item.streak:hover .streak-hover-panel {
+        display: flex;
+    }
+
+    .panel-header-bg {
+        background: var(--theme-orange-light);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .fire-ring {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+        color: #ff9f43;
+    }
+
+    .streak-title { 
+        font-size: 0.9rem; 
+        font-weight: 700; 
+        opacity: 0.9; 
+        color: var(--theme-orange);
+    }
+    .streak-big-number { 
+        font-size: 1.8rem; 
+        font-weight: 900; 
+        color: var(--theme-orange);
+    }
+
+    .streak-week-container {
+        padding: 20px 15px;
+        display: flex;
+        justify-content: space-between;
+        background: var(--bg-panel);
+    }
+
+    .week-day-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .day-literal {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--text-medium);
+    }
+
+    .week-day {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 0.7rem;
+        transition: all 0.3s;
+    }
+    
+    .week-day.active {
+        background: #ff9f43;
+        box-shadow: 0 0 10px rgba(255, 159, 67, 0.4);
+    }
+
+    .streak-hover-panel .panel-footer {
+        padding: 12px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        color: var(--theme-blue);
+        background: var(--bg-app);
+        border-top: 1px solid var(--border-color);
     }
 </style>

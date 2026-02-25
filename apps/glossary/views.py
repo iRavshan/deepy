@@ -120,6 +120,7 @@ def speed_run_view(request):
         terms_data.append({
             'id': term.id,
             'term': term.term,
+            'term_en': getattr(term, 'term_en', ''),
             'definition': term.short_definition,
             'topic': term.topic.name if term.topic else 'General',
         })
@@ -165,6 +166,7 @@ def learning_view(request):
         terms_data.append({
             'id': term.id,
             'term': term.term,
+            'term_en': getattr(term, 'term_en', ''),
             'definition': term.short_definition,
             'full_definition': term.definition,
             'topic': term.topic.name if term.topic else 'General',

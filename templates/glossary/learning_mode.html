@@ -1,592 +1,652 @@
-{% extends '../shared/_blank.html' %}
-{% block title %} Learning Session {% endblock %}
+{% extends '../shared/_blank.html' %} 
+{% block title %} Learning Session {%endblock %} 
 {% block content %}
 <main class="container learning-container">
-    
-    <!-- Top Bar: Progress & Exit -->
-    <div class="learning-header">
-        <a href="{% url 'learning_setup' %}" class="btn-exit">
-            <i class="fa-solid fa-xmark"></i> Yakunlash
-        </a>
-        <div class="progress-wrapper">
-            <div class="progress-bar-container">
-                <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
-            </div>
-            <span class="progress-text"><span id="current-count">1</span> / <span id="total-count">{{ total_count }}</span></span>
-        </div>
-        <div class="header-spacer"></div>
+  <!-- Top Bar: Progress & Exit -->
+  <div class="learning-header">
+    <a href="{% url 'learning_setup' %}" class="btn-exit">
+      <i class="fa-solid fa-xmark"></i> Yakunlash
+    </a>
+    <div class="progress-wrapper">
+      <div class="progress-bar-container">
+        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <span class="progress-text"
+        ><span id="current-count">1</span> /
+        <span id="total-count">{{ total_count }}</span></span
+      >
     </div>
+    <div class="header-spacer"></div>
+  </div>
 
-    <!-- Main Flashcard Area -->
-    <div class="flashcard-scene">
-        <div class="flashcard" id="flashcard">
-            <div class="flashcard-inner">
-                <div class="flashcard-front">
-                    <div class="card-content" id="card-front-content">
-                        <!-- JS injects content here -->
-                    </div>
-                    <div class="card-hint">
-                        <i class="fa-solid fa-rotate"></i> Click to flip
-                    </div>
-                </div>
-                <div class="flashcard-back">
-                    <div class="card-content" id="card-back-content">
-                        <!-- JS injects content here -->
-                    </div>
-                </div>
-            </div>
+  <!-- Main Flashcard Area -->
+  <div class="flashcard-scene">
+    <div class="flashcard" id="flashcard">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="card-content" id="card-front-content">
+            <!-- JS injects content here -->
+          </div>
+          <div class="card-hint">
+            <i class="fa-solid fa-rotate"></i> Aylantirish
+          </div>
         </div>
+        <div class="flashcard-back">
+          <div class="card-content" id="card-back-content">
+            <!-- JS injects content here -->
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Navigation Controls -->
-    <div class="learning-controls">
-        <button class="btn-control prev" id="btn-prev" disabled>
-            <i class="fa-solid fa-arrow-left"></i> Avvalgisi
+  <!-- Navigation Controls -->
+  <div class="learning-controls">
+    <button class="btn-control prev" id="btn-prev" disabled>
+      <i class="fa-solid fa-arrow-left"></i> Avvalgisi
+    </button>
+    <button class="btn-control next" id="btn-next">
+      Keyingisi <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+
+  <!-- Music Player Widget -->
+  <div class="music-player minimized" id="music-player">
+    <div class="player-toggle" id="player-toggle">
+      <i class="fa-solid fa-music"></i>
+    </div>
+    <div class="player-content">
+      <div class="track-info">
+        <span class="track-name" id="track-name">Lofi Chill</span>
+        <div class="visualizer">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+      </div>
+      <div class="player-controls">
+        <button class="player-btn small" id="btn-music-prev">
+          <i class="fa-solid fa-backward-step"></i>
         </button>
-        <button class="btn-control next" id="btn-next">
-            Keyingisi <i class="fa-solid fa-arrow-right"></i>
+        <button class="player-btn main" id="btn-play-pause">
+          <i class="fa-solid fa-play"></i>
         </button>
+        <button class="player-btn small" id="btn-music-next">
+          <i class="fa-solid fa-forward-step"></i>
+        </button>
+      </div>
+      <div class="volume-slider-container">
+        <i class="fa-solid fa-volume-low"></i>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value="0.5"
+          class="volume-slider"
+          id="volume-slider"
+        />
+      </div>
     </div>
-
-    <!-- Music Player Widget -->
-    <div class="music-player minimized" id="music-player">
-        <div class="player-toggle" id="player-toggle">
-            <i class="fa-solid fa-music"></i>
-        </div>
-        <div class="player-content">
-            <div class="track-info">
-                <span class="track-name" id="track-name">Lofi Chill</span>
-                <div class="visualizer">
-                    <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                </div>
-            </div>
-            <div class="player-controls">
-                <button class="player-btn small" id="btn-music-prev"><i class="fa-solid fa-backward-step"></i></button>
-                <button class="player-btn main" id="btn-play-pause"><i class="fa-solid fa-play"></i></button>
-                <button class="player-btn small" id="btn-music-next"><i class="fa-solid fa-forward-step"></i></button>
-            </div>
-            <div class="volume-slider-container">
-                <i class="fa-solid fa-volume-low"></i>
-                <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume-slider" id="volume-slider">
-            </div>
-        </div>
-    </div>
-
+  </div>
 </main>
 
 <style>
-    /* Layout & Container */
-    .learning-container {
-        max-width: 700px;
-        min-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-    }
+  /* Layout & Container */
+  .learning-container {
+    max-width: 700px;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
 
-    .learning-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin: 40px 0;
-        width: 100%;
-    }
+  .learning-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 40px 0;
+    width: 100%;
+  }
 
-    .btn-exit {
-        color: var(--text-medium);
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: color 0.2s;
-        width: 120px;
-    }
-    .btn-exit:hover { color: var(--theme-red); }
-    .header-spacer { width: 120px; }
+  .btn-exit {
+    color: var(--text-medium);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+    width: 120px;
+  }
+  .btn-exit:hover {
+    color: var(--theme-red);
+  }
+  .header-spacer {
+    width: 120px;
+  }
 
-    /* Progress Bar */
-    .progress-wrapper {
-        flex-grow: 1;
-        max-width: 400px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
+  /* Progress Bar */
+  .progress-wrapper {
+    flex-grow: 1;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
 
-    .progress-bar-container {
-        flex-grow: 1;
-        height: 10px;
-        background: var(--border-color);
-        border-radius: 10px;
-        overflow: hidden;
-    }
+  .progress-bar-container {
+    flex-grow: 1;
+    height: 10px;
+    background: var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+  }
 
-    .progress-fill {
-        height: 100%;
-        background: var(--theme-green);
-        border-radius: 10px;
-        transition: width 0.3s ease;
-    }
+  .progress-fill {
+    height: 100%;
+    background: var(--theme-green);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+  }
 
-    .progress-text {
-        font-family: 'Nunito', sans-serif;
-        font-weight: 800;
-        color: var(--text-medium);
-        min-width: 60px;
-        text-align: right;
-    }
+  .progress-text {
+    font-family: "Nunito", sans-serif;
+    font-weight: 800;
+    color: var(--text-medium);
+    min-width: 60px;
+    text-align: right;
+  }
 
-    /* Flashcard 3D Scene */
+  /* Flashcard 3D Scene */
+  .flashcard-scene {
+    perspective: 1000px;
+    width: 100%;
+    height: 400px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .flashcard {
+    width: 100%;
+    max-width: 700px;
+    height: 100%;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-style: preserve-3d;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: var(--card-radius);
+  }
+
+  .flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flashcard-front,
+  .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--card-radius);
+    background: var(--bg-panel);
+    border: 2px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    user-select: none;
+  }
+
+  .flashcard-back {
+    transform: rotateY(180deg);
+    background: var(--bg-app); /* Slight different bg for back */
+    border-color: var(--theme-blue);
+  }
+
+  .card-content {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1.4;
+    max-height: 280px;
+    overflow-y: auto;
+  }
+
+  /* Adjust content size if it's long */
+  .card-content.long-text {
+    font-size: 1.4rem;
+  }
+
+  .card-hint {
+    position: absolute;
+    bottom: 20px;
+    color: var(--text-medium);
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  /* Controls */
+  .learning-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .btn-control {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border: none;
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+  }
+
+  .btn-control.next {
+    background: var(--theme-blue);
+    color: white;
+    box-shadow: 0 4px 0 var(--theme-blue-dark);
+  }
+  .btn-control.next:active {
+    transform: translateY(4px);
+    box-shadow: none;
+  }
+
+  .btn-control.prev {
+    background: var(--bg-panel);
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+    box-shadow: 0 4px 0 var(--border-color);
+  }
+  .btn-control.prev:active {
+    transform: translateY(4px);
+    box-shadow: none;
+  }
+
+  .btn-control:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Music Player */
+  .music-player {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: var(--bg-panel);
+    border: 2px solid var(--border-color);
+    border-radius: 50px; /* Pill shape when minimized could be round */
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 100;
+    max-width: 300px;
+  }
+
+  .music-player.minimized {
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    justify-content: center;
+  }
+
+  .music-player.minimized .player-content {
+    display: none;
+  }
+
+  .player-toggle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--theme-purple-light);
+    color: var(--theme-purple);
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .music-player.minimized .player-toggle {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    font-size: 1.2rem;
+  }
+
+  .player-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 8px;
+    padding-right: 10px;
+  }
+
+  /* Animation for playing state */
+  .music-player.playing .player-toggle {
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(206, 130, 255, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(206, 130, 255, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(206, 130, 255, 0);
+    }
+  }
+
+  .track-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .visualizer {
+    display: flex;
+    gap: 2px;
+    height: 10px;
+    align-items: flex-end;
+  }
+
+  .visualizer .bar {
+    width: 3px;
+    height: 100%;
+    background: var(--theme-purple);
+    animation: equalizer 0.5s infinite alternate;
+    display: none; /* Hidden by default */
+  }
+
+  .music-player.playing .visualizer .bar {
+    display: block;
+  }
+  .music-player.playing .visualizer .bar:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  .music-player.playing .visualizer .bar:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+
+  @keyframes equalizer {
+    0% {
+      height: 30%;
+    }
+    100% {
+      height: 100%;
+    }
+  }
+
+  .player-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .player-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-medium);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .player-btn:hover {
+    color: var(--theme-purple);
+  }
+
+  .player-btn.main {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg-app);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .volume-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-medium);
+    font-size: 0.8rem;
+  }
+
+  .volume-slider {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  /* Dark Mode Overrides */
+  [data-theme="dark"] .flashcard-front,
+  [data-theme="dark"] .flashcard-back {
+    background: var(--bg-panel);
+  }
+  [data-theme="dark"] .flashcard-back {
+    background: #182329; /* Slightly different */
+  }
+
+  @media (max-width: 600px) {
     .flashcard-scene {
-        perspective: 1000px;
-        width: 100%;
-        height: 400px;
-        margin-bottom: 40px;
-        display: flex;
-        justify-content: center;
+      height: 300px;
     }
-
-    .flashcard {
-        width: 100%;
-        max-width: 700px;
-        height: 100%;
-        position: relative;
-        cursor: pointer;
-    }
-
-    .flashcard-inner {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        transform-style: preserve-3d;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        border-radius: var(--card-radius);
-    }
-
-    .flashcard.flipped .flashcard-inner {
-        transform: rotateY(180deg);
-    }
-
-    .flashcard-front, .flashcard-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backface-visibility: hidden;
-        border-radius: var(--card-radius);
-        background: var(--bg-panel);
-        border: 2px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 40px;
-        user-select: none;
-    }
-
-    .flashcard-back {
-        transform: rotateY(180deg);
-        background: var(--bg-app); /* Slight different bg for back */
-        border-color: var(--theme-blue);
-    }
-
     .card-content {
-        font-size: 2rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        line-height: 1.4;
-        max-height: 280px;
-        overflow-y: auto;
+      font-size: 1.5rem;
     }
-    
-    /* Adjust content size if it's long */
-    .card-content.long-text { font-size: 1.4rem; }
-    
-    .card-hint {
-        position: absolute;
-        bottom: 20px;
-        color: var(--text-medium);
-        font-size: 0.9rem;
-        opacity: 0.7;
-    }
-
-    /* Controls */
-    .learning-controls {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-    }
-
-    .btn-control {
-        padding: 15px 30px;
-        font-size: 1.1rem;
-        font-weight: 800;
-        border: none;
-        border-radius: var(--btn-radius);
-        cursor: pointer;
-        transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-family: inherit;
-    }
-
-    .btn-control.next {
-        background: var(--theme-blue);
-        color: white;
-        box-shadow: 0 4px 0 var(--theme-blue-dark);
-    }
-    .btn-control.next:active { transform: translateY(4px); box-shadow: none; }
-
-    .btn-control.prev {
-        background: var(--bg-panel);
-        color: var(--text-dark);
-        border: 2px solid var(--border-color);
-        box-shadow: 0 4px 0 var(--border-color);
-    }
-    .btn-control.prev:active { transform: translateY(4px); box-shadow: none; }
-    
-    .btn-control:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-        box-shadow: none;
-    }
-
-    /* Music Player */
-    .music-player {
-        position: fixed;
-        bottom: 30px;
-        right: 30px;
-        background: var(--bg-panel);
-        border: 2px solid var(--border-color);
-        border-radius: 50px; /* Pill shape when minimized could be round */
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
-        z-index: 100;
-        max-width: 300px;
-    }
-
-    .music-player.minimized {
-        width: 60px;
-        height: 60px;
-        padding: 0;
-        border-radius: 50%;
-        overflow: hidden;
-        cursor: pointer;
-        justify-content: center;
-    }
-
-    .music-player.minimized .player-content {
-        display: none;
-    }
-
-    .player-toggle {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--theme-purple-light);
-        color: var(--theme-purple);
-        border-radius: 50%;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-
-    .music-player.minimized .player-toggle {
-        width: 100%;
-        height: 100%;
-        background: transparent;
-        font-size: 1.2rem;
-    }
-
-    .player-content {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-        gap: 8px;
-        padding-right: 10px;
-    }
-
-    /* Animation for playing state */
-    .music-player.playing .player-toggle {
-        animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(206, 130, 255, 0.4); }
-        70% { box-shadow: 0 0 0 10px rgba(206, 130, 255, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(206, 130, 255, 0); }
-    }
-
-    .track-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--text-dark);
-    }
-    
-    .visualizer {
-        display: flex;
-        gap: 2px;
-        height: 10px;
-        align-items: flex-end;
-    }
-    
-    .visualizer .bar {
-        width: 3px;
-        height: 100%;
-        background: var(--theme-purple);
-        animation: equalizer 0.5s infinite alternate;
-        display: none; /* Hidden by default */
-    }
-    
-    .music-player.playing .visualizer .bar { display: block; }
-    .music-player.playing .visualizer .bar:nth-child(2) { animation-delay: 0.1s; }
-    .music-player.playing .visualizer .bar:nth-child(3) { animation-delay: 0.2s; }
-    
-    @keyframes equalizer {
-        0% { height: 30%; }
-        100% { height: 100%; }
-    }
-
-    .player-controls {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    .player-btn {
-        border: none;
-        background: transparent;
-        color: var(--text-medium);
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-
-    .player-btn:hover { color: var(--theme-purple); }
-
-    .player-btn.main {
-        font-size: 1.2rem;
-        color: var(--text-dark);
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: var(--bg-app);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    .volume-slider-container {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        color: var(--text-medium);
-        font-size: 0.8rem;
-    }
-    
-    .volume-slider { width: 100%; cursor: pointer; }
-
-    /* Dark Mode Overrides */
-    [data-theme="dark"] .flashcard-front,
-    [data-theme="dark"] .flashcard-back {
-        background: var(--bg-panel);
-    }
-    [data-theme="dark"] .flashcard-back {
-        background: #182329; /* Slightly different */
-    }
-    
-    @media (max-width: 600px) {
-        .flashcard-scene { height: 300px; }
-        .card-content { font-size: 1.5rem; }
-    }
+  }
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- Data & State ---
-        const terms = {{ terms_json|safe }};
-        const startSide = "{{ start_side }}";
-        let currentIndex = 0;
-        let isFlipped = false;
-        
-        // --- Elements ---
-        const flashcard = document.getElementById('flashcard');
-        const frontContent = document.getElementById('card-front-content');
-        const backContent = document.getElementById('card-back-content');
-        const btnNext = document.getElementById('btn-next');
-        const btnPrev = document.getElementById('btn-prev');
-        const progressFill = document.getElementById('progress-fill');
-        const currentCountEl = document.getElementById('current-count');
+  document.addEventListener('DOMContentLoaded', () => {
+      // --- Data & State ---
+      const terms = {{ terms_json|safe }};
+      const startSide = "{{ start_side }}";
+      let currentIndex = 0;
+      let isFlipped = false;
 
-        // --- Logic ---
-        function updateCard() {
-            const term = terms[currentIndex];
-            const termText = term.term;
-            // Use full definition if available and short enough, else use short definition
-            // Actually, let's use full definition for back if possible, stripping HTML tags for safety if needed
-            // But for now, we'll keep it simple
-            let defText = term.full_definition || term.definition;
+      // --- Elements ---
+      const flashcard = document.getElementById('flashcard');
+      const frontContent = document.getElementById('card-front-content');
+      const backContent = document.getElementById('card-back-content');
+      const btnNext = document.getElementById('btn-next');
+      const btnPrev = document.getElementById('btn-prev');
+      const progressFill = document.getElementById('progress-fill');
+      const currentCountEl = document.getElementById('current-count');
 
-            // Handle rich text: create temp div to strip tags if you want plain text, 
-            // but we might want to render HTML. Let's assume we render HTML safely.
-            
-            // Determine Front/Back based on setting
-            if (startSide === 'term') {
-                frontContent.innerHTML = termText;
-                backContent.innerHTML = defText;
-                frontContent.classList.remove('long-text'); // Reset
-                
-                // Add class if text is long
-                if (termText.length > 50) frontContent.classList.add('long-text');
-            } else {
-                frontContent.innerHTML = defText;
-                backContent.innerHTML = termText;
-                 // Add class if text is long
-                 if (defText.length > 100) frontContent.classList.add('long-text');
-            }
+      // --- Logic ---
+      function updateCard() {
+          const term = terms[currentIndex];
+          const termText = term.term;
+          // Use full definition if available and short enough, else use short definition
+          // Actually, let's use full definition for back if possible, stripping HTML tags for safety if needed
+          // But for now, we'll keep it simple
+          let defText = term.full_definition || term.definition;
 
-            // Reset Flip
-            isFlipped = false;
-            flashcard.classList.remove('flipped');
-            
-            // Update UI Controls
-            btnPrev.disabled = currentIndex === 0;
-            btnNext.innerHTML = currentIndex === terms.length - 1 ? 'Finish <i class="fa-solid fa-flag-checkered"></i>' : 'Keyingisi <i class="fa-solid fa-arrow-right"></i>';
-            
-            // Update Progress
-            const progress = ((currentIndex + 1) / terms.length) * 100;
-            progressFill.style.width = `${progress}%`;
-            currentCountEl.textContent = currentIndex + 1;
-        }
+          let termDisplay = termText;
+          if (term.term_en) {
+              termDisplay += `<div style="font-size: 0.6em; color: var(--text-medium); margin-top: 5px; font-weight: normal;">${term.term_en}</div>`;
+          }
 
-        // Interaction
-        flashcard.addEventListener('click', () => {
-            isFlipped = !isFlipped;
-            flashcard.classList.toggle('flipped');
-        });
+          // Handle rich text: create temp div to strip tags if you want plain text,
+          // but we might want to render HTML. Let's assume we render HTML safely.
 
-        btnNext.addEventListener('click', () => {
-            if (currentIndex < terms.length - 1) {
-                currentIndex++;
-                updateCard();
-            } else {
-                // Return to setup or glossary
-                window.location.href = "{% url 'glossary' %}"; // Or a results page
-            }
-        });
+          // Determine Front/Back based on setting
+          if (startSide === 'term') {
+              frontContent.innerHTML = termDisplay;
+              backContent.innerHTML = defText;
+              frontContent.classList.remove('long-text'); // Reset
 
-        btnPrev.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCard();
-            }
-        });
-        
-        // Keyboard Support
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
-                e.preventDefault();
-                flashcard.click();
-            } else if (e.code === 'ArrowRight') {
-                btnNext.click();
-            } else if (e.code === 'ArrowLeft') {
-                btnPrev.click();
-            }
-        });
+              // Add class if text is long
+              if (termText.length > 50) frontContent.classList.add('long-text');
+          } else {
+              frontContent.innerHTML = defText;
+              backContent.innerHTML = termDisplay;
+               // Add class if text is long
+               if (defText.length > 100) frontContent.classList.add('long-text');
+          }
 
-        // Initialize
-        if (terms.length > 0) {
-            updateCard();
-        } else {
-            frontContent.textContent = "No terms found for your selection.";
-            flashcard.style.pointerEvents = "none";
-        }
-        
-        // --- Music Player Logic ---
-        const player = document.getElementById('music-player');
-        const playerToggle = document.getElementById('player-toggle');
-        const btnPlay = document.getElementById('btn-play-pause');
-        const btnMusicNext = document.getElementById('btn-music-next');
-        const btnMusicPrev = document.getElementById('btn-music-prev');
-        const trackNameEl = document.getElementById('track-name');
-        const volumeSlider = document.getElementById('volume-slider');
-        
-        // Simple list of royalty-free lofi/study tracks (using placeholders or external URLs if valid)
-        // Using some reliable CDN or placeholder for demo logic. 
-        // Ideally these should be local static files or valid external URLs.
-        // For this implementation, I will use a simple array structure.
-        const playlist = [
-            { name: "Lofi Chill 1", src: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Elips.mp3" },
-            { name: "Focus Flow", src: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Algorithms.mp3" },
-            { name: "Study Beats", src: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Shipping_Lanes.mp3" }
-        ];
-        
-        let trackIndex = 0;
-        let isPlaying = false;
-        const audio = new Audio();
-        audio.volume = 0.5;
+          // Reset Flip
+          isFlipped = false;
+          flashcard.classList.remove('flipped');
 
-        playerToggle.addEventListener('click', () => {
-            player.classList.toggle('minimized');
-        });
+          // Update UI Controls
+          btnPrev.disabled = currentIndex === 0;
+          btnNext.innerHTML = currentIndex === terms.length - 1 ? 'Finish <i class="fa-solid fa-flag-checkered"></i>' : 'Keyingisi <i class="fa-solid fa-arrow-right"></i>';
 
-        function loadTrack(index) {
-            audio.src = playlist[index].src;
-            trackNameEl.textContent = playlist[index].name;
-        }
+          // Update Progress
+          const progress = ((currentIndex + 1) / terms.length) * 100;
+          progressFill.style.width = `${progress}%`;
+          currentCountEl.textContent = currentIndex + 1;
+      }
 
-        function togglePlay() {
-            if (isPlaying) {
-                audio.pause();
-                btnPlay.innerHTML = '<i class="fa-solid fa-play"></i>';
-                player.classList.remove('playing');
-            } else {
-                audio.play().catch(e => console.log("Audio play failed (interaction needed)", e));
-                btnPlay.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                player.classList.add('playing');
-            }
-            isPlaying = !isPlaying;
-        }
-        
-        btnPlay.addEventListener('click', togglePlay);
-        
-        btnMusicNext.addEventListener('click', () => {
-            trackIndex = (trackIndex + 1) % playlist.length;
-            loadTrack(trackIndex);
-            if (isPlaying) audio.play();
-        });
-        
-        btnMusicPrev.addEventListener('click', () => {
-            trackIndex = (trackIndex - 1 + playlist.length) % playlist.length;
-            loadTrack(trackIndex);
-            if (isPlaying) audio.play();
-        });
-        
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value;
-        });
-        
-        // Auto play next
-        audio.addEventListener('ended', () => {
-            trackIndex = (trackIndex + 1) % playlist.length;
-            loadTrack(trackIndex);
-            audio.play();
-        });
+      // Interaction
+      flashcard.addEventListener('click', () => {
+          isFlipped = !isFlipped;
+          flashcard.classList.toggle('flipped');
+      });
 
-        // Init Player
-        loadTrack(0);
-    });
+      btnNext.addEventListener('click', () => {
+          if (currentIndex < terms.length - 1) {
+              currentIndex++;
+              updateCard();
+          } else {
+              // Return to setup or glossary
+              window.location.href = "{% url 'glossary' %}"; // Or a results page
+          }
+      });
+
+      btnPrev.addEventListener('click', () => {
+          if (currentIndex > 0) {
+              currentIndex--;
+              updateCard();
+          }
+      });
+
+      // Keyboard Support
+      document.addEventListener('keydown', (e) => {
+          if (e.code === 'Space') {
+              e.preventDefault();
+              flashcard.click();
+          } else if (e.code === 'ArrowRight') {
+              btnNext.click();
+          } else if (e.code === 'ArrowLeft') {
+              btnPrev.click();
+          }
+      });
+
+      // Initialize
+      if (terms.length > 0) {
+          updateCard();
+      } else {
+          frontContent.textContent = "No terms found for your selection.";
+          flashcard.style.pointerEvents = "none";
+      }
+
+      // --- Music Player Logic ---
+      const player = document.getElementById('music-player');
+      const playerToggle = document.getElementById('player-toggle');
+      const btnPlay = document.getElementById('btn-play-pause');
+      const btnMusicNext = document.getElementById('btn-music-next');
+      const btnMusicPrev = document.getElementById('btn-music-prev');
+      const trackNameEl = document.getElementById('track-name');
+      const volumeSlider = document.getElementById('volume-slider');
+
+      // Simple list of royalty-free lofi/study tracks (using placeholders or external URLs if valid)
+      // Using some reliable CDN or placeholder for demo logic.
+      // Ideally these should be local static files or valid external URLs.
+      // For this implementation, I will use a simple array structure.
+      const playlist = [
+          { name: "Lofi Chill 1", src: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Elips.mp3" },
+          { name: "Focus Flow", src: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Algorithms.mp3" },
+          { name: "Study Beats", src: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Shipping_Lanes.mp3" }
+      ];
+
+      let trackIndex = 0;
+      let isPlaying = false;
+      const audio = new Audio();
+      audio.volume = 0.5;
+
+      playerToggle.addEventListener('click', () => {
+          player.classList.toggle('minimized');
+      });
+
+      function loadTrack(index) {
+          audio.src = playlist[index].src;
+          trackNameEl.textContent = playlist[index].name;
+      }
+
+      function togglePlay() {
+          if (isPlaying) {
+              audio.pause();
+              btnPlay.innerHTML = '<i class="fa-solid fa-play"></i>';
+              player.classList.remove('playing');
+          } else {
+              audio.play().catch(e => console.log("Audio play failed (interaction needed)", e));
+              btnPlay.innerHTML = '<i class="fa-solid fa-pause"></i>';
+              player.classList.add('playing');
+          }
+          isPlaying = !isPlaying;
+      }
+
+      btnPlay.addEventListener('click', togglePlay);
+
+      btnMusicNext.addEventListener('click', () => {
+          trackIndex = (trackIndex + 1) % playlist.length;
+          loadTrack(trackIndex);
+          if (isPlaying) audio.play();
+      });
+
+      btnMusicPrev.addEventListener('click', () => {
+          trackIndex = (trackIndex - 1 + playlist.length) % playlist.length;
+          loadTrack(trackIndex);
+          if (isPlaying) audio.play();
+      });
+
+      volumeSlider.addEventListener('input', (e) => {
+          audio.volume = e.target.value;
+      });
+
+      // Auto play next
+      audio.addEventListener('ended', () => {
+          trackIndex = (trackIndex + 1) % playlist.length;
+          loadTrack(trackIndex);
+          audio.play();
+      });
+
+      // Init Player
+      loadTrack(0);
+  });
 </script>
 {% endblock content %}

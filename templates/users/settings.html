@@ -1,0 +1,350 @@
+{% extends '../shared/_base.html' %}
+{% load i18n %}
+{% block title %} Sozlamalar {% endblock %}
+{% block content %}
+<main class="container">
+    <div class="settings-wrapper">
+        <h1 class="settings-title"><i class="fa-solid fa-gear"></i> Sozlamalar</h1>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %}"></i> {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="settings-layout">
+            <div class="settings-sidebar">
+                <div class="settings-tabs">
+                    <button class="tab-pill active" data-target="profile-tab"><i class="fa-solid fa-user"></i> Umumiy</button>
+                    <button class="tab-pill" data-target="password-tab"><i class="fa-solid fa-lock"></i> Parol</button>
+                    <button class="tab-pill" data-target="language-tab"><i class="fa-solid fa-globe"></i> Til sozlamalari</button>
+                </div>
+            </div>
+
+            <div class="settings-content">
+            <!-- Profile Settings -->
+            <div class="settings-card tab-content active" id="profile-tab">
+                <h2 class="card-title"><i class="fa-solid fa-user"></i> Shaxsiy ma'lumotlar</h2>
+                <form method="POST" action="{% url 'settings' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="profile_update">
+                    <div class="form-group">
+                        <label>Ism</label>
+                        {{ profile_form.first_name }}
+                        {% if profile_form.first_name.errors %}
+                            <div class="error-text">{% for error in profile_form.first_name.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>Familiya</label>
+                        {{ profile_form.last_name }}
+                        {% if profile_form.last_name.errors %}
+                            <div class="error-text">{% for error in profile_form.last_name.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        {{ profile_form.email }}
+                        {% if profile_form.email.errors %}
+                            <div class="error-text">{% for error in profile_form.email.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Saqlash</button>
+                </form>
+            </div>
+
+            <!-- Password Settings -->
+            <div class="settings-card tab-content" id="password-tab">
+                <h2 class="card-title"><i class="fa-solid fa-lock"></i> Parolni o'zgartirish</h2>
+                <form method="POST" action="{% url 'settings' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="password_update">
+                    
+                    {% for field in password_form %}
+                    <div class="form-group">
+                        <label>{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="error-text">
+                                {% for error in field.errors %}{{ error }}{% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn-submit btn-danger">Parolni yangilash</button>
+                </form>
+            </div>
+            <!-- Language Settings -->
+            <div class="settings-card tab-content" id="language-tab">
+                <h2 class="card-title"><i class="fa-solid fa-globe"></i> Platforma tili</h2>
+                <form action="{% url 'set_language' %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ redirect_to }}">
+                    
+                    <div class="form-group">
+                        <label>Tilni tanlang</label>
+                        <select name="language" class="form-select">
+                            {% get_current_language as LANGUAGE_CODE %}
+                            {% get_available_languages as languages %}
+                            {% get_language_info_list for languages as languages %}
+                            {% for language in languages %}
+                                <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %}selected{% endif %}>
+                                    {{ language.name_local }} ({{ language.code }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Tilni saqlash</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabs = document.querySelectorAll('.tab-pill');
+        const contents = document.querySelectorAll('.tab-content');
+        
+        // Auto-select tab with errors if present
+        const passwordTab = document.getElementById('password-tab');
+        const profileTab = document.getElementById('profile-tab');
+        let activeTabTarget = null;
+        
+        if (passwordTab && passwordTab.querySelector('.error-text')) {
+            activeTabTarget = 'password-tab';
+        } else if (profileTab && profileTab.querySelector('.error-text')) {
+             activeTabTarget = 'profile-tab';
+        }
+
+        if (activeTabTarget) {
+            tabs.forEach(t => {
+                if(t.getAttribute('data-target') === activeTabTarget) t.classList.add('active');
+                else t.classList.remove('active');
+            });
+            contents.forEach(c => {
+                if(c.id === activeTabTarget) c.classList.add('active');
+                else c.classList.remove('active');
+            });
+        }
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.getAttribute('data-target')).classList.add('active');
+            });
+        });
+    });
+</script>
+
+<style>
+    .settings-wrapper {
+        max-width: 900px;
+    }
+    .settings-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .settings-title i {
+        color: var(--theme-blue);
+    }
+    .settings-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+    @media (min-width: 768px) {
+        .settings-layout {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+    }
+    .settings-sidebar {
+        min-width: 250px;
+        flex-shrink: 0;
+    }
+    .settings-content {
+        flex-grow: 1;
+        width: 100%;
+    }
+    .settings-tabs {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: var(--bg-panel);
+        padding: 15px;
+        border-radius: var(--card-radius);
+        border: 2px solid var(--border-color);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .tab-pill {
+        padding: 14px 20px;
+        background: transparent;
+        border: none;
+        border-radius: var(--btn-radius);
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        color: var(--text-medium);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-family: inherit;
+    }
+    .tab-pill.active {
+        background: var(--theme-blue);
+        color: white;
+        box-shadow: 0 4px 0 var(--theme-blue-dark);
+        transform: translateY(-2px);
+    }
+    .tab-pill.active:active {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+    .tab-pill:hover:not(.active) {
+        background: var(--bg-app);
+        color: var(--text-dark);
+    }
+    .tab-content {
+        display: none;
+        animation: fadeIn 0.4s ease forwards;
+        opacity: 0;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .settings-card {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: var(--card-radius);
+        padding: 30px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--border-color);
+    }
+    .card-title i {
+        color: var(--theme-purple);
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: 700;
+        color: var(--text-medium);
+        margin-bottom: 8px;
+    }
+    /* Style inputs the same as main web app */
+    .form-group input, 
+    .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: var(--btn-radius);
+        background: var(--bg-app);
+        color: var(--text-dark);
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: inherit;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        appearance: none; /* for select */
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: var(--theme-blue);
+        box-shadow: 0 0 0 3px rgba(61, 133, 198, 0.2);
+        outline: none;
+    }
+    .btn-submit {
+        background: var(--theme-blue);
+        color: white;
+        border: none;
+        padding: 14px 25px;
+        border-radius: var(--btn-radius);
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 4px 0 var(--theme-blue-dark);
+        font-family: inherit;
+        margin-top: 10px;
+    }
+    .btn-submit:active {
+        transform: translateY(4px);
+        box-shadow: none;
+    }
+    .btn-submit.btn-danger {
+        background: var(--theme-red);
+        box-shadow: 0 4px 0 var(--theme-red-dark);
+    }
+    .btn-submit.btn-danger:active {
+        transform: translateY(4px);
+        box-shadow: none;
+    }
+    #password-tab .card-title i {
+        color: var(--theme-red);
+    }
+    #language-tab .card-title i {
+        color: var(--theme-green);
+    }
+    .messages {
+        margin-bottom: 30px;
+    }
+    .alert {
+        padding: 15px 20px;
+        border-radius: var(--btn-radius);
+        margin-bottom: 15px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.05rem;
+    }
+    .alert-success {
+        background: var(--theme-green-light);
+        color: var(--theme-green-dark);
+        border: 2px solid var(--theme-green);
+    }
+    .alert-error {
+        background: var(--theme-red-light);
+        color: var(--theme-red-dark);
+        border: 2px solid var(--theme-red);
+    }
+    .error-text {
+        color: var(--theme-red);
+        font-size: 0.85rem;
+        margin-top: 5px;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
