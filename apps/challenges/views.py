@@ -1,18 +1,26 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q
+from django.db.models import Q, Exists, OuterRef
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from .models import Challenge, Submission, Tag, Topic
+from .models import Challenge, Submission, Tag, Topic, SavedChallenge
 from .forms import ChallangeSubmissionForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from .utils.code_runners.python.python_judge import judge_submission
+import json
 
 
 
 def challenge_list(request):
     challenges = Challenge.objects.all().select_related('topic').prefetch_related('tags')
+
+    if request.user.is_authenticated:
+        saved_subquery = SavedChallenge.objects.filter(
+            user=request.user,
+            challenge=OuterRef('pk')
+        )
+        challenges = challenges.annotate(is_saved=Exists(saved_subquery))
 
     search_query = request.GET.get('q', '')
     if search_query:
@@ -47,17 +55,9 @@ def challenge_list(request):
     context['challenges'] = page_obj
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        html = render_to_string('challenges/includes/challenge_card.html', {'challenges': page_obj}, request=request)
-        # We need to loop manually or pass list, but wait, render_to_string with just the template expects the context to match.
-        # The partial is a SINGLE card, but we want to render MULTIPLE. 
-        # Correct approach: loop here or use a list template. 
-        # Making a loop here:
-        html_parts = []
-        for challenge in page_obj:
-            html_parts.append(render_to_string('challenges/includes/challenge_card.html', {'challenge': challenge}, request=request))
-        
+        html = render_to_string('challenges/includes/challenge_list_partial.html', {'challenges': page_obj}, request=request)
         return JsonResponse({
-            'html': "".join(html_parts),
+            'html': html,
             'has_next': page_obj.has_next()
         })
 
@@ -128,3 +128,21 @@ def run_code_view(request, slug):
     result = judge_submission(code, challenge.sample_tests, challenge.time_limit)
     
     return JsonResponse(result)
+
+@login_required
+@require_POST
+def toggle_challenge_save(request):
+    data = json.loads(request.body)
+    slug = data.get('slug')
+    
+    challenge = get_object_or_404(Challenge, slug=slug)
+    
+    saved_challenge, created = SavedChallenge.objects.get_or_create(user=request.user, challenge=challenge)
+    
+    if not created:
+        saved_challenge.delete()
+        saved = False
+    else:
+        saved = True
+        
+    return JsonResponse({'saved': saved})

@@ -35,7 +35,6 @@
                                             {% endif %}
                                         </div>
                                     </div>
-                                    <i class="fa-solid fa-chevron-right chevron-icon"></i>
                                 </a>
                             {% endfor %}
                         </div>
@@ -60,7 +59,7 @@
                                         <h3>{{ saved.term.term }}</h3>
                                     </div>
                                     <p class="term-definition">{{ saved.term.short_definition }}</p>
-                                    <a href="{% url 'term' saved.term.slug %}" class="term-link">Batafsil <i class="fa-solid fa-arrow-right"></i></a>
+                                    <a href="{% url 'term' saved.term.slug %}" class="term-link">Batafsil</a>
                                 </div>
                             {% endfor %}
                         </div>
@@ -292,16 +291,6 @@
         margin-right: 10px;
         opacity: 0.5;
     }
-    .chevron-icon {
-        color: var(--text-medium);
-        font-size: 1.2rem;
-        transition: transform 0.3s;
-    }
-    .grid-item:hover .chevron-icon {
-        color: var(--theme-blue);
-        transform: translateX(5px);
-    }
-    
     /* Term Items */
     .term-item {
         padding: 20px;

@@ -1,8 +1,8 @@
 <div class="problem-card">
     <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
     <div class="problem-info">
-        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ forloop.counter }}.
-            {{ challenge.title }}</a>
+        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}.
+            {{ challenge.title|capfirst}}</a>
         <div class="problem-meta">
             {% if challenge.difficulty == 'easy' %}
             <span class="badge easy">Oson</span>
@@ -20,6 +20,5 @@
                 <i class="{% if challenge.is_saved %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
             </button>
         {% endif %}
-        <a href="{% url 'challenge_detail' challenge.slug %}" class="btn-action review">Solve</a>
     </div>
 </div>

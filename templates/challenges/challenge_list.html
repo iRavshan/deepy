@@ -110,6 +110,43 @@
                 spinner.style.display = 'none';
             });
         }
+
+        // Bookmark Logic
+        document.addEventListener('click', function(e) {
+            const btn = e.target.closest('.bookmark-btn');
+            if (!btn) return;
+            
+            e.preventDefault();
+
+            const slug = btn.dataset.slug;
+            const icon = btn.querySelector('i');
+
+            fetch('{% url "toggle_challenge_save" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ slug: slug })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.saved) {
+                    btn.classList.add('active');
+                    icon.classList.remove('fa-regular');
+                    icon.classList.add('fa-solid');
+                } else {
+                    btn.classList.remove('active');
+                    icon.classList.remove('fa-solid');
+                    icon.classList.add('fa-regular');
+                }
+                
+                // Animate
+                icon.style.transform = 'scale(1.2)';
+                setTimeout(() => icon.style.transform = 'scale(1)', 200);
+            })
+            .catch(console.error);
+        });
     });
 
     // Add keyframes for animation if not exists
