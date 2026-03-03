@@ -64,14 +64,14 @@
         </div>
         <div class="nav-center">
             <a href="{% if prev_challenge %}{% url 'challenge_detail' prev_challenge.slug %}{% else %}#{% endif %}"
-                class="nav-control-btn {% if not prev_challenge %}disabled{% endif %}" title="Previous Challenge">
+                class="nav-control-btn {% if not prev_challenge %}disabled{% endif %}" title="Avvalgi masala">
                 <i class="fa-solid fa-chevron-left"></i>
             </a>
-            <a href="{% url 'challenge_random' %}" class="nav-control-btn" title="Random Challenge">
+            <a href="{% url 'challenge_random' %}" class="nav-control-btn" title="Tasodifiy masala">
                 <i class="fa-solid fa-shuffle"></i>
             </a>
             <a href="{% if next_challenge %}{% url 'challenge_detail' next_challenge.slug %}{% else %}#{% endif %}"
-                class="nav-control-btn {% if not next_challenge %}disabled{% endif %}" title="Next Challenge">
+                class="nav-control-btn {% if not next_challenge %}disabled{% endif %}" title="Keyingi masala">
                 <i class="fa-solid fa-chevron-right"></i>
             </a>
         </div>
@@ -129,19 +129,40 @@
                                 {{ challenge.input_description|safe }}
                             </div>
                             <div class="output-box">
-                                <h3 class="output-box-title"">Chiquvchi ma'lumot:</h3>
+                                <h3 class="output-box-title">Chiquvchi ma'lumot:</h3>
                                 {{ challenge.output_description|safe }}
                             </div>
                         </div>
                         
                         {% for sample in challenge.sample_tests %}
-                        <h3>Namuna {{ forloop.counter }}:</h3>
-                        <div class="example-box">
-                            <div><span class="label">Input:</span><span class="example-value">{{ sample.input }}</span></div>
-                            <div><span class="label">Output:</span><span class="example-value">{{ sample.expected }}</span></div>
-                        </div>
+                        <h3 class="example-box-title">Namuna {{ forloop.counter }}:</h3>
+                        <table class="example-table">
+                            <thead>
+                                <tr>
+                                    <th>Input</th>
+                                    <th>Output</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="example-value">{{ sample.input }}</span>
+                                            <button type="button" class="copy-btn" onclick="copyText(this, '{{ sample.input|escapejs }}')" title="Nusxalash"><i class="fa-regular fa-copy"></i></button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="example-value">{{ sample.expected }}</span>
+                                            <button type="button" class="copy-btn" onclick="copyText(this, '{{ sample.expected|escapejs }}')" title="Nusxalash"><i class="fa-regular fa-copy"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         {% endfor %}
                     </div>
+                </div>
 
                     <div id="tab-note" class="tab-content">
                         <div id="noteEditor" class="note-editor">
@@ -150,7 +171,8 @@
                     </div>
 
                     <div id="tab-hints" class="tab-content">
-                        <h2 style="margin-bottom: 20px;">Hints</h2>
+                        <h2 style="margin-bottom: 20px;">Yordam</h2>
+                        {% if challenge.hints.all %}
                         {% for hint in challenge.hints.all %}
                         <div class="hint-card">
                             <i class="fa-solid fa-lightbulb hint-icon"></i>
@@ -162,14 +184,17 @@
                             </div>
                         </div>
                         {% endfor %}
+                        {% else %}
+                        <p style="margin: 0; font-size: 0.95rem;">Ushbu masala uchun yordam mavjud emas</p>
+                        {% endif %}
                     </div>
 
                     <div id="tab-tests" class="tab-content">
-                        <h2 style="margin-bottom: 20px;">Testcase</h2>
+                        <h2 style="margin-bottom: 20px;">Sinovlar</h2>
                         <div class="test-case-selector">
                             {% for sample in challenge.sample_tests %}
                             <div class="case-pill {% if forloop.counter == 1 %}active{% endif %}"
-                                onclick="switchTestCase({{ forloop.counter }})">Case {{ forloop.counter }}</div>
+                                onclick="switchTestCase({{ forloop.counter }})">Test {{ forloop.counter }}</div>
                             {% endfor %}
                         </div>
                         {% for sample in challenge.sample_tests %}
@@ -188,7 +213,7 @@
                     </div>
 
                     <div id="tab-subs" class="tab-content">
-                        <h2 style="margin-bottom: 20px;">My Submissions</h2>
+                        <h2 style="margin-bottom: 20px;">Urinishlar</h2>
                         {% if user.is_authenticated %}
                         {% if submissions %}
                         <div class="submission-item">
@@ -196,10 +221,10 @@
                             <div class="sub-time">Just now</div>
                         </div>
                         {% else %}
-                        <p>You haven't submit any solution</p>
+                        <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
                         {% endif %}
                         {% else %}
-                        <p>Please, <a href="{% url 'login' %}">log in</a> your account to see your submissions.</p>
+                        <p>Urinishlaringizni ko'rish uchun <a href="{% url 'login' %}">hisobingizni faollashtiring</a></p>
                         {%endif %}
                     </div>
                 </div>
@@ -209,7 +234,7 @@
 
         <section class="panel right-panel" id="rightPanel">
             <div class="editor-header">
-                <h3 style="font-weight: 800;">Code Editor</h3>
+                <h3 style="font-weight: 800;">Yechimingiz</h3>
                 <select class="lang-select">
                     <option value="python">Python 3</option>
                 </select>
@@ -219,14 +244,31 @@
                 <div class="editor-container-stack" id="monaco-editor-container"></div>
                 <input type="hidden" name="code" id="hidden_code">
                 <div class="buttons-row">
-                    <button type="button" class="btn-3d btn-blue" id="runBtn"><i class="fa-solid fa-play"></i>Run
-                        Code</button>
-                    <button type="button" class="btn-3d btn-green" id="submitBtn"><i
-                            class="fa-solid fa-check"></i>Submit</button>
+                    <button type="button" class="btn-3d btn-blue" id="runBtn"><i class="fa-solid fa-play"></i>Yurgizish</button>
+                    <button type="button" class="btn-3d btn-green" id="submitBtn"><i class="fa-solid fa-cloud-arrow-up"></i>Yuborish</button>
                 </div>
             </form>
         </section>
     </main>
+    
+    <!-- Feedback Overlay -->
+    <div id="feedback-overlay" class="hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: var(--bg-panel, #fff); padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div id="card-success" class="hidden" style="display: none;">
+                <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--theme-green, green); margin-bottom: 15px;"></i>
+                <h2 style="color: var(--theme-green, green); margin-bottom: 10px;">Muvaffaqiyatli</h2>
+                <p id="success-msg" style="font-weight: bold;"></p>
+            </div>
+            <div id="card-fail" class="hidden" style="display: none;">
+                <i class="fa-solid fa-circle-xmark" style="font-size: 3rem; color: var(--theme-red, red); margin-bottom: 15px;"></i>
+                <h2 style="color: var(--theme-red, red); margin-bottom: 10px;">Xatolik</h2>
+                <p id="fail-msg" style="font-weight: bold;"></p>
+            </div>
+            <pre id="error-console" style="display: none; background: #eee; padding: 15px; border-radius: 8px; overflow-x: auto; text-align: left; margin-top: 15px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;"></pre>
+            <button onclick="document.getElementById('feedback-overlay').style.display='none'; document.getElementById('feedback-overlay').classList.add('hidden');" style="margin-top: 25px; padding: 12px 30px; border-radius: 8px; border: none; background: var(--theme-blue, blue); color: white; font-weight: bold; cursor: pointer; display: inline-block;">Yopish</button>
+        </div>
+    </div>
+
     {% block extra_js %}{% endblock %}
     <style>
         :root {
@@ -538,22 +580,70 @@
         }
 
         .input-box .input-box-title,
-        .output-box .output-box-title {
+        .output-box .output-box-title,
+        .example-box-title {
             margin-bottom: 5px;
+            color: var(--theme-blue-dark);
         }
 
-        .example-box {
-            background: #f7f7f7;
-            padding: 20px;
-            border-radius: var(--btn-radius);
-            font-family: monospace;
-            margin-bottom: 25px;
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 25px 0;
             border: 2px solid var(--border-color);
-            margin-top: 12px;
+            background: var(--border-color);
+            border-radius: var(--btn-radius);
+            table-layout: fixed;
+            overflow: hidden;
         }
 
-        .example-box div {
-            margin-bottom: 8px;
+        .example-table th, .example-table td {
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            text-align: left;
+        }
+
+        .example-table th {
+            font-family: 'Sora';
+            font-weight: 800;
+            color: var(--text-dark);
+            background: var(--bg-panel);
+            font-size: 0.95rem;
+        }
+
+        .example-table td {
+            font-family: monospace;
+            vertical-align: top;
+            background: var(--bg-app);
+            word-break: break-all;
+        }
+
+        .example-table .cell-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .example-table .example-value {
+            font-size: 16px;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-medium);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .copy-btn:hover {
+            background: rgba(0,0,0,0.05);
+            color: var(--text-dark);
         }
 
         .label {
@@ -561,10 +651,6 @@
             color: var(--text-dark);
             font-family: 'Sora';
             margin-right: 5px;
-        }
-
-        .example-box .example-value {
-            font-size: 16px;
         }
 
         /* --- Hints Styling --- */
@@ -949,6 +1035,25 @@
                 }
             });
         });
+
+        // --- COPY TO CLIPBOARD ---
+        function copyText(btnElement, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = btnElement.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-copy', 'fa-regular');
+                    icon.classList.add('fa-check', 'fa-solid');
+                    icon.style.color = "var(--theme-green)";
+                    setTimeout(() => {
+                        icon.classList.remove('fa-check', 'fa-solid');
+                        icon.classList.add('fa-copy', 'fa-regular');
+                        icon.style.color = "";
+                    }, 2000);
+                }
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
     </script>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
@@ -1078,6 +1183,15 @@
         runBtn.addEventListener('click', () => executeCode("{% url 'run_code' challenge.slug %}", false));
         submitBtn.addEventListener('click', () => executeCode("{% url 'judge_submission' challenge.slug %}", true));
 
+        function triggerFeedback(type) {
+            document.getElementById('card-success').style.display = 'none';
+            document.getElementById('card-fail').style.display = 'none';
+            if (type === 'success') {
+                document.getElementById('card-success').style.display = 'block';
+            } else {
+                document.getElementById('card-fail').style.display = 'block';
+            }
+        }
 
         function handleResult(data, isSubmission) {
             const successOverlay = document.getElementById('card-success');
@@ -1111,5 +1225,4 @@
         }
     </script>
 </body>
-
 </html>
