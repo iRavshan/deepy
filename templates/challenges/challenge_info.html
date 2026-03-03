@@ -1,0 +1,278 @@
+{% extends '../shared/_base.html' %}
+{% block title %} Masalalar Sahifasi Haqida {% endblock %}
+{% block content %}
+{% load static %}
+<main class="container">
+    <div class="info-page">
+        <a href="{% url 'challenge_list' %}" class="info-back-link"><i class="fa-solid fa-arrow-left"></i> Masalalarga qaytish</a>
+
+        <h1 class="info-page-title">Masalalar Sahifasi Haqida</h1>
+        <p class="info-page-subtitle">Bu sahifa masalalarni yechish jarayoni va natijalar haqida batafsil ma'lumot beradi.</p>
+
+        <!-- What is this page -->
+        <section class="info-section">
+            <div class="info-section-icon"><i class="fa-solid fa-laptop-code"></i></div>
+            <div>
+                <h2>Sahifa nima uchun?</h2>
+                <p>
+                    Masalalar sahifasi — bu siz dasturlash masalalarini yechishingiz mumkin bo'lgan interaktiv muhit. 
+                    Har bir masalada siz quyidagilarni topasiz:
+                </p>
+                <ul>
+                    <li><strong>Izoh</strong> — masalaning to'liq tavsifi, kiruvchi va chiquvchi ma'lumotlar formati va namunaviy testlar.</li>
+                    <li><strong>Qaydlar</strong> — masala haqidagi shaxsiy qaydlaringizni yozish uchun joy.</li>
+                    <li><strong>Yordam</strong> — masalani yechishda sizga yordam beradigan ko'rsatmalar (hints).</li>
+                    <li><strong>Sinovlar</strong> — masalaning namunaviy kiruvchi/chiquvchi ma'lumotlarini ko'rish.</li>
+                    <li><strong>Urinishlar</strong> — avvalgi yechimlaringiz tarixi.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- How to solve -->
+        <section class="info-section">
+            <div class="info-section-icon"><i class="fa-solid fa-code"></i></div>
+            <div>
+                <h2>Qanday yechish kerak?</h2>
+                <p>
+                    Sahifaning o'ng tomonidagi kod muharrirga yechimingizni Python tilida yozing. 
+                    Keyin quyidagi tugmalardan foydalaning:
+                </p>
+                <ul>
+                    <li><strong>Run</strong> — kodingizni namunaviy testlar ustida sinab ko'rish. Natija faqat namunaviy testlarga asoslanadi.</li>
+                    <li><strong>Yuborish (Submit)</strong> — kodingizni barcha yashirin testlar ustida tekshirish. Agar barcha testlardan o'tsa, masala "yechilgan" deb hisoblanadi.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Error Types -->
+        <section class="info-section">
+            <div class="info-section-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div>
+                <h2>Xatolik turlari</h2>
+                <p>Kodingiz tekshirilganida quyidagi natijalar bo'lishi mumkin:</p>
+
+                <div class="error-type-card accepted">
+                    <div class="error-type-badge"><i class="fa-solid fa-circle-check"></i> Accepted</div>
+                    <p>Kodingiz barcha testlardan muvaffaqiyatli o'tdi. Tabriklaymiz!</p>
+                </div>
+
+                <div class="error-type-card wrong-answer">
+                    <div class="error-type-badge"><i class="fa-solid fa-circle-xmark"></i> Wrong Answer</div>
+                    <p>Kodingiz ishladi, lekin biror testda kutilgan natijadan farqli javob berdi. Algoritmingizni qayta tekshiring.</p>
+                </div>
+
+                <div class="error-type-card runtime-error">
+                    <div class="error-type-badge"><i class="fa-solid fa-bug"></i> Runtime Error</div>
+                    <p>Kodingiz ishlash davomida xatolikka duch keldi (masalan: ZeroDivisionError, IndexError va h.k.). Kodingizda istisno holatlari mavjudligini tekshiring.</p>
+                </div>
+
+                <div class="error-type-card tle">
+                    <div class="error-type-badge"><i class="fa-solid fa-clock"></i> Time Limit Exceeded (TLE)</div>
+                    <p>Kodingiz belgilangan vaqt chegarasida ishlamadi. Algoritmingizni samaraliroq qilishga harakat qiling — masalan, O(n²) dan O(n log n) ga o'tish.</p>
+                </div>
+
+                <div class="error-type-card compilation-error">
+                    <div class="error-type-badge"><i class="fa-solid fa-file-circle-exclamation"></i> Compilation / Syntax Error</div>
+                    <p>Kodingizda sintaksis xatolik mavjud. Qavslar, ikki nuqta (:) va indentatsiya (bo'sh joy)larni tekshiring.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Font size control info -->
+        <section class="info-section">
+            <div class="info-section-icon"><i class="fa-solid fa-text-height"></i></div>
+            <div>
+                <h2>Shrift hajmini sozlash</h2>
+                <p>
+                    Masala sahifasining yuqori qismidagi <strong>−</strong> va <strong>+</strong> tugmalar yordamida tavsif matnining shrift hajmini
+                    14px dan 24px gacha sozlashingiz mumkin. O'zgartirishlar eslab qolinadi va keyingi safar ham saqlanadi.
+                </p>
+            </div>
+        </section>
+
+        <!-- Difficulty levels -->
+        <section class="info-section">
+            <div class="info-section-icon"><i class="fa-solid fa-signal"></i></div>
+            <div>
+                <h2>Qiyinlik darajalari</h2>
+                <div class="difficulty-row">
+                    <span class="badge easy">Oson</span>
+                    <span>— Oddiy matematik amallar yoki oddiy sikllar bilan yechiladigan masalalar.</span>
+                </div>
+                <div class="difficulty-row">
+                    <span class="badge medium">O'rta</span>
+                    <span>— Algoritmik fikrlashni talab qiladigan masalalar.</span>
+                </div>
+                <div class="difficulty-row">
+                    <span class="badge hard">Qiyin</span>
+                    <span>— Murakkab algoritmlar va ma'lumotlar tuzilmalarini bilishni talab qiladigan masalalar.</span>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock content %}
+
+{% block extra_js %}
+<style>
+    .info-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+    }
+
+    .info-back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-medium);
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+    }
+
+    .info-back-link:hover {
+        color: var(--theme-blue);
+    }
+
+    .info-page-title {
+        font-size: 2rem;
+        font-weight: 900;
+        font-family: var(--primary-font);
+        margin-bottom: 10px;
+    }
+
+    .info-page-subtitle {
+        color: var(--text-medium);
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 40px;
+        line-height: 1.6;
+    }
+
+    .info-section {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 40px;
+        padding: 25px;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .info-section-icon {
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        background: var(--theme-blue-light);
+        color: var(--theme-blue);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .info-section h2 {
+        font-size: 1.3rem;
+        font-weight: 800;
+        font-family: var(--primary-font);
+        margin-bottom: 10px;
+    }
+
+    .info-section p {
+        line-height: 1.7;
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    .info-section ul {
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+
+    .info-section ul li {
+        margin-bottom: 8px;
+        line-height: 1.6;
+        font-weight: 500;
+    }
+
+    /* Error type cards */
+    .error-type-card {
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border: 2px solid var(--border-color);
+    }
+
+    .error-type-card p {
+        margin: 5px 0 0 0;
+        font-size: 0.95rem;
+    }
+
+    .error-type-badge {
+        font-weight: 800;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .error-type-card.accepted {
+        background: var(--theme-green-light);
+        border-color: var(--theme-green);
+    }
+    .error-type-card.accepted .error-type-badge {
+        color: var(--theme-green-dark);
+    }
+
+    .error-type-card.wrong-answer {
+        background: var(--theme-red-light);
+        border-color: var(--theme-red);
+    }
+    .error-type-card.wrong-answer .error-type-badge {
+        color: var(--theme-red-dark);
+    }
+
+    .error-type-card.runtime-error {
+        background: var(--theme-orange-light);
+        border-color: var(--theme-orange);
+    }
+    .error-type-card.runtime-error .error-type-badge {
+        color: var(--theme-orange-dark);
+    }
+
+    .error-type-card.tle {
+        background: var(--theme-blue-light);
+        border-color: var(--theme-blue);
+    }
+    .error-type-card.tle .error-type-badge {
+        color: var(--theme-blue-dark);
+    }
+
+    .error-type-card.compilation-error {
+        background: #f3f0ff;
+        border-color: #a78bfa;
+    }
+    .error-type-card.compilation-error .error-type-badge {
+        color: #6d28d9;
+    }
+
+    .difficulty-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+        .info-section {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}

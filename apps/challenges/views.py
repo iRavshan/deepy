@@ -96,6 +96,10 @@ def challenge_random(request):
     return redirect('challenge_detail', slug=random_slug)
 
 
+def challenge_info(request):
+    return render(request, 'challenges/challenge_info.html')
+
+
 @login_required
 @require_POST
 def judge_submission_view(request, slug):

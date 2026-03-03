@@ -1,1228 +1,1541 @@
 {% load i18n %}
-<!DOCTYPE html>
-{% load static %}
-{% load humanize %}
+<!doctype html>
+{% load static %} {% load humanize %}
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ challenge.title }} - Deepland</title>
     {% block mathjax %}
     <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [["$", "$"], ["\\(", "\\)"]],
-                displayMath: [["$$", "$$"], ["\\[", "\\]"]],
-            },
-            svg: {
-                fontCache: "global",
-            },
-        };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
-    {% endblock %}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static '/css/style.css' %}" />
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "name": "Deepland",
-          "url": "{{ request.scheme }}://{{ request.get_host }}"
+      window.MathJax = {
+        tex: {
+          inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"],
+          ],
+          displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"],
+          ],
         },
-        {
-          "@type": "SoftwareSourceCode",
-          "name": "{{ challenge.title }}",
-          "description": "{{ challenge.description|striptags|escapejs }}",
-          "programmingLanguage": "Python",
-          "author": {
-            "@type": "Organization",
-            "name": "Deepland"
-          },
-          "datePublished": "2024-01-01" 
-        }
-      ]
-    }
+        svg: {
+          fontCache: "global",
+        },
+      };
     </script>
-</head>
-<body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      async
+    ></script>
+    {% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Sora:wght@100..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{% static '/css/style.css' %}" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "Deepland",
+            "url": "{{ request.scheme }}://{{ request.get_host }}"
+          },
+          {
+            "@type": "SoftwareSourceCode",
+            "name": "{{ challenge.title }}",
+            "description": "{{ challenge.description|striptags|escapejs }}",
+            "programmingLanguage": "Python",
+            "author": {
+              "@type": "Organization",
+              "name": "Deepland"
+            },
+            "datePublished": "2024-01-01"
+          }
+        ]
+      }
+    </script>
+  </head>
+  <body>
     <nav class="challenge-nav">
-        <div class="nav-left">
-            <a href="{% url 'challenge_list' %}" class="nav-back-btn">
-                <i class="fa-solid fa-list-ul"></i> Barcha masalalar
-            </a>
+      <div class="nav-left">
+        <a href="{% url 'challenge_list' %}" class="nav-back-btn">
+          <i class="fa-solid fa-list-ul"></i> Barcha masalalar
+        </a>
+      </div>
+      <div class="nav-center">
+        <a
+          href="{% if prev_challenge %}{% url 'challenge_detail' prev_challenge.slug %}{% else %}#{% endif %}"
+          class="nav-control-btn {% if not prev_challenge %}disabled{% endif %}"
+          title="Avvalgi masala"
+        >
+          <i class="fa-solid fa-chevron-left"></i>
+        </a>
+        <a
+          href="{% url 'challenge_random' %}"
+          class="nav-control-btn"
+          title="Tasodifiy masala"
+        >
+          <i class="fa-solid fa-shuffle"></i>
+        </a>
+        <a
+          href="{% if next_challenge %}{% url 'challenge_detail' next_challenge.slug %}{% else %}#{% endif %}"
+          class="nav-control-btn {% if not next_challenge %}disabled{% endif %}"
+          title="Keyingi masala"
+        >
+          <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </div>
+      <div class="nav-right">
+        <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        {% if user.is_authenticated %}
+        <div class="user-stats">
+          <div class="stat-item streak">
+            <i class="fa-solid fa-fire nav-icon"></i
+            ><span class="nav-count">{{ user.current_streak }}</span>
+          </div>
+          <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
+          <img
+            src="https://i.pravatar.cc/100?img=8"
+            alt="User Avatar"
+            class="avatar"
+          />
         </div>
-        <div class="nav-center">
-            <a href="{% if prev_challenge %}{% url 'challenge_detail' prev_challenge.slug %}{% else %}#{% endif %}"
-                class="nav-control-btn {% if not prev_challenge %}disabled{% endif %}" title="Avvalgi masala">
-                <i class="fa-solid fa-chevron-left"></i>
-            </a>
-            <a href="{% url 'challenge_random' %}" class="nav-control-btn" title="Tasodifiy masala">
-                <i class="fa-solid fa-shuffle"></i>
-            </a>
-            <a href="{% if next_challenge %}{% url 'challenge_detail' next_challenge.slug %}{% else %}#{% endif %}"
-                class="nav-control-btn {% if not next_challenge %}disabled{% endif %}" title="Keyingi masala">
-                <i class="fa-solid fa-chevron-right"></i>
-            </a>
-        </div>
-        <div class="nav-right">
-            <button id="theme-toggle" class="theme-btn" aria-label="Toggle Theme">
-                <i class="fa-solid fa-moon"></i>
-            </button>
-            {% if user.is_authenticated %}
-            <div class="user-stats">
-                <div class="stat-item streak">
-                    <i class="fa-solid fa-fire nav-icon"></i><span class="nav-count">{{ user.current_streak }}</span>
-                </div>
-                <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
-                <img src="https://i.pravatar.cc/100?img=8" alt="User Avatar" class="avatar">
-            </div>
-            {% else %}
-            <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
-            {% endif %}
-        </div>
+        {% else %}
+        <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
+        {% endif %}
+      </div>
     </nav>
 
     <main class="main-container">
-        <section class="panel left-panel" id="leftPanel">
-            <div class="tabs-nav">
-                <button class="tab-btn active" onclick="switchTab('desc')"><i class="fa-solid fa-file-lines"></i>Izoh</button>
-                <button class="tab-btn" onclick="switchTab('note')"><i class="fa-solid fa-note-sticky"></i>Qaydlar</button>
-                <button class="tab-btn" onclick="switchTab('hints')"><i class="fa-solid fa-lightbulb"></i>Yordam</button>
-                <button class="tab-btn" onclick="switchTab('tests')"><i class="fa-solid fa-flask"></i>Sinovlar</button>
-                <button class="tab-btn" onclick="switchTab('subs')"><i class="fa-solid fa-clock-rotate-left"></i>Urinishlar</button>
+      <section class="panel left-panel" id="leftPanel">
+        <div class="tabs-nav">
+          <div class="tabs-nav-left">
+            <button class="tab-btn active" onclick="switchTab('desc')">
+              <i class="fa-solid fa-file-lines"></i>Izoh
+            </button>
+            <button class="tab-btn" onclick="switchTab('note')">
+              <i class="fa-solid fa-note-sticky"></i>Qaydlar
+            </button>
+            <button class="tab-btn" onclick="switchTab('hints')">
+              <i class="fa-solid fa-lightbulb"></i>Yordam
+            </button>
+            <button class="tab-btn" onclick="switchTab('tests')">
+              <i class="fa-solid fa-flask"></i>Sinovlar
+            </button>
+            <button class="tab-btn" onclick="switchTab('subs')">
+              <i class="fa-solid fa-clock-rotate-left"></i>Urinishlar
+            </button>
+          </div>
+          <div class="tabs-nav-right">
+            <div class="font-size-control">
+              <button
+                class="font-size-btn"
+                id="fontSizeDown"
+                title="Kichiklashtirish"
+              >
+                <i class="fa-solid fa-minus"></i>
+              </button>
+              <span class="font-size-label" id="fontSizeLabel">16</span>
+              <button
+                class="font-size-btn"
+                id="fontSizeUp"
+                title="Kattalashtirish"
+              >
+                <i class="fa-solid fa-plus"></i>
+              </button>
             </div>
-
-            <div class="left-panel-content">
-                <div id="tab-desc" class="tab-content active">
-                    <header class="problem-header">
-                        <h1>{{ challenge.id }}. {{ challenge.title }}</h1>
-                        <div class="badges">
-                            {% if challenge.difficulty == 'easy' %}
-                            <span class="badge easy">Oson</span>
-                            {% elif challenge.difficulty == 'medium' %}
-                            <span class="badge medium">O'rta.</span>
-                            {% else %}
-                            <span class="badge hard">Qiyin</span>
-                            {% endif %}
-                            {% for tag in challenge.tags.all %}
-                            <span class="badge tag"><i class="fa-solid fa-hashtag"></i> {{ tag.name }}</span>
-                            {% endfor %}
-                        </div>
-                    </header>
-                    <div class="problem-text">
-                        {{ challenge.description|safe }}
-
-                        <div class="input-output-box">
-                            <div class="input-box">
-                                <h3 class="input-box-title">Kiruvchi ma'lumot:</h3>
-                                {{ challenge.input_description|safe }}
-                            </div>
-                            <div class="output-box">
-                                <h3 class="output-box-title">Chiquvchi ma'lumot:</h3>
-                                {{ challenge.output_description|safe }}
-                            </div>
-                        </div>
-                        
-                        {% for sample in challenge.sample_tests %}
-                        <h3 class="example-box-title">Namuna {{ forloop.counter }}:</h3>
-                        <table class="example-table">
-                            <thead>
-                                <tr>
-                                    <th>Input</th>
-                                    <th>Output</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <div class="cell-content">
-                                            <span class="example-value">{{ sample.input }}</span>
-                                            <button type="button" class="copy-btn" onclick="copyText(this, '{{ sample.input|escapejs }}')" title="Nusxalash"><i class="fa-regular fa-copy"></i></button>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="cell-content">
-                                            <span class="example-value">{{ sample.expected }}</span>
-                                            <button type="button" class="copy-btn" onclick="copyText(this, '{{ sample.expected|escapejs }}')" title="Nusxalash"><i class="fa-regular fa-copy"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                    <div id="tab-note" class="tab-content">
-                        <div id="noteEditor" class="note-editor">
-                            <p>Start typing here...</p>
-                        </div>
-                    </div>
-
-                    <div id="tab-hints" class="tab-content">
-                        <h2 style="margin-bottom: 20px;">Yordam</h2>
-                        {% if challenge.hints.all %}
-                        {% for hint in challenge.hints.all %}
-                        <div class="hint-card">
-                            <i class="fa-solid fa-lightbulb hint-icon"></i>
-                            <div>
-                                <h4 style="margin-bottom: 5px;">#{{ forloop.counter }}</h4>
-                                <p style="margin: 0; font-size: 0.95rem; color: #555;">
-                                    {{ hint.text|safe }}
-                                </p>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        {% else %}
-                        <p style="margin: 0; font-size: 0.95rem;">Ushbu masala uchun yordam mavjud emas</p>
-                        {% endif %}
-                    </div>
-
-                    <div id="tab-tests" class="tab-content">
-                        <h2 style="margin-bottom: 20px;">Sinovlar</h2>
-                        <div class="test-case-selector">
-                            {% for sample in challenge.sample_tests %}
-                            <div class="case-pill {% if forloop.counter == 1 %}active{% endif %}"
-                                onclick="switchTestCase({{ forloop.counter }})">Test {{ forloop.counter }}</div>
-                            {% endfor %}
-                        </div>
-                        {% for sample in challenge.sample_tests %}
-                        <div id="case-{{ forloop.counter }}"
-                            class="case-content {% if forloop.counter == 1 %}active{% endif %}">
-                            <div class="io-group">
-                                <span class="io-label">Input</span>
-                                <div class="io-box">{{ sample.input }}</div>
-                            </div>
-                            <div class="io-group">
-                                <span class="io-label">Expected Output</span>
-                                <div class="io-box">{{ sample.expected }}</div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-
-                    <div id="tab-subs" class="tab-content">
-                        <h2 style="margin-bottom: 20px;">Urinishlar</h2>
-                        {% if user.is_authenticated %}
-                        {% if submissions %}
-                        <div class="submission-item">
-                            <div class="sub-status status-acc"><i class="fa-solid fa-check"></i> Accepted</div>
-                            <div class="sub-time">Just now</div>
-                        </div>
-                        {% else %}
-                        <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
-                        {% endif %}
-                        {% else %}
-                        <p>Urinishlaringizni ko'rish uchun <a href="{% url 'login' %}">hisobingizni faollashtiring</a></p>
-                        {%endif %}
-                    </div>
-                </div>
-        </section>
-
-        <div class="resizer" id="dragHandle"></div>
-
-        <section class="panel right-panel" id="rightPanel">
-            <div class="editor-header">
-                <h3 style="font-weight: 800;">Yechimingiz</h3>
-                <select class="lang-select">
-                    <option value="python">Python 3</option>
-                </select>
-            </div>
-            <form style="display: contents;">
-                {% csrf_token %}
-                <div class="editor-container-stack" id="monaco-editor-container"></div>
-                <input type="hidden" name="code" id="hidden_code">
-                <div class="buttons-row">
-                    <button type="button" class="btn-3d btn-blue" id="runBtn"><i class="fa-solid fa-play"></i>Yurgizish</button>
-                    <button type="button" class="btn-3d btn-green" id="submitBtn"><i class="fa-solid fa-cloud-arrow-up"></i>Yuborish</button>
-                </div>
-            </form>
-        </section>
-    </main>
-    
-    <!-- Feedback Overlay -->
-    <div id="feedback-overlay" class="hidden" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: var(--bg-panel, #fff); padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-            <div id="card-success" class="hidden" style="display: none;">
-                <i class="fa-solid fa-circle-check" style="font-size: 3rem; color: var(--theme-green, green); margin-bottom: 15px;"></i>
-                <h2 style="color: var(--theme-green, green); margin-bottom: 10px;">Muvaffaqiyatli</h2>
-                <p id="success-msg" style="font-weight: bold;"></p>
-            </div>
-            <div id="card-fail" class="hidden" style="display: none;">
-                <i class="fa-solid fa-circle-xmark" style="font-size: 3rem; color: var(--theme-red, red); margin-bottom: 15px;"></i>
-                <h2 style="color: var(--theme-red, red); margin-bottom: 10px;">Xatolik</h2>
-                <p id="fail-msg" style="font-weight: bold;"></p>
-            </div>
-            <pre id="error-console" style="display: none; background: #eee; padding: 15px; border-radius: 8px; overflow-x: auto; text-align: left; margin-top: 15px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word;"></pre>
-            <button onclick="document.getElementById('feedback-overlay').style.display='none'; document.getElementById('feedback-overlay').classList.add('hidden');" style="margin-top: 25px; padding: 12px 30px; border-radius: 8px; border: none; background: var(--theme-blue, blue); color: white; font-weight: bold; cursor: pointer; display: inline-block;">Yopish</button>
+            <a
+              href="{% url 'challenge_info' %}"
+              class="info-link-btn"
+              title="Sahifa haqida ma'lumot"
+              target="_blank"
+              ><i class="fa-solid fa-circle-info"></i
+            ></a>
+          </div>
         </div>
+
+        <div class="left-panel-content">
+          <div id="tab-desc" class="tab-content active">
+            <header class="problem-header">
+              <h1>{{ challenge.id }}. {{ challenge.title }}</h1>
+              <div class="badges">
+                {% if challenge.difficulty == 'easy' %}
+                <span class="badge easy">Oson</span>
+                {% elif challenge.difficulty == 'medium' %}
+                <span class="badge medium">O'rta.</span>
+                {% else %}
+                <span class="badge hard">Qiyin</span>
+                {% endif %} {% for tag in challenge.tags.all %}
+                <span class="badge tag"
+                  ><i class="fa-solid fa-hashtag"></i> {{ tag.name }}</span
+                >
+                {% endfor %}
+              </div>
+            </header>
+            <div class="problem-text">
+              {{ challenge.description|safe }}
+
+              <div class="input-output-box">
+                <div class="input-box">
+                  <h3 class="input-box-title">Kiruvchi ma'lumot:</h3>
+                  {{ challenge.input_description|safe }}
+                </div>
+                <div class="output-box">
+                  <h3 class="output-box-title">Chiquvchi ma'lumot:</h3>
+                  {{ challenge.output_description|safe }}
+                </div>
+              </div>
+
+              {% for sample in challenge.sample_tests %}
+              <h3 class="example-box-title">Namuna {{ forloop.counter }}:</h3>
+              <table class="example-table">
+                <thead>
+                  <tr>
+                    <th>Input</th>
+                    <th>Output</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="cell-content">
+                        <span class="example-value">{{ sample.input }}</span>
+                        <button
+                          type="button"
+                          class="copy-btn"
+                          onclick="copyText(this, '{{ sample.input|escapejs }}')"
+                          title="Nusxalash"
+                        >
+                          <i class="fa-regular fa-copy"></i>
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="cell-content">
+                        <span class="example-value">{{ sample.expected }}</span>
+                        <button
+                          type="button"
+                          class="copy-btn"
+                          onclick="copyText(this, '{{ sample.expected|escapejs }}')"
+                          title="Nusxalash"
+                        >
+                          <i class="fa-regular fa-copy"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div id="tab-note" class="tab-content">
+            <div id="noteEditor" class="note-editor">
+              <p>Start typing here...</p>
+            </div>
+          </div>
+
+          <div id="tab-hints" class="tab-content">
+            <h2 style="margin-bottom: 20px">Yordam</h2>
+            {% if challenge.hints.all %} {% for hint in challenge.hints.all %}
+            <div class="hint-card">
+              <i class="fa-solid fa-lightbulb hint-icon"></i>
+              <div>
+                <h4 style="margin-bottom: 5px">#{{ forloop.counter }}</h4>
+                <p style="margin: 0; font-size: 0.95rem; color: #555">
+                  {{ hint.text|safe }}
+                </p>
+              </div>
+            </div>
+            {% endfor %} {% else %}
+            <p style="margin: 0; font-size: 0.95rem">
+              Ushbu masala uchun yordam mavjud emas
+            </p>
+            {% endif %}
+          </div>
+
+          <div id="tab-tests" class="tab-content">
+            <h2 style="margin-bottom: 20px">Sinovlar</h2>
+            <div class="test-case-selector">
+              {% for sample in challenge.sample_tests %}
+              <div
+                class="case-pill {% if forloop.counter == 1 %}active{% endif %}"
+                onclick="switchTestCase({{ forloop.counter }})"
+              >
+                Test {{ forloop.counter }}
+              </div>
+              {% endfor %}
+            </div>
+            {% for sample in challenge.sample_tests %}
+            <div
+              id="case-{{ forloop.counter }}"
+              class="case-content {% if forloop.counter == 1 %}active{% endif %}"
+            >
+              <div class="io-group">
+                <span class="io-label">Input</span>
+                <div class="io-box">{{ sample.input }}</div>
+              </div>
+              <div class="io-group">
+                <span class="io-label">Expected Output</span>
+                <div class="io-box">{{ sample.expected }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div id="tab-subs" class="tab-content">
+            <h2 style="margin-bottom: 20px">Urinishlar</h2>
+            {% if user.is_authenticated %} {% if submissions %}
+            <div class="submission-item">
+              <div class="sub-status status-acc">
+                <i class="fa-solid fa-check"></i> Accepted
+              </div>
+              <div class="sub-time">Just now</div>
+            </div>
+            {% else %}
+            <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
+            {% endif %} {% else %}
+            <p>
+              Urinishlaringizni ko'rish uchun
+              <a href="{% url 'login' %}">hisobingizni faollashtiring</a>
+            </p>
+            {%endif %}
+          </div>
+        </div>
+      </section>
+
+      <div class="resizer" id="dragHandle"></div>
+
+      <section class="panel right-panel" id="rightPanel">
+        <div class="editor-header">
+          <h3 style="font-weight: 800">Yechimingiz</h3>
+          <select class="lang-select">
+            <option value="python">Python 3</option>
+          </select>
+        </div>
+        <form style="display: contents">
+          {% csrf_token %}
+          <div
+            class="editor-container-stack"
+            id="monaco-editor-container"
+          ></div>
+          <input type="hidden" name="code" id="hidden_code" />
+          <div class="buttons-row">
+            <button type="button" class="btn-3d btn-blue" id="runBtn">
+              <i class="fa-solid fa-play"></i>Yurgizish
+            </button>
+            <button type="button" class="btn-3d btn-green" id="submitBtn">
+              <i class="fa-solid fa-cloud-arrow-up"></i>Yuborish
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <!-- Feedback Overlay -->
+    <div
+      id="feedback-overlay"
+      class="hidden"
+      style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      "
+    >
+      <div
+        style="
+          background: var(--bg-panel, #fff);
+          padding: 30px;
+          border-radius: 12px;
+          max-width: 500px;
+          width: 90%;
+          text-align: center;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        "
+      >
+        <div id="card-success" class="hidden" style="display: none">
+          <i
+            class="fa-solid fa-circle-check"
+            style="
+              font-size: 3rem;
+              color: var(--theme-green, green);
+              margin-bottom: 15px;
+            "
+          ></i>
+          <h2 style="color: var(--theme-green, green); margin-bottom: 10px">
+            Muvaffaqiyatli
+          </h2>
+          <p id="success-msg" style="font-weight: bold"></p>
+        </div>
+        <div id="card-fail" class="hidden" style="display: none">
+          <i
+            class="fa-solid fa-circle-xmark"
+            style="
+              font-size: 3rem;
+              color: var(--theme-red, red);
+              margin-bottom: 15px;
+            "
+          ></i>
+          <h2 style="color: var(--theme-red, red); margin-bottom: 10px">
+            Xatolik
+          </h2>
+          <p id="fail-msg" style="font-weight: bold"></p>
+        </div>
+        <pre
+          id="error-console"
+          style="
+            display: none;
+            background: #eee;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            text-align: left;
+            margin-top: 15px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+          "
+        ></pre>
+        <button
+          onclick="
+            document.getElementById('feedback-overlay').style.display = 'none';
+            document.getElementById('feedback-overlay').classList.add('hidden');
+          "
+          style="
+            margin-top: 25px;
+            padding: 12px 30px;
+            border-radius: 8px;
+            border: none;
+            background: var(--theme-blue, blue);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-block;
+          "
+        >
+          Yopish
+        </button>
+      </div>
     </div>
 
     {% block extra_js %}{% endblock %}
     <style>
-        :root {
-            /* Editor Colors (Monokai-ish) */
-            --editor-bg: #2d2d2d;
-            --editor-gutter: #3e3e3e;
-            --editor-selection: rgba(255, 255, 255, 0.15);
+      :root {
+        /* Editor Colors (Monokai-ish) */
+        --editor-bg: #2d2d2d;
+        --editor-gutter: #3e3e3e;
+        --editor-selection: rgba(255, 255, 255, 0.15);
+      }
+
+      body {
+        font-family: var(--secondary-font);
+        color: var(--text-dark);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 15px;
+      }
+
+      /* --- Navbar Styles --- */
+      .challenge-nav .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .theme-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-medium);
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .user-stats {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-weight: 700;
+        color: var(--text-medium);
+      }
+
+      .stat-item {
+        display: flex;
+        align-items: center;
+      }
+
+      .stat-item i {
+        margin-right: 8px;
+      }
+
+      .streak {
+        color: var(--theme-orange);
+      }
+
+      .gems {
+        color: var(--theme-blue);
+      }
+
+      .avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: #ddd;
+        border: 2px solid var(--bg-panel);
+      }
+
+      .login-btn {
+        background: var(--theme-gold);
+        box-shadow: 0 4px 0 var(--theme-gold-dark);
+        color: #634c00;
+        border: none;
+        border-radius: var(--btn-radius);
+        font-family: "Sora", sans-serif;
+        font-weight: 800;
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        transition: all 0.1s;
+        padding: 12px 24px;
+        display: inline-block;
+      }
+
+      .login-btn:hover {
+        transform: translateY(2px);
+        box-shadow: 0 2px 0 var(--theme-gold-dark);
+      }
+
+      .login-btn:active {
+        transform: translateY(4px);
+        box-shadow: none;
+      }
+
+      /* --- Main Layout (FLEXBOX for Resizing) --- */
+      .main-container {
+        flex-grow: 1;
+        max-width: 100%;
+        /* Full width allowed */
+        margin: 0;
+        padding: 0 20px;
+        display: flex;
+        /* Changed from Grid to Flex */
+        align-items: stretch;
+        /* Ensure equal height */
+        overflow: hidden;
+      }
+
+      /* --- Panel Styles --- */
+      .panel {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        /* Flex properties */
+        flex-shrink: 0;
+      }
+
+      /* LEFT PANEL SPECIFICS */
+      .left-panel {
+        width: 50%;
+        /* Initial Width */
+        min-width: 300px;
+        /* Minimum width constraint */
+        padding: 0;
+        border-radius: var(--panel-radius) 0 0 var(--panel-radius);
+        /* Rounded left, square right */
+        border-right: none;
+        /* Merge border with resizer */
+      }
+
+      /* RIGHT PANEL SPECIFICS */
+      .right-panel {
+        flex-grow: 1;
+        /* Takes remaining space */
+        min-width: 400px;
+        /* Minimum width constraint */
+        padding: 30px;
+        border-radius: 0 var(--panel-radius) var(--panel-radius) 0;
+        /* Square left, rounded right */
+        border-left: none;
+        /* Merge border with resizer */
+      }
+
+      /* --- RESIZER HANDLE --- */
+      .resizer {
+        width: 8px;
+        background-color: #f0f0f0;
+        border-top: 2px solid var(--border-color);
+        border-bottom: 2px solid var(--border-color);
+        cursor: col-resize;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: background 0.2s;
+        z-index: 10;
+      }
+
+      .resizer:hover,
+      .resizer.active {
+        background-color: var(--text-medium);
+      }
+
+      /* Little grip dots in the resizer */
+      .resizer::after {
+        content: "•••";
+        color: #ccc;
+        font-size: 10px;
+        writing-mode: vertical-rl;
+        letter-spacing: 2px;
+        pointer-events: none;
+      }
+
+      .resizer:hover::after {
+        color: white;
+      }
+
+      /* --- Left Panel Content Wrapper --- */
+      .left-panel-content {
+        padding: 30px;
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+
+      /* --- Tabs Navigation --- */
+      .tabs-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        background: #f7f7f7;
+        border-bottom: 2px solid var(--border-color);
+        padding: 10px 20px 0 20px;
+        gap: 5px;
+        flex-shrink: 0;
+      }
+
+      .tabs-nav-left {
+        display: flex;
+        gap: 5px;
+      }
+
+      .tabs-nav-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 8px;
+      }
+
+      .font-size-control {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 4px 8px;
+      }
+
+      .font-size-btn {
+        width: 26px;
+        height: 26px;
+        border: none;
+        background: transparent;
+        color: var(--text-medium);
+        cursor: pointer;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        transition: all 0.15s;
+      }
+
+      .font-size-btn:hover {
+        background: rgba(0, 0, 0, 0.07);
+        color: var(--text-dark);
+      }
+
+      .font-size-label {
+        font-family: "Sora";
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: var(--text-dark);
+        min-width: 20px;
+        text-align: center;
+      }
+
+      .info-link-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        color: var(--text-medium);
+        font-size: 1.1rem;
+        transition: all 0.2s;
+      }
+
+      .info-link-btn:hover {
+        background: rgba(0, 0, 0, 0.07);
+        color: var(--theme-blue);
+      }
+
+      .tab-btn {
+        padding: 12px 20px;
+        border: none;
+        background: transparent;
+        font-weight: 700;
+        color: var(--text-medium);
+        cursor: pointer;
+        border-radius: 12px 12px 0 0;
+        transition: all 0.2s;
+        position: relative;
+        bottom: -2px;
+        font-family: var(--secondary-font);
+      }
+
+      .tab-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--text-dark);
+      }
+
+      .tab-btn.active {
+        background: var(--bg-panel);
+        color: var(--theme-blue);
+        border: 2px solid var(--border-color);
+        border-bottom: 2px solid var(--bg-panel);
+      }
+
+      .tab-btn i {
+        margin-right: 3px;
+      }
+
+      /* Tab Content Areas */
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+        animation: fadeIn 0.2s;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* --- Problem Description --- */
+      .problem-header {
+        margin-bottom: 25px;
+        border-bottom: 2px solid var(--border-color);
+        padding-bottom: 20px;
+      }
+
+      .problem-header h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        font-family: var(--primary-font);
+        margin-bottom: 15px;
+      }
+
+      .badges {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .badge.tag {
+        background: var(--theme-blue-light);
+        color: var(--theme-blue-dark);
+        font-weight: 500;
+        font-size: 0.8rem;
+      }
+
+      .problem-text p {
+        margin-bottom: 20px;
+        line-height: 1.6;
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
+
+      .problem-text .math-tex {
+        font-family: "Times New Roman", serif;
+      }
+
+      .code-span {
+        background: #f0f0f0;
+        padding: 4px 8px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-weight: 700;
+        color: var(--theme-blue-dark);
+      }
+
+      .input-output-box {
+        margin: 30px 0;
+      }
+
+      .input-box p,
+      .output-box p {
+        font-weight: 500;
+      }
+
+      .input-box .input-box-title,
+      .output-box .output-box-title,
+      .example-box-title {
+        margin-bottom: 5px;
+        color: var(--theme-blue-dark);
+      }
+
+      .example-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0 25px 0;
+        border: 2px solid var(--border-color);
+        background: var(--border-color);
+        border-radius: var(--btn-radius);
+        table-layout: fixed;
+        overflow: hidden;
+      }
+
+      .example-table th,
+      .example-table td {
+        border: 2px solid var(--border-color);
+        padding: 15px;
+        text-align: left;
+      }
+
+      .example-table th {
+        font-family: "Sora";
+        font-weight: 800;
+        color: var(--text-dark);
+        background: var(--bg-panel);
+        font-size: 0.95rem;
+      }
+
+      .example-table td {
+        font-family: monospace;
+        vertical-align: top;
+        background: var(--bg-app);
+        word-break: break-all;
+      }
+
+      .example-table .cell-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .example-table .example-value {
+        font-size: 16px;
+        white-space: pre-wrap;
+      }
+
+      .copy-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-medium);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 6px;
+        transition: all 0.2s;
+        font-size: 16px;
+      }
+
+      .copy-btn:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--text-dark);
+      }
+
+      .label {
+        font-weight: 800;
+        color: var(--text-dark);
+        font-family: "Sora";
+        margin-right: 5px;
+      }
+
+      /* --- Hints Styling --- */
+      .hint-card {
+        background: #fff8e1;
+        border: 2px solid #ffe082;
+        padding: 15px;
+        border-radius: 16px;
+        margin-bottom: 15px;
+        display: flex;
+        gap: 15px;
+        align-items: start;
+      }
+
+      .hint-card p {
+        line-height: 25px;
+      }
+
+      .hint-icon {
+        color: var(--theme-orange);
+        font-size: 1.2rem;
+        margin-top: 3px;
+      }
+
+      /* --- Test Cases UI (NEW) --- */
+      .test-case-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .case-pill {
+        padding: 8px 16px;
+        background: #f0f0f0;
+        border-radius: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        border: 2px solid transparent;
+        font-size: 0.9rem;
+        color: var(--text-medium);
+        transition: all 0.2s;
+      }
+
+      .case-pill:hover {
+        background: #e5e5e5;
+      }
+
+      .case-pill.active {
+        background: var(--bg-app);
+        border-color: var(--theme-blue);
+        color: var(--theme-blue);
+      }
+
+      .case-content {
+        display: none;
+      }
+
+      .case-content.active {
+        display: block;
+      }
+
+      .io-group {
+        margin-bottom: 15px;
+      }
+
+      .io-label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: var(--text-medium);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+
+      .io-box {
+        background: #f7f7f7;
+        padding: 15px;
+        border-radius: 12px;
+        font-family: "Courier New", monospace;
+        border: 2px solid var(--border-color);
+        color: var(--text-dark);
+        font-weight: 600;
+      }
+
+      /* --- Submissions Styling --- */
+      .submission-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .sub-status {
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .status-acc {
+        color: var(--theme-green);
+      }
+
+      .status-err {
+        color: var(--theme-red);
+      }
+
+      .sub-time {
+        color: var(--text-medium);
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      /* --- Right Panel (Editor) --- */
+      .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        flex-shrink: 0;
+      }
+
+      .lang-select {
+        padding: 10px 20px;
+        border-radius: var(--btn-radius);
+        border: 2px solid var(--border-color);
+        font-family: "Sora";
+        font-weight: 700;
+        color: var(--text-dark);
+        background: white;
+        cursor: pointer;
+        outline: none;
+      }
+
+      /* --- STACKED EDITOR CONTAINER --- */
+      .editor-container-stack {
+        position: relative;
+        flex-grow: 1;
+        background: var(--editor-bg);
+        border-radius: var(--btn-radius);
+        border: 2px solid #1e1e1e;
+        overflow: hidden;
+        margin-bottom: 20px;
+        font-family: "Courier New", monospace;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      .editor-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding: 20px;
+        padding-left: 55px;
+        /* Space for line numbers */
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        white-space: pre-wrap;
+        overflow: auto;
+        border: none;
+        box-sizing: border-box;
+      }
+
+      #highlighting-layer {
+        z-index: 1;
+        pointer-events: none;
+        color: #f8f8f2;
+      }
+
+      #editing-layer {
+        z-index: 2;
+        color: transparent;
+        background: transparent;
+        caret-color: white;
+        resize: none;
+        outline: none;
+      }
+
+      #editing-layer::selection {
+        background: var(--editor-selection);
+        color: transparent;
+      }
+
+      .gutter {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 45px;
+        background: var(--editor-gutter);
+        color: #888;
+        padding: 20px 5px;
+        text-align: right;
+        border-right: 1px solid #555;
+        z-index: 3;
+        pointer-events: none;
+        overflow: hidden;
+        font-family: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        user-select: none;
+      }
+
+      /* --- Buttons --- */
+      .buttons-row {
+        display: flex;
+        gap: 20px;
+        flex-shrink: 0;
+      }
+
+      .btn-3d {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: var(--btn-radius);
+        font-family: "Sora", sans-serif;
+        font-weight: 800;
+        font-size: 1.2rem;
+        color: white;
+        cursor: pointer;
+        transition:
+          transform 0.1s,
+          box-shadow 0.1s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .btn-blue {
+        background: var(--theme-blue);
+        box-shadow: 0 5px 0 var(--theme-blue-dark);
+      }
+
+      .btn-green {
+        background: var(--theme-green);
+        box-shadow: 0 5px 0 var(--theme-green-dark);
+      }
+
+      .btn-3d:active {
+        transform: translateY(5px);
+        box-shadow: none;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .main-container {
+          flex-direction: column;
+        }
+
+        .left-panel,
+        .right-panel {
+          width: 100%;
+          border-radius: var(--panel-radius);
+          border: 2px solid var(--border-color);
+        }
+
+        .left-panel {
+          height: 400px;
+          margin-bottom: 20px;
+        }
+
+        .resizer {
+          display: none;
+        }
+
+        /* Hide resizer on mobile */
+        .panel {
+          height: auto;
+        }
+
+        .right-panel {
+          height: 500px;
         }
 
         body {
-            font-family: var(--secondary-font);
-            color: var(--text-dark);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 15px;
+          height: auto;
         }
-
-        /* --- Navbar Styles --- */
-        .challenge-nav .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .theme-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-medium);
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .user-stats {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-weight: 700;
-            color: var(--text-medium);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-        }
-
-        .stat-item i {
-            margin-right: 8px;
-        }
-
-        .streak {
-            color: var(--theme-orange);
-        }
-
-        .gems {
-            color: var(--theme-blue);
-        }
-
-        .avatar {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: #ddd;
-            border: 2px solid var(--bg-panel);
-        }
-
-        .login-btn {
-            background: var(--theme-gold);
-            box-shadow: 0 4px 0 var(--theme-gold-dark);
-            color: #634c00;
-            border: none;
-            border-radius: var(--btn-radius);
-            font-family: 'Sora', sans-serif;
-            font-weight: 800;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            transition: all 0.1s;
-            padding: 12px 24px;
-            display: inline-block;
-        }
-
-        .login-btn:hover {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 var(--theme-gold-dark);
-        }
-
-        .login-btn:active {
-            transform: translateY(4px);
-            box-shadow: none;
-        }
-
-        /* --- Main Layout (FLEXBOX for Resizing) --- */
-        .main-container {
-            flex-grow: 1;
-            max-width: 100%;
-            /* Full width allowed */
-            margin: 0;
-            padding: 0 20px;
-            display: flex;
-            /* Changed from Grid to Flex */
-            align-items: stretch;
-            /* Ensure equal height */
-            overflow: hidden;
-        }
-
-        /* --- Panel Styles --- */
-        .panel {
-            background: var(--bg-panel);
-            border: 2px solid var(--border-color);
-            box-shadow: 0 4px 0 rgba(0, 0, 0, 0.05);
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            /* Flex properties */
-            flex-shrink: 0;
-        }
-
-        /* LEFT PANEL SPECIFICS */
-        .left-panel {
-            width: 50%;
-            /* Initial Width */
-            min-width: 300px;
-            /* Minimum width constraint */
-            padding: 0;
-            border-radius: var(--panel-radius) 0 0 var(--panel-radius);
-            /* Rounded left, square right */
-            border-right: none;
-            /* Merge border with resizer */
-        }
-
-        /* RIGHT PANEL SPECIFICS */
-        .right-panel {
-            flex-grow: 1;
-            /* Takes remaining space */
-            min-width: 400px;
-            /* Minimum width constraint */
-            padding: 30px;
-            border-radius: 0 var(--panel-radius) var(--panel-radius) 0;
-            /* Square left, rounded right */
-            border-left: none;
-            /* Merge border with resizer */
-        }
-
-        /* --- RESIZER HANDLE --- */
-        .resizer {
-            width: 8px;
-            background-color: #f0f0f0;
-            border-top: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--border-color);
-            cursor: col-resize;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background 0.2s;
-            z-index: 10;
-        }
-
-        .resizer:hover,
-        .resizer.active {
-            background-color: var(--text-medium);
-        }
-
-        /* Little grip dots in the resizer */
-        .resizer::after {
-            content: "•••";
-            color: #ccc;
-            font-size: 10px;
-            writing-mode: vertical-rl;
-            letter-spacing: 2px;
-            pointer-events: none;
-        }
-
-        .resizer:hover::after {
-            color: white;
-        }
-
-
-        /* --- Left Panel Content Wrapper --- */
-        .left-panel-content {
-            padding: 30px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        /* --- Tabs Navigation --- */
-        .tabs-nav {
-            display: flex;
-            background: #f7f7f7;
-            border-bottom: 2px solid var(--border-color);
-            padding: 10px 20px 0 20px;
-            gap: 5px;
-            flex-shrink: 0;
-        }
-
-        .tab-btn {
-            padding: 12px 20px;
-            border: none;
-            background: transparent;
-            font-weight: 700;
-            color: var(--text-medium);
-            cursor: pointer;
-            border-radius: 12px 12px 0 0;
-            transition: all 0.2s;
-            position: relative;
-            bottom: -2px;
-            font-family: var(--secondary-font);
-        }
-
-        .tab-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
-            color: var(--text-dark);
-        }
-
-        .tab-btn.active {
-            background: var(--bg-panel);
-            color: var(--theme-blue);
-            border: 2px solid var(--border-color);
-            border-bottom: 2px solid var(--bg-panel);
-        }
-
-        .tab-btn i {
-            margin-right: 3px;
-        }
-
-        /* Tab Content Areas */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.2s;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(5px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- Problem Description --- */
-        .problem-header {
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 20px;
-        }
-
-        .problem-header h1 {
-            font-size: 1.8rem;
-            font-weight: 800;
-            font-family: var(--primary-font);
-            margin-bottom: 15px;
-        }
-
-        .badges {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge.tag {
-            background: var(--theme-blue-light);
-            color: var(--theme-blue-dark);
-            font-weight: 500;
-            font-size: 0.8rem;
-        }
-
-        .problem-text p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            font-size: 1.05rem;
-            font-weight: 500;
-        }
-
-        .problem-text .math-tex {
-            font-family: 'Times New Roman', serif;
-        }
-
-        .code-span {
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-weight: 700;
-            color: var(--theme-blue-dark);
-        }
-
-        .input-output-box {
-            margin: 30px 0;
-        }
-
-        .input-box p,
-        .output-box p {
-            font-weight: 500;
-        }
-
-        .input-box .input-box-title,
-        .output-box .output-box-title,
-        .example-box-title {
-            margin-bottom: 5px;
-            color: var(--theme-blue-dark);
-        }
-
-        .example-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 12px 0 25px 0;
-            border: 2px solid var(--border-color);
-            background: var(--border-color);
-            border-radius: var(--btn-radius);
-            table-layout: fixed;
-            overflow: hidden;
-        }
-
-        .example-table th, .example-table td {
-            border: 2px solid var(--border-color);
-            padding: 15px;
-            text-align: left;
-        }
-
-        .example-table th {
-            font-family: 'Sora';
-            font-weight: 800;
-            color: var(--text-dark);
-            background: var(--bg-panel);
-            font-size: 0.95rem;
-        }
-
-        .example-table td {
-            font-family: monospace;
-            vertical-align: top;
-            background: var(--bg-app);
-            word-break: break-all;
-        }
-
-        .example-table .cell-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .example-table .example-value {
-            font-size: 16px;
-            white-space: pre-wrap;
-        }
-
-        .copy-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-medium);
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 6px;
-            transition: all 0.2s;
-            font-size: 16px;
-        }
-
-        .copy-btn:hover {
-            background: rgba(0,0,0,0.05);
-            color: var(--text-dark);
-        }
-
-        .label {
-            font-weight: 800;
-            color: var(--text-dark);
-            font-family: 'Sora';
-            margin-right: 5px;
-        }
-
-        /* --- Hints Styling --- */
-        .hint-card {
-            background: #fff8e1;
-            border: 2px solid #ffe082;
-            padding: 15px;
-            border-radius: 16px;
-            margin-bottom: 15px;
-            display: flex;
-            gap: 15px;
-            align-items: start;
-        }
-
-        .hint-card p {
-            line-height: 25px;
-        }
-
-        .hint-icon {
-            color: var(--theme-orange);
-            font-size: 1.2rem;
-            margin-top: 3px;
-        }
-
-        /* --- Test Cases UI (NEW) --- */
-        .test-case-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .case-pill {
-            padding: 8px 16px;
-            background: #f0f0f0;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            border: 2px solid transparent;
-            font-size: 0.9rem;
-            color: var(--text-medium);
-            transition: all 0.2s;
-        }
-
-        .case-pill:hover {
-            background: #e5e5e5;
-        }
-
-        .case-pill.active {
-            background: var(--bg-app);
-            border-color: var(--theme-blue);
-            color: var(--theme-blue);
-        }
-
-        .case-content {
-            display: none;
-        }
-
-        .case-content.active {
-            display: block;
-        }
-
-        .io-group {
-            margin-bottom: 15px;
-        }
-
-        .io-label {
-            display: block;
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--text-medium);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        .io-box {
-            background: #f7f7f7;
-            padding: 15px;
-            border-radius: 12px;
-            font-family: 'Courier New', monospace;
-            border: 2px solid var(--border-color);
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-
-        /* --- Submissions Styling --- */
-        .submission-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .sub-status {
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-acc {
-            color: var(--theme-green);
-        }
-
-        .status-err {
-            color: var(--theme-red);
-        }
-
-        .sub-time {
-            color: var(--text-medium);
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-
-        /* --- Right Panel (Editor) --- */
-        .editor-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            flex-shrink: 0;
-        }
-
-        .lang-select {
-            padding: 10px 20px;
-            border-radius: var(--btn-radius);
-            border: 2px solid var(--border-color);
-            font-family: 'Sora';
-            font-weight: 700;
-            color: var(--text-dark);
-            background: white;
-            cursor: pointer;
-            outline: none;
-        }
-
-        /* --- STACKED EDITOR CONTAINER --- */
-        .editor-container-stack {
-            position: relative;
-            flex-grow: 1;
-            background: var(--editor-bg);
-            border-radius: var(--btn-radius);
-            border: 2px solid #1e1e1e;
-            overflow: hidden;
-            margin-bottom: 20px;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .editor-layer {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            padding: 20px;
-            padding-left: 55px;
-            /* Space for line numbers */
-            margin: 0;
-            width: 100%;
-            height: 100%;
-            font-family: inherit;
-            font-size: inherit;
-            line-height: inherit;
-            white-space: pre-wrap;
-            overflow: auto;
-            border: none;
-            box-sizing: border-box;
-        }
-
-        #highlighting-layer {
-            z-index: 1;
-            pointer-events: none;
-            color: #f8f8f2;
-        }
-
-        #editing-layer {
-            z-index: 2;
-            color: transparent;
-            background: transparent;
-            caret-color: white;
-            resize: none;
-            outline: none;
-        }
-
-        #editing-layer::selection {
-            background: var(--editor-selection);
-            color: transparent;
-        }
-
-        .gutter {
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 45px;
-            background: var(--editor-gutter);
-            color: #888;
-            padding: 20px 5px;
-            text-align: right;
-            border-right: 1px solid #555;
-            z-index: 3;
-            pointer-events: none;
-            overflow: hidden;
-            font-family: inherit;
-            font-size: inherit;
-            line-height: inherit;
-            user-select: none;
-        }
-
-        /* --- Buttons --- */
-        .buttons-row {
-            display: flex;
-            gap: 20px;
-            flex-shrink: 0;
-        }
-
-        .btn-3d {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: var(--btn-radius);
-            font-family: 'Sora', sans-serif;
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: white;
-            cursor: pointer;
-            transition: transform 0.1s, box-shadow 0.1s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-blue {
-            background: var(--theme-blue);
-            box-shadow: 0 5px 0 var(--theme-blue-dark);
-        }
-
-        .btn-green {
-            background: var(--theme-green);
-            box-shadow: 0 5px 0 var(--theme-green-dark);
-        }
-
-        .btn-3d:active {
-            transform: translateY(5px);
-            box-shadow: none;
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .main-container {
-                flex-direction: column;
-            }
-
-            .left-panel,
-            .right-panel {
-                width: 100%;
-                border-radius: var(--panel-radius);
-                border: 2px solid var(--border-color);
-            }
-
-            .left-panel {
-                height: 400px;
-                margin-bottom: 20px;
-            }
-
-            .resizer {
-                display: none;
-            }
-
-            /* Hide resizer on mobile */
-            .panel {
-                height: auto;
-            }
-
-            .right-panel {
-                height: 500px;
-            }
-
-            body {
-                height: auto;
-            }
-        }
+      }
     </style>
     <script>
-        // --- RESIZABLE LOGIC (NEW) ---
-        const resizer = document.getElementById('dragHandle');
-        const leftPanel = document.getElementById('leftPanel');
-        const mainContainer = document.querySelector('.main-container');
+      // --- RESIZABLE LOGIC (NEW) ---
+      const resizer = document.getElementById("dragHandle");
+      const leftPanel = document.getElementById("leftPanel");
+      const mainContainer = document.querySelector(".main-container");
 
-        let isResizing = false;
+      let isResizing = false;
 
-        resizer.addEventListener('mousedown', (e) => {
-            isResizing = true;
-            document.body.style.cursor = 'col-resize';
-            resizer.classList.add('active');
-            document.body.style.userSelect = 'none';
-        });
+      resizer.addEventListener("mousedown", (e) => {
+        isResizing = true;
+        document.body.style.cursor = "col-resize";
+        resizer.classList.add("active");
+        document.body.style.userSelect = "none";
+      });
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isResizing) return;
-            const containerOffsetLeft = mainContainer.getBoundingClientRect().left;
-            const newWidth = e.clientX - containerOffsetLeft;
-            const minWidth = 300;
-            const maxWidth = mainContainer.clientWidth - 400;
-            if (newWidth > minWidth && newWidth < maxWidth) {
-                leftPanel.style.width = `${newWidth}px`;
-                // Right panel automatically adjusts due to flex-grow: 1
-            }
-        });
+      document.addEventListener("mousemove", (e) => {
+        if (!isResizing) return;
+        const containerOffsetLeft = mainContainer.getBoundingClientRect().left;
+        const newWidth = e.clientX - containerOffsetLeft;
+        const minWidth = 300;
+        const maxWidth = mainContainer.clientWidth - 400;
+        if (newWidth > minWidth && newWidth < maxWidth) {
+          leftPanel.style.width = `${newWidth}px`;
+          // Right panel automatically adjusts due to flex-grow: 1
+        }
+      });
 
-        document.addEventListener('mouseup', () => {
-            if (isResizing) {
-                isResizing = false;
-                document.body.style.cursor = 'default';
-                resizer.classList.remove('active');
-                document.body.style.userSelect = 'auto';
-            }
-        });
+      document.addEventListener("mouseup", () => {
+        if (isResizing) {
+          isResizing = false;
+          document.body.style.cursor = "default";
+          resizer.classList.remove("active");
+          document.body.style.userSelect = "auto";
+        }
+      });
 
+      // --- TABS LOGIC ---
+      function switchTab(tabName) {
+        document
+          .querySelectorAll(".tab-content")
+          .forEach((el) => el.classList.remove("active"));
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((el) => el.classList.remove("active"));
+        document.getElementById("tab-" + tabName).classList.add("active");
 
+        const buttons = document.querySelectorAll(".tab-btn");
+        if (tabName === "desc") buttons[0].classList.add("active");
+        if (tabName === "note") buttons[1].classList.add("active");
+        if (tabName === "hints") buttons[2].classList.add("active");
+        if (tabName === "tests") buttons[3].classList.add("active");
+        if (tabName === "subs") buttons[4].classList.add("active");
+      }
 
+      function switchTestCase(caseNum) {
+        // Update pills
+        document
+          .querySelectorAll(".case-pill")
+          .forEach((pill) => pill.classList.remove("active"));
+        document
+          .querySelectorAll(".case-pill")
+          [caseNum - 1].classList.add("active");
 
-        // --- TABS LOGIC ---
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.add('active');
+        // Update content
+        document
+          .querySelectorAll(".case-content")
+          .forEach((content) => content.classList.remove("active"));
+        document.getElementById(`case-${caseNum}`).classList.add("active");
+      }
 
-            const buttons = document.querySelectorAll('.tab-btn');
-            if (tabName === 'desc') buttons[0].classList.add('active');
-            if (tabName === 'note') buttons[1].classList.add('active');
-            if (tabName === 'hints') buttons[2].classList.add('active');
-            if (tabName === 'tests') buttons[3].classList.add('active');
-            if (tabName === 'subs') buttons[4].classList.add('active');
+      // --- DARK MODE TOGGLE ---
+      document.addEventListener("DOMContentLoaded", () => {
+        const toggleBtn = document.getElementById("theme-toggle");
+        const icon = toggleBtn.querySelector("i");
+        const html = document.documentElement;
+
+        const savedTheme = localStorage.getItem("theme");
+        const systemPrefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+
+        let currentTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+
+        // Apply initial theme
+        if (currentTheme === "dark") {
+          html.setAttribute("data-theme", "dark");
+          icon.classList.replace("fa-moon", "fa-sun");
+        } else {
+          html.removeAttribute("data-theme"); // Default is light
+          icon.classList.replace("fa-sun", "fa-moon");
         }
 
-        function switchTestCase(caseNum) {
-            // Update pills
-            document.querySelectorAll('.case-pill').forEach(pill => pill.classList.remove('active'));
-            document.querySelectorAll('.case-pill')[caseNum - 1].classList.add('active');
+        toggleBtn.addEventListener("click", () => {
+          // If currently dark, switch to light (remove attribute)
+          if (html.getAttribute("data-theme") === "dark") {
+            html.removeAttribute("data-theme");
+            localStorage.setItem("theme", "light");
+            icon.classList.replace("fa-sun", "fa-moon");
+          } else {
+            // Switch to dark
+            html.setAttribute("data-theme", "dark");
+            localStorage.setItem("theme", "dark");
+            icon.classList.replace("fa-moon", "fa-sun");
+          }
+        });
+      });
 
-            // Update content
-            document.querySelectorAll('.case-content').forEach(content => content.classList.remove('active'));
-            document.getElementById(`case-${caseNum}`).classList.add('active');
+      // --- FONT SIZE CONTROL ---
+      (function () {
+        const leftPanelContent = document.querySelector(".left-panel-content");
+        const fontSizeLabel = document.getElementById("fontSizeLabel");
+        const savedSize = localStorage.getItem("challengeFontSize");
+        let currentSize = savedSize ? parseInt(savedSize) : 16;
+        const minSize = 14;
+        const maxSize = 24;
+
+        function applyFontSize(size) {
+          leftPanelContent.style.fontSize = size + "px";
+          fontSizeLabel.textContent = size;
+          localStorage.setItem("challengeFontSize", size);
         }
 
-        // --- DARK MODE TOGGLE ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const toggleBtn = document.getElementById('theme-toggle');
-            const icon = toggleBtn.querySelector('i');
-            const html = document.documentElement;
+        applyFontSize(currentSize);
 
-            const savedTheme = localStorage.getItem('theme');
-            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-            let currentTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-
-            // Apply initial theme
-            if (currentTheme === 'dark') {
-                html.setAttribute('data-theme', 'dark');
-                icon.classList.replace('fa-moon', 'fa-sun');
-            } else {
-                html.removeAttribute('data-theme'); // Default is light
-                icon.classList.replace('fa-sun', 'fa-moon');
-            }
-
-            toggleBtn.addEventListener('click', () => {
-                // If currently dark, switch to light (remove attribute)
-                if (html.getAttribute('data-theme') === 'dark') {
-                    html.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'light');
-                    icon.classList.replace('fa-sun', 'fa-moon');
-                } else {
-                    // Switch to dark
-                    html.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                    icon.classList.replace('fa-moon', 'fa-sun');
-                }
-            });
+        document.getElementById("fontSizeUp").addEventListener("click", () => {
+          if (currentSize < maxSize) {
+            currentSize += 1;
+            applyFontSize(currentSize);
+          }
         });
 
-        // --- COPY TO CLIPBOARD ---
-        function copyText(btnElement, text) {
-            navigator.clipboard.writeText(text).then(() => {
-                const icon = btnElement.querySelector('i');
-                if (icon) {
-                    icon.classList.remove('fa-copy', 'fa-regular');
-                    icon.classList.add('fa-check', 'fa-solid');
-                    icon.style.color = "var(--theme-green)";
-                    setTimeout(() => {
-                        icon.classList.remove('fa-check', 'fa-solid');
-                        icon.classList.add('fa-copy', 'fa-regular');
-                        icon.style.color = "";
-                    }, 2000);
-                }
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
-        }
+        document
+          .getElementById("fontSizeDown")
+          .addEventListener("click", () => {
+            if (currentSize > minSize) {
+              currentSize -= 1;
+              applyFontSize(currentSize);
+            }
+          });
+      })();
+
+      // --- COPY TO CLIPBOARD ---
+      function copyText(btnElement, text) {
+        navigator.clipboard
+          .writeText(text)
+          .then(() => {
+            const icon = btnElement.querySelector("i");
+            if (icon) {
+              icon.classList.remove("fa-copy", "fa-regular");
+              icon.classList.add("fa-check", "fa-solid");
+              icon.style.color = "var(--theme-green)";
+              setTimeout(() => {
+                icon.classList.remove("fa-check", "fa-solid");
+                icon.classList.add("fa-copy", "fa-regular");
+                icon.style.color = "";
+              }, 2000);
+            }
+          })
+          .catch((err) => {
+            console.error("Failed to copy text: ", err);
+          });
+      }
     </script>
     <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
     <script>
-        ClassicEditor
-            .create(document.querySelector('#noteEditor'), {
-                toolbar: {
-                    items: [
-                        'heading',
-                        '|',
-                        'bold',
-                        'italic',
-                        'underline',
-                        'strikethrough',
-                        '|',
-                        'bulletedList',
-                        'numberedList',
-                        '|',
-                        'link',
-                        'blockQuote',
-                        'insertTable',
-                        '|',
-                        'undo',
-                        'redo'
-                    ]
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            });
+      ClassicEditor.create(document.querySelector("#noteEditor"), {
+        toolbar: {
+          items: [
+            "heading",
+            "|",
+            "bold",
+            "italic",
+            "underline",
+            "strikethrough",
+            "|",
+            "bulletedList",
+            "numberedList",
+            "|",
+            "link",
+            "blockQuote",
+            "insertTable",
+            "|",
+            "undo",
+            "redo",
+          ],
+        },
+      }).catch((error) => {
+        console.error(error);
+      });
     </script>
     <script>
-        // --- MONACO EDITOR SETUP ---
-        let editor;
+      // --- MONACO EDITOR SETUP ---
+      let editor;
 
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+      require.config({
+        paths: {
+          vs: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs",
+        },
+      });
 
-        require(['vs/editor/editor.main'], function () {
-            editor = monaco.editor.create(document.getElementById('monaco-editor-container'), {
-                value: `# Write your python code here\n\nclass Solution:\n    def solve(self):\n        pass`,
-                language: 'python',
-                theme: 'vs-dark', // Default to dark, logic below handles switch
-                automaticLayout: true,
-                minimap: { enabled: false },
-                fontSize: 14,
-                fontFamily: "'Fira Code', 'Consolas', monospace",
-                scrollBeyondLastLine: false,
-                padding: { top: 20 }
-            });
+      require(["vs/editor/editor.main"], function () {
+        editor = monaco.editor.create(
+          document.getElementById("monaco-editor-container"),
+          {
+            value: `# Write your python code here\n\nclass Solution:\n    def solve(self):\n        pass`,
+            language: "python",
+            theme: "vs-dark", // Default to dark, logic below handles switch
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 14,
+            fontFamily: "'Fira Code', 'Consolas', monospace",
+            scrollBeyondLastLine: false,
+            padding: { top: 20 },
+          },
+        );
 
-            // Theme Handling
-            function updateEditorTheme() {
-                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-                monaco.editor.setTheme(isDark ? 'vs-dark' : 'vs-light');
+        // Theme Handling
+        function updateEditorTheme() {
+          const isDark =
+            document.documentElement.getAttribute("data-theme") === "dark";
+          monaco.editor.setTheme(isDark ? "vs-dark" : "vs-light");
+        }
+
+        // Watch for theme changes (simple poll or observer if possible, doing manual check for now)
+        updateEditorTheme();
+
+        // Expose to global for button usage
+        window.editor = editor;
+
+        // Add observer for theme change
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (
+              mutation.type === "attributes" &&
+              mutation.attributeName === "data-theme"
+            ) {
+              updateEditorTheme();
             }
-
-            // Watch for theme changes (simple poll or observer if possible, doing manual check for now)
-            updateEditorTheme();
-
-            // Expose to global for button usage
-            window.editor = editor;
-
-            // Add observer for theme change
-            const observer = new MutationObserver(function (mutations) {
-                mutations.forEach(function (mutation) {
-                    if (mutation.type === "attributes" && mutation.attributeName === "data-theme") {
-                        updateEditorTheme();
-                    }
-                });
-            });
-            observer.observe(document.documentElement, { attributes: true });
+          });
         });
+        observer.observe(document.documentElement, { attributes: true });
+      });
 
-        // --- AJAX EXECUTION ---
-        const runBtn = document.getElementById('runBtn');
-        const submitBtn = document.getElementById('submitBtn');
+      // --- AJAX EXECUTION ---
+      const runBtn = document.getElementById("runBtn");
+      const submitBtn = document.getElementById("submitBtn");
 
-        // Helper to get CSRF token
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
+      // Helper to get CSRF token
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              );
+              break;
             }
-            return cookieValue;
+          }
         }
-        const csrftoken = getCookie('csrftoken');
+        return cookieValue;
+      }
+      const csrftoken = getCookie("csrftoken");
 
-        async function executeCode(url, isSubmission) {
-            if (!editor) return;
-            const code = editor.getValue();
+      async function executeCode(url, isSubmission) {
+        if (!editor) return;
+        const code = editor.getValue();
 
-            // Loading State
-            const btn = isSubmission ? submitBtn : runBtn;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
-            btn.disabled = true;
+        // Loading State
+        const btn = isSubmission ? submitBtn : runBtn;
+        const originalText = btn.innerHTML;
+        btn.innerHTML =
+          '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
 
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: `code=${encodeURIComponent(code)}`
-                });
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+              "X-CSRFToken": csrftoken,
+            },
+            body: `code=${encodeURIComponent(code)}`,
+          });
 
-                const data = await response.json();
-                handleResult(data, isSubmission);
-
-            } catch (error) {
-                console.error("Error:", error);
-                handleResult({ verdict: "System Error", error: "Network Error" }, isSubmission);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
+          const data = await response.json();
+          handleResult(data, isSubmission);
+        } catch (error) {
+          console.error("Error:", error);
+          handleResult(
+            { verdict: "System Error", error: "Network Error" },
+            isSubmission,
+          );
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
         }
+      }
 
-        runBtn.addEventListener('click', () => executeCode("{% url 'run_code' challenge.slug %}", false));
-        submitBtn.addEventListener('click', () => executeCode("{% url 'judge_submission' challenge.slug %}", true));
+      runBtn.addEventListener("click", () =>
+        executeCode("{% url 'run_code' challenge.slug %}", false),
+      );
+      submitBtn.addEventListener("click", () =>
+        executeCode("{% url 'judge_submission' challenge.slug %}", true),
+      );
 
-        function triggerFeedback(type) {
-            document.getElementById('card-success').style.display = 'none';
-            document.getElementById('card-fail').style.display = 'none';
-            if (type === 'success') {
-                document.getElementById('card-success').style.display = 'block';
-            } else {
-                document.getElementById('card-fail').style.display = 'block';
-            }
+      function triggerFeedback(type) {
+        document.getElementById("card-success").style.display = "none";
+        document.getElementById("card-fail").style.display = "none";
+        if (type === "success") {
+          document.getElementById("card-success").style.display = "block";
+        } else {
+          document.getElementById("card-fail").style.display = "block";
         }
+      }
 
-        function handleResult(data, isSubmission) {
-            const successOverlay = document.getElementById('card-success');
-            const failOverlay = document.getElementById('card-fail');
-            const errorConsole = document.getElementById('error-console');
+      function handleResult(data, isSubmission) {
+        const successOverlay = document.getElementById("card-success");
+        const failOverlay = document.getElementById("card-fail");
+        const errorConsole = document.getElementById("error-console");
 
-            document.getElementById('feedback-overlay').classList.remove('hidden');
-            document.getElementById('feedback-overlay').style.display = 'flex'; // Ensure flex
+        document.getElementById("feedback-overlay").classList.remove("hidden");
+        document.getElementById("feedback-overlay").style.display = "flex"; // Ensure flex
 
-            // Reset
-            errorConsole.style.display = 'none';
-            errorConsole.textContent = '';
+        // Reset
+        errorConsole.style.display = "none";
+        errorConsole.textContent = "";
 
-            if (data.verdict === 'Accepted' || data.status === 'OK') {
-                triggerFeedback('success');
-                document.getElementById('success-msg').textContent = isSubmission ? "All tests passed! Challenge Solved." : "Sample tests passed!";
-            } else {
-                triggerFeedback('fail');
-                let msg = "";
-                if (data.verdict) msg += data.verdict;
-                if (data.status && data.status !== 'OK') msg += ": " + data.status;
+        if (data.verdict === "Accepted" || data.status === "OK") {
+          triggerFeedback("success");
+          document.getElementById("success-msg").textContent = isSubmission
+            ? "All tests passed! Challenge Solved."
+            : "Sample tests passed!";
+        } else {
+          triggerFeedback("fail");
+          let msg = "";
+          if (data.verdict) msg += data.verdict;
+          if (data.status && data.status !== "OK") msg += ": " + data.status;
 
-                document.getElementById('fail-msg').textContent = msg || "Check your logic.";
+          document.getElementById("fail-msg").textContent =
+            msg || "Check your logic.";
 
-                // Show error details if any
-                if (data.error || data.output) {
-                    errorConsole.style.display = 'block';
-                    errorConsole.textContent = data.error || data.output;
-                }
-            }
+          // Show error details if any
+          if (data.error || data.output) {
+            errorConsole.style.display = "block";
+            errorConsole.textContent = data.error || data.output;
+          }
         }
+      }
     </script>
-</body>
+  </body>
 </html>
