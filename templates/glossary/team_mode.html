@@ -1,0 +1,595 @@
+{% extends '../shared/_blank.html' %}
+{% load static %}
+{% block title %}Team Mode{% endblock %}
+
+{% block content %}
+<div class="team-game-wrapper">
+    <!-- Header -->
+    <nav class="team-nav">
+        <a href="{% url 'glossary' %}" class="nav-back-btn"><i class="fa-solid fa-arrow-left"></i> Glossary</a>
+        <h2 class="team-nav-title">⚔️ Team Mode</h2>
+        <div class="team-nav-turn" id="turn-indicator">
+            <span class="turn-dot" id="turn-dot"></span>
+            <span id="turn-team-name"></span> navbati
+        </div>
+    </nav>
+
+    <!-- Scoreboard -->
+    <div class="scoreboard" id="scoreboard"></div>
+
+    <!-- Card Grid -->
+    <div class="card-grid" id="card-grid"></div>
+
+    <!-- Answer Overlay (shown when card is flipped) -->
+    <div class="answer-overlay hidden" id="answer-overlay">
+        <div class="answer-card">
+            <div class="answer-label" id="answer-label">Savol</div>
+            <div class="answer-question" id="answer-question"></div>
+            <div class="answer-divider"></div>
+            <div class="answer-label" id="answer-answer-label">Javob</div>
+            <div class="answer-answer hidden" id="answer-answer"></div>
+            <button class="btn-reveal btn-transform" id="btn-reveal"><i class="fa-solid fa-eye"></i> Javobni ko'rsatish</button>
+            <div class="answer-actions hidden" id="answer-actions">
+                <button class="btn-correct btn-transform" id="btn-correct"><i class="fa-solid fa-check"></i> To'g'ri</button>
+                <button class="btn-wrong btn-transform" id="btn-wrong"><i class="fa-solid fa-xmark"></i> Noto'g'ri</button>
+            </div>
+            <div class="answer-team-badge" id="answer-team-badge"></div>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div class="gameover-overlay hidden" id="gameover-overlay">
+        <div class="gameover-card">
+            <h1>🏆 O'yin tugadi!</h1>
+            <div class="final-scores" id="final-scores"></div>
+            <div class="gameover-actions">
+                <a href="{% url 'team_mode_setup' %}" class="btn-restart btn-transform"><i class="fa-solid fa-rotate-right"></i> Qayta o'ynash</a>
+                <a href="{% url 'glossary' %}" class="btn-home btn-transform"><i class="fa-solid fa-house"></i> Glossary</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --team-purple: #8b5cf6;
+        --team-purple-dark: #6d28d9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        font-family: var(--secondary-font);
+        background: var(--bg-app);
+        color: var(--text-dark);
+        min-height: 100vh;
+    }
+
+    .team-game-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* --- NAV --- */
+    .team-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 20px;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 16px;
+        margin-bottom: 20px;
+    }
+
+    .team-nav .nav-back-btn {
+        font-weight: 700;
+        color: var(--text-medium);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+    }
+
+    .team-nav .nav-back-btn:hover { color: var(--team-purple); }
+
+    .team-nav-title {
+        font-weight: 900;
+        font-family: var(--primary-font);
+        font-size: 1.3rem;
+    }
+
+    .team-nav-turn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 8px 16px;
+        background: #f3f0ff;
+        border-radius: 10px;
+        color: #5b21b6;
+    }
+
+    .turn-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        display: inline-block;
+        transition: background 0.3s;
+    }
+
+    /* --- SCOREBOARD --- */
+    .scoreboard {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .score-item {
+        flex: 1;
+        min-width: 140px;
+        padding: 15px 20px;
+        border-radius: 14px;
+        text-align: center;
+        color: white;
+        font-weight: 800;
+        font-family: var(--primary-font);
+        border-bottom: 4px solid rgba(0,0,0,0.15);
+        transition: transform 0.2s;
+    }
+
+    .score-item.active-team {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 3px white, 0 0 0 5px currentColor;
+    }
+
+    .score-name {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin-bottom: 5px;
+    }
+
+    .score-value {
+        font-size: 2rem;
+    }
+
+    /* --- CARD GRID --- */
+    .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 12px;
+    }
+
+    .game-card {
+        aspect-ratio: 1;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 900;
+        font-family: var(--primary-font);
+        cursor: pointer;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 0 rgba(0,0,0,0.06);
+        color: var(--text-dark);
+        transition: transform 0.15s, box-shadow 0.15s, background 0.3s;
+        position: relative;
+        user-select: none;
+    }
+
+    .game-card:hover:not(.used) {
+        transform: translateY(-3px);
+        box-shadow: 0 7px 0 rgba(0,0,0,0.08);
+        border-color: var(--team-purple);
+    }
+
+    .game-card.used {
+        cursor: default;
+        opacity: 0.85;
+        box-shadow: none;
+        border-bottom-width: 2px;
+    }
+
+    .game-card.used .card-team-label {
+        display: block;
+    }
+
+    .card-team-label {
+        display: none;
+        position: absolute;
+        bottom: 5px;
+        font-size: 0.55rem;
+        font-weight: 700;
+        color: white;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    .game-card.correct {
+        color: white;
+    }
+
+    .game-card.wrong {
+        color: white;
+    }
+
+    /* --- ANSWER OVERLAY --- */
+    .answer-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.55);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.2s;
+    }
+
+    .answer-overlay.hidden { display: none; }
+
+    .answer-card {
+        background: var(--bg-panel);
+        border-radius: 20px;
+        padding: 35px 40px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        border: 2px solid var(--border-color);
+        animation: slideUp 0.25s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .answer-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--text-medium);
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .answer-question {
+        font-size: 1.4rem;
+        font-weight: 800;
+        font-family: var(--primary-font);
+        margin-bottom: 15px;
+        line-height: 1.5;
+    }
+
+    .answer-divider {
+        height: 2px;
+        background: var(--border-color);
+        margin: 15px 0;
+    }
+
+    .answer-answer {
+        font-size: 1.15rem;
+        font-weight: 600;
+        line-height: 1.6;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+        min-height: 30px;
+    }
+
+    .answer-answer.hidden { display: none; }
+
+    .btn-reveal {
+        padding: 12px 28px;
+        border-radius: 12px;
+        border: none;
+        background: var(--team-purple);
+        color: white;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 0 var(--team-purple-dark);
+        margin-bottom: 10px;
+    }
+
+    .btn-reveal.hidden { display: none; }
+
+    .answer-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 10px;
+    }
+
+    .answer-actions.hidden { display: none; }
+
+    .btn-correct, .btn-wrong {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        color: white;
+    }
+
+    .btn-correct {
+        background: var(--theme-green);
+        box-shadow: 0 4px 0 var(--theme-green-dark);
+    }
+
+    .btn-wrong {
+        background: var(--theme-red);
+        box-shadow: 0 4px 0 var(--theme-red-dark);
+    }
+
+    .answer-team-badge {
+        margin-top: 15px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 6px 14px;
+        border-radius: 8px;
+        display: inline-block;
+        color: white;
+    }
+
+    /* --- GAME OVER --- */
+    .gameover-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .gameover-overlay.hidden { display: none; }
+
+    .gameover-card {
+        background: var(--bg-panel);
+        border-radius: 24px;
+        padding: 45px;
+        max-width: 550px;
+        width: 90%;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+        border: 2px solid var(--border-color);
+        animation: slideUp 0.3s ease-out;
+    }
+
+    .gameover-card h1 {
+        font-size: 2rem;
+        font-family: var(--primary-font);
+        margin-bottom: 30px;
+    }
+
+    .final-scores {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .final-score-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        border-radius: 12px;
+        color: white;
+        font-weight: 800;
+        font-size: 1.1rem;
+    }
+
+    .final-score-row .trophy { font-size: 1.5rem; }
+
+    .gameover-actions {
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-restart, .btn-home {
+        flex: 1;
+        padding: 14px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 800;
+        font-size: 1rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-restart {
+        background: var(--team-purple);
+        color: white;
+        box-shadow: 0 4px 0 var(--team-purple-dark);
+    }
+
+    .btn-home {
+        background: var(--bg-app);
+        color: var(--text-dark);
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 0 rgba(0,0,0,0.06);
+    }
+
+    @media (max-width: 600px) {
+        .team-nav { flex-direction: column; gap: 10px; text-align: center; }
+        .card-grid { grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; }
+        .game-card { font-size: 1.3rem; }
+        .scoreboard { flex-direction: column; }
+    }
+</style>
+
+<script>
+    const TEAM_COLORS = ['#ef4444', '#3b82f6', '#f59e0b', '#10b981', '#ec4899', '#6366f1'];
+    const TEAM_COLORS_DARK = ['#b91c1c', '#1d4ed8', '#d97706', '#047857', '#be185d', '#4338ca'];
+    const TEAM_COLORS_LIGHT = ['#fef2f2', '#eff6ff', '#fffbeb', '#ecfdf5', '#fdf2f8', '#eef2ff'];
+
+    // Parse data from Django
+    const allTerms = JSON.parse('{{ terms_json|escapejs }}');
+    const startSide = '{{ start_side }}';
+    const teamNames = JSON.parse('{{ team_names_json|escapejs }}');
+    const teamCount = teamNames.length;
+
+    // Ensure cards are proportional to teams: multiple of teamCount, at least teamCount*3, at most all terms
+    let cardCount = Math.min(allTerms.length, Math.max(teamCount * 3, teamCount * Math.floor(allTerms.length / teamCount)));
+    // Round down to nearest multiple of teamCount for fairness
+    cardCount = Math.floor(cardCount / teamCount) * teamCount;
+    if (cardCount === 0) cardCount = Math.min(allTerms.length, teamCount);
+
+    const gameTerms = allTerms.slice(0, cardCount);
+
+    // State
+    let currentTeamIndex = 0;
+    let scores = teamNames.map(() => 0);
+    let usedCards = new Set();
+
+    // --- RENDER SCOREBOARD ---
+    function renderScoreboard() {
+        const sb = document.getElementById('scoreboard');
+        sb.innerHTML = teamNames.map((name, i) => `
+            <div class="score-item ${i === currentTeamIndex ? 'active-team' : ''}"
+                 style="background: ${TEAM_COLORS[i]};">
+                <div class="score-name">${name}</div>
+                <div class="score-value">${scores[i]}</div>
+            </div>
+        `).join('');
+    }
+
+    // --- RENDER CARD GRID ---
+    function renderCardGrid() {
+        const grid = document.getElementById('card-grid');
+        grid.innerHTML = gameTerms.map((term, i) => `
+            <div class="game-card" data-index="${i}" id="card-${i}" onclick="selectCard(${i})">
+                ${i + 1}
+                <span class="card-team-label"></span>
+            </div>
+        `).join('');
+    }
+
+    // --- UPDATE TURN INDICATOR ---
+    function updateTurn() {
+        const dot = document.getElementById('turn-dot');
+        const nameEl = document.getElementById('turn-team-name');
+        dot.style.background = TEAM_COLORS[currentTeamIndex];
+        nameEl.textContent = teamNames[currentTeamIndex];
+
+        // Update scoreboard active state
+        renderScoreboard();
+    }
+
+    // --- CARD SELECTION ---
+    function selectCard(index) {
+        if (usedCards.has(index)) return;
+
+        const term = gameTerms[index];
+
+        // Show question side
+        const questionText = startSide === 'term' ? term.term : term.definition;
+        const answerText = startSide === 'term' ? term.definition : term.term;
+
+        document.getElementById('answer-question').textContent = questionText;
+        document.getElementById('answer-answer').textContent = answerText;
+
+        document.getElementById('answer-label').textContent = startSide === 'term' ? 'Termin' : "Ta'rif";
+        document.getElementById('answer-answer-label').textContent = startSide === 'term' ? "Ta'rif" : 'Termin';
+
+        // Reset state
+        document.getElementById('answer-answer').classList.add('hidden');
+        document.getElementById('btn-reveal').classList.remove('hidden');
+        document.getElementById('answer-actions').classList.add('hidden');
+
+        // Team badge
+        const badge = document.getElementById('answer-team-badge');
+        badge.textContent = teamNames[currentTeamIndex];
+        badge.style.background = TEAM_COLORS[currentTeamIndex];
+
+        // Store current card info
+        document.getElementById('answer-overlay').dataset.cardIndex = index;
+        document.getElementById('answer-overlay').classList.remove('hidden');
+    }
+
+    // --- REVEAL ANSWER ---
+    document.getElementById('btn-reveal').addEventListener('click', () => {
+        document.getElementById('answer-answer').classList.remove('hidden');
+        document.getElementById('btn-reveal').classList.add('hidden');
+        document.getElementById('answer-actions').classList.remove('hidden');
+    });
+
+    // --- CORRECT / WRONG ---
+    function handleAnswer(isCorrect) {
+        const overlay = document.getElementById('answer-overlay');
+        const cardIndex = parseInt(overlay.dataset.cardIndex);
+
+        usedCards.add(cardIndex);
+
+        const card = document.getElementById(`card-${cardIndex}`);
+        card.classList.add('used');
+
+        if (isCorrect) {
+            scores[currentTeamIndex] += 1;
+            card.classList.add('correct');
+            card.style.background = TEAM_COLORS[currentTeamIndex];
+            card.style.borderColor = TEAM_COLORS_DARK[currentTeamIndex];
+        } else {
+            card.classList.add('wrong');
+            card.style.background = '#9ca3af';
+            card.style.borderColor = '#6b7280';
+        }
+
+        // Show team label on card
+        const label = card.querySelector('.card-team-label');
+        label.textContent = teamNames[currentTeamIndex];
+
+        // Close overlay
+        overlay.classList.add('hidden');
+
+        // Next team
+        currentTeamIndex = (currentTeamIndex + 1) % teamCount;
+        updateTurn();
+        renderScoreboard();
+
+        // Check if game over
+        if (usedCards.size >= gameTerms.length) {
+            setTimeout(showGameOver, 400);
+        }
+    }
+
+    document.getElementById('btn-correct').addEventListener('click', () => handleAnswer(true));
+    document.getElementById('btn-wrong').addEventListener('click', () => handleAnswer(false));
+
+    // --- GAME OVER ---
+    function showGameOver() {
+        const finalScores = document.getElementById('final-scores');
+        // Sort teams by score descending
+        const sorted = teamNames.map((name, i) => ({ name, score: scores[i], color: TEAM_COLORS[i], index: i }));
+        sorted.sort((a, b) => b.score - a.score);
+
+        finalScores.innerHTML = sorted.map((team, rank) => `
+            <div class="final-score-row" style="background: ${team.color};">
+                <span>${rank === 0 ? '<span class="trophy">🏆</span> ' : ''}${team.name}</span>
+                <span>${team.score} ball</span>
+            </div>
+        `).join('');
+
+        document.getElementById('gameover-overlay').classList.remove('hidden');
+    }
+
+    // --- INIT ---
+    renderScoreboard();
+    renderCardGrid();
+    updateTurn();
+</script>
+{% endblock content %}

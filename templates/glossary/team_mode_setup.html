@@ -1,0 +1,285 @@
+{% extends '../shared/_base.html' %}
+{% block title %} Team Mode Setup {% endblock %}
+{% block content %}
+<main class="container">
+    <div class="setup-card team-mode-card">
+        <h1 class="page-title text-center" style="color: #8b5cf6;">⚔️ Team Mode Setup</h1>
+        <p class="subtitle text-center">Set up a team competition to review terms together!</p>
+
+        <form action="{% url 'team_mode' %}" method="GET" class="setup-form" id="team-setup-form">
+            
+            <!-- Topics Section -->
+            <div class="form-section">
+                <h3><i class="fa-solid fa-list-ul"></i>Mavzularni tanlang</h3>
+                <div class="topic-selection-grid">
+                    <label class="topic-checkbox special-all">
+                        <input type="checkbox" name="topics" value="all" checked id="all-topics">
+                        <span class="checkbox-visual"><i class="fa-solid fa-check"></i></span>
+                        <span class="topic-name">Barcha mavzular</span>
+                    </label>
+                    {% for topic in topics %}
+                    <label class="topic-checkbox">
+                        <input type="checkbox" name="topics" value="{{ topic.slug }}" class="single-topic">
+                        <span class="checkbox-visual"><i class="fa-solid fa-check"></i></span>
+                        <span class="topic-name">{{ topic.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Card Front Section -->
+            <div class="form-section">
+                <h3><i class="fa-solid fa-layer-group"></i>Avval ko'rsatilsin</h3>
+                <div class="radio-group">
+                    <label class="custom-radio">
+                        <input type="radio" name="side" value="term" checked>
+                        <span class="radio-content">
+                            <span class="radio-icon"><i class="fa-solid fa-font"></i></span>
+                            <span class="radio-text">Termin</span>
+                        </span>
+                    </label>
+                    <label class="custom-radio">
+                        <input type="radio" name="side" value="definition">
+                        <span class="radio-content">
+                            <span class="radio-icon"><i class="fa-solid fa-align-left"></i></span>
+                            <span class="radio-text">Ta'rif</span>
+                        </span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Number of Teams -->
+            <div class="form-section">
+                <h3><i class="fa-solid fa-users"></i>Jamoalar soni: <span id="team-count-display">2</span></h3>
+                <div class="range-container">
+                    <input type="range" name="team_count" min="2" max="6" step="1" value="2" class="custom-range" id="team-count-slider">
+                    <div class="range-labels">
+                        <span>2</span>
+                        <span>6</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Names -->
+            <div class="form-section">
+                <h3><i class="fa-solid fa-pen"></i>Jamoalar nomlari <span style="font-weight: 500; font-size: 0.85rem; color: var(--text-medium);">(ixtiyoriy)</span></h3>
+                <div class="team-names-grid" id="team-names-grid">
+                    <div class="team-name-input-group">
+                        <span class="team-color-dot" style="background: #ef4444;"></span>
+                        <input type="text" name="team_name" placeholder="Team 1" class="team-name-input">
+                    </div>
+                    <div class="team-name-input-group">
+                        <span class="team-color-dot" style="background: #3b82f6;"></span>
+                        <input type="text" name="team_name" placeholder="Team 2" class="team-name-input">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-start btn-transform team-btn">
+                O'yinni boshlash <i class="fa-solid fa-play"></i>
+            </button>
+        </form>
+    </div>
+</main>
+
+<style>
+    .setup-card {
+        background: var(--bg-panel);
+        border-radius: var(--panel-radius);
+        padding: 40px;
+        width: 800px;
+        margin: 40px auto;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        border: 2px solid var(--border-color);
+    }
+
+    .text-center { text-align: center; }
+    .subtitle { color: var(--text-medium); margin-bottom: 40px; }
+    
+    .form-section { margin-bottom: 30px; }
+    .form-section h3 { 
+        margin-bottom: 15px; 
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* Grid & Checkbox */
+    .topic-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+    }
+    
+    .topic-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .topic-checkbox:hover { border-color: #8b5cf6; }
+    .topic-checkbox input { display: none; }
+    
+    .checkbox-visual {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        transition: all 0.2s;
+    }
+    
+    .topic-checkbox input:checked + .checkbox-visual { background: #8b5cf6; }
+    .topic-checkbox.special-all input:checked + .checkbox-visual { background: #6d28d9; }
+
+    /* Radio Group */
+    .radio-group { display: flex; gap: 10px; }
+    .custom-radio { flex: 1; cursor: pointer; }
+    .custom-radio input { display: none; }
+    
+    .radio-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        transition: all 0.2s;
+    }
+    
+    .custom-radio input:checked + .radio-content {
+        border-color: #8b5cf6;
+        background: #f3f0ff;
+        color: #5b21b6;
+    }
+
+    /* Slider */
+    .range-container { padding: 10px 0; }
+    .custom-range {
+        width: 100%;
+        height: 10px;
+        border-radius: 5px;
+        background: var(--border-color);
+        outline: none;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    .custom-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .range-labels { display: flex; justify-content: space-between; margin-top: 5px; color: var(--text-medium); font-size: 0.9rem; font-weight: 700; }
+
+    /* Team Name Inputs */
+    .team-names-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .team-name-input-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 15px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        background: var(--bg-app);
+    }
+
+    .team-color-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .team-name-input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-family: var(--secondary-font);
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-dark);
+        width: 100%;
+    }
+
+    /* Start Button */
+    .team-btn {
+        width: 100%;
+        padding: 18px;
+        font-size: 1.3rem;
+        font-weight: 900;
+        border: none;
+        border-radius: var(--btn-radius);
+        background: #8b5cf6;
+        color: white;
+        cursor: pointer;
+        margin-top: 20px;
+        box-shadow: 0 4px 0 #6d28d9;
+        letter-spacing: 1px;
+        font-family: var(--primary-font);
+    }
+    .team-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #6d28d9; }
+    .team-btn:active { transform: translateY(4px); box-shadow: none; margin-top: 24px; border-bottom: 0; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const TEAM_COLORS = ['#ef4444', '#3b82f6', '#f59e0b', '#10b981', '#ec4899', '#6366f1'];
+
+        // Checkbox Logic
+        const allCheckbox = document.getElementById('all-topics');
+        const otherCheckboxes = document.querySelectorAll('.single-topic');
+        
+        allCheckbox.addEventListener('change', (e) => {
+            if (e.target.checked) otherCheckboxes.forEach(cb => cb.checked = false);
+        });
+        
+        otherCheckboxes.forEach(cb => {
+            cb.addEventListener('change', () => { if (cb.checked) allCheckbox.checked = false; });
+        });
+
+        // Team Count Slider
+        const teamCountSlider = document.getElementById('team-count-slider');
+        const teamCountDisplay = document.getElementById('team-count-display');
+        const teamNamesGrid = document.getElementById('team-names-grid');
+
+        function renderTeamInputs(count) {
+            teamNamesGrid.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const group = document.createElement('div');
+                group.className = 'team-name-input-group';
+                group.innerHTML = `
+                    <span class="team-color-dot" style="background: ${TEAM_COLORS[i]};"></span>
+                    <input type="text" name="team_name" placeholder="Team ${i + 1}" class="team-name-input">
+                `;
+                teamNamesGrid.appendChild(group);
+            }
+        }
+
+        teamCountSlider.addEventListener('input', (e) => {
+            teamCountDisplay.textContent = e.target.value;
+            renderTeamInputs(parseInt(e.target.value));
+        });
+    });
+</script>
+{% endblock content %}

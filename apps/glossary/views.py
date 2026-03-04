@@ -193,3 +193,57 @@ def random_term_json(request):
     else:
         data = {}
     return JsonResponse(data)
+
+
+def team_mode_setup_view(request):
+    term_service = TermService()
+    context = {
+        'topics': term_service.get_all_topics()
+    }
+    return render(request, 'glossary/team_mode_setup.html', context)
+
+
+def team_mode_view(request):
+    term_service = TermService()
+
+    # Get parameters
+    topic_slugs = request.GET.getlist('topics')
+    start_side = request.GET.get('side', 'term')
+    team_count = int(request.GET.get('team_count', '2'))
+    team_names_raw = request.GET.getlist('team_name')
+
+    # Build team names list with defaults
+    team_names = []
+    for i in range(team_count):
+        if i < len(team_names_raw) and team_names_raw[i].strip():
+            team_names.append(team_names_raw[i].strip())
+        else:
+            team_names.append(f'Team {i + 1}')
+
+    # Filter terms
+    terms = term_service.get_all()
+
+    if topic_slugs and 'all' not in topic_slugs:
+        terms = terms.filter(topic__slug__in=topic_slugs)
+
+    # Shuffle
+    terms = terms.order_by('?')
+
+    # Serialize terms for JS
+    terms_data = []
+    for term in terms:
+        terms_data.append({
+            'id': term.id,
+            'term': term.term,
+            'term_en': getattr(term, 'term_en', ''),
+            'definition': term.short_definition,
+            'topic': term.topic.name if term.topic else 'General',
+        })
+
+    context = {
+        'terms_json': json.dumps(terms_data),
+        'start_side': start_side,
+        'team_names_json': json.dumps(team_names),
+        'total_count': len(terms_data),
+    }
+    return render(request, 'glossary/team_mode.html', context)

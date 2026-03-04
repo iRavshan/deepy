@@ -1,162 +1,189 @@
-{% extends '../shared/_base.html' %}
-{% block title %} DeepWiki {% endblock %}
-{% block content %}
-{% load static %}
-{% load i18n %}
+{% extends '../shared/_base.html' %} {% block title %} DeepWiki {% endblock %}
+{% block content %} {% load static %} {% load i18n %}
 <main class="container">
-    <div class="banner-row">
-        <div class="mode-banner banner-study">
-            <div class="banner-content">
-                <h2>Study Mode</h2>
-                <p>Review definitions at your own pace.</p>
-                <a class="banner-btn btn-study-action btn-transform" href="{% url 'learning_setup' %}">Start Learning</a>
-            </div>
-            <div class="banner-icon">📖</div>
-        </div>
-
-        <div class="mode-banner banner-speed">
-            <div class="banner-content">
-                <h2>Speed Run</h2>
-                <p>Race against the clock to score points!</p>
-                <a class="banner-btn btn-speed-action btn-transform" href="{% url 'speed_run_setup' %}">Play Game</a>
-            </div>
-            <div class="banner-icon">🚀</div>
-        </div>
-
-    </div>
-    <div class="page-header-row">
-        <h1 class="page-title">DEEPWIKI</h1>
-        <form method="GET" action="{% url 'glossary' %}" class="search-container">
-            <i class="fa-solid fa-magnifying-glass search-icon"></i>
-            <input type="search" name="search" class="search-input" placeholder="Qidirish..." value="{{ search_query|default:'' }}">
-        </form>
+  <div class="banner-row">
+    <div class="mode-banner banner-study">
+      <div class="banner-content">
+        <h2>Study Mode</h2>
+        <p>Review definitions at your own pace.</p>
+        <a
+          class="banner-btn btn-study-action btn-transform"
+          href="{% url 'learning_setup' %}"
+          >Start Learning</a
+        >
+      </div>
+      <div class="banner-icon">📖</div>
     </div>
 
-    <!-- Topic Filter Pills -->
-    <div class="topic-filter-container">
-        <a href="{% url 'glossary' %}{% if search_query %}?search={{ search_query }}{% endif %}"
-            class="topic-pill {% if not selected_topic %}active{% endif %}">
-            <i class="fa-solid fa-border-all"></i> Barchasi
-        </a>
-        {% for topic in topics %}
-        <a href="{% url 'glossary' %}?topic={{ topic.slug }}{% if search_query %}&search={{ search_query }}{% endif %}"
-            class="topic-pill {% if selected_topic == topic.slug %}active{% endif %}">
-            {% if topic.icon %}{{ topic.icon }}{% else %}<i class="fa-solid fa-tag"></i>{% endif %}
-            {{ topic.name }}
-            <span class="topic-count">{{ topic.terms.count }}</span>
-        </a>
-        {% endfor %}
+    <div class="mode-banner banner-speed">
+      <div class="banner-content">
+        <h2>Speed Run</h2>
+        <p>Race against the clock to score points!</p>
+        <a
+          class="banner-btn btn-speed-action btn-transform"
+          href="{% url 'speed_run_setup' %}"
+          >Play Game</a
+        >
+      </div>
+      <div class="banner-icon">🚀</div>
     </div>
 
-    {% if search_query and not terms %}
-    <p class="search-results-title">"{{ search_query }}" so'roviga mos ma'lumot topilmadi</p>
-    {% endif %}
-    <div class="term-grid" id="term-grid">
-        {% for term in terms %}
-        {% include "glossary/includes/term_card.html" with term=term %}
-        {% endfor %}
+    <div class="mode-banner banner-team">
+      <div class="banner-content">
+        <h2>Team Mode</h2>
+        <p>Compete in teams and test your knowledge!</p>
+        <a
+          class="banner-btn btn-team-action btn-transform"
+          href="{% url 'team_mode_setup' %}"
+          >Start Game</a
+        >
+      </div>
+      <div class="banner-icon">⚔️</div>
     </div>
+  </div>
+  <div class="page-header-row">
+    <h1 class="page-title">DEEPWIKI</h1>
+    <form method="GET" action="{% url 'glossary' %}" class="search-container">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input
+        type="search"
+        name="search"
+        class="search-input"
+        placeholder="Qidirish..."
+        value="{{ search_query|default:'' }}"
+      />
+    </form>
+  </div>
 
-    <!-- Loading Spinner -->
-    <div id="loading-spinner" class="loading-spinner" style="display: none;">
-        <i class="fa-solid fa-spinner fa-spin"></i>
-    </div>
-    
-    <div id="end-message" style="display: none; text-align: center; color: var(--text-medium); margin-top: 20px;">
-        All terms loaded.
-    </div>
+  <!-- Topic Filter Pills -->
+  <div class="topic-filter-container">
+    <a href="{% url 'glossary' %}{% if search_query %}?search={{ search_query }}{% endif %}" class="topic-pill {% if not selected_topic %}active{% endif %}">
+      <i class="fa-solid fa-border-all"></i> Barchasi
+    </a>
+    {% for topic in topics %}
+    <a href="{% url 'glossary' %}?topic={{ topic.slug }}{% if search_query %}&search={{ search_query }}{% endif %}" class="topic-pill {% if selected_topic == topic.slug %}active{% endif %}">
+      {% if topic.icon %}{{ topic.icon }}{% else %}<i class="fa-solid fa-tag"></i>{% endif %} {{ topic.name }}
+      <span class="topic-count">{{ topic.terms.count }}</span>
+    </a>
+    {% endfor %}
+  </div>
 
+  {% if search_query and not terms %}
+  <p class="search-results-title">
+    "{{ search_query }}" so'roviga mos ma'lumot topilmadi
+  </p>
+  {% endif %}
+  <div class="term-grid" id="term-grid">
+    {% for term in terms %} {% include "glossary/includes/term_card.html" with term=term %} {% endfor %}
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="loading-spinner" class="loading-spinner" style="display: none">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+  </div>
+
+  <div
+    id="end-message"
+    style="
+      display: none;
+      text-align: center;
+      color: var(--text-medium);
+      margin-top: 20px;
+    "
+  >
+    All terms loaded.
+  </div>
 </main>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // ... (Existing Infinite Scroll Logic) ...
-        let page = 1;
-        let hasNext = {{ terms.has_next|yesno:"true,false" }};
-        let isLoading = false;
-        const termGrid = document.getElementById('term-grid');
-        const spinner = document.getElementById('loading-spinner');
-        const endMessage = document.getElementById('end-message');
-        
-        // Infinite Scroll
-        window.addEventListener('scroll', () => {
-             if (isLoading || !hasNext) return;
-             
-             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                 loadMoreTerms();
-             }
-        });
+  document.addEventListener('DOMContentLoaded', function() {
+      // ... (Existing Infinite Scroll Logic) ...
+      let page = 1;
+      let hasNext = {{ terms.has_next|yesno:"true,false" }};
+      let isLoading = false;
+      const termGrid = document.getElementById('term-grid');
+      const spinner = document.getElementById('loading-spinner');
+      const endMessage = document.getElementById('end-message');
 
-        function loadMoreTerms() {
-            isLoading = true;
-            spinner.style.display = 'block';
-            page++;
-            
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', page);
-            
-            fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = data.html;
-                
-                Array.from(tempDiv.children).forEach((child, index) => {
-                     child.style.animationDelay = `${index * 0.1}s`;
-                     child.classList.add('slide-up-fade-in');
-                     termGrid.appendChild(child);
-                });
-                
-                hasNext = data.has_next;
-                if (!hasNext) {
-                    endMessage.style.display = 'block';
-                }
-            })
-            .catch(console.error)
-            .finally(() => {
-                isLoading = false;
-                spinner.style.display = 'none';
-            });
-        }
+      // Infinite Scroll
+      window.addEventListener('scroll', () => {
+           if (isLoading || !hasNext) return;
 
-        // Bookmark Logic
-        document.addEventListener('click', function(e) {
-            const btn = e.target.closest('.bookmark-btn');
-            if (!btn) return;
+           if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+               loadMoreTerms();
+           }
+      });
 
-            const slug = btn.dataset.slug;
-            const icon = btn.querySelector('i');
+      function loadMoreTerms() {
+          isLoading = true;
+          spinner.style.display = 'block';
+          page++;
 
-            fetch('{% url "toggle_term_save" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ slug: slug })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.saved) {
-                    btn.classList.add('active');
-                    icon.classList.remove('fa-regular');
-                    icon.classList.add('fa-solid');
-                } else {
-                    btn.classList.remove('active');
-                    icon.classList.remove('fa-solid');
-                    icon.classList.add('fa-regular');
-                }
-                
-                // Animate
-                icon.style.transform = 'scale(1.2)';
-                setTimeout(() => icon.style.transform = 'scale(1)', 200);
-            })
-            .catch(console.error);
-        });
-    });
+          const url = new URL(window.location.href);
+          url.searchParams.set('page', page);
+
+          fetch(url, {
+              headers: {
+                  'X-Requested-With': 'XMLHttpRequest'
+              }
+          })
+          .then(response => response.json())
+          .then(data => {
+              const tempDiv = document.createElement('div');
+              tempDiv.innerHTML = data.html;
+
+              Array.from(tempDiv.children).forEach((child, index) => {
+                   child.style.animationDelay = `${index * 0.1}s`;
+                   child.classList.add('slide-up-fade-in');
+                   termGrid.appendChild(child);
+              });
+
+              hasNext = data.has_next;
+              if (!hasNext) {
+                  endMessage.style.display = 'block';
+              }
+          })
+          .catch(console.error)
+          .finally(() => {
+              isLoading = false;
+              spinner.style.display = 'none';
+          });
+      }
+
+      // Bookmark Logic
+      document.addEventListener('click', function(e) {
+          const btn = e.target.closest('.bookmark-btn');
+          if (!btn) return;
+
+          const slug = btn.dataset.slug;
+          const icon = btn.querySelector('i');
+
+          fetch('{% url "toggle_term_save" %}', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': '{{ csrf_token }}'
+              },
+              body: JSON.stringify({ slug: slug })
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.saved) {
+                  btn.classList.add('active');
+                  icon.classList.remove('fa-regular');
+                  icon.classList.add('fa-solid');
+              } else {
+                  btn.classList.remove('active');
+                  icon.classList.remove('fa-solid');
+                  icon.classList.add('fa-regular');
+              }
+
+              // Animate
+              icon.style.transform = 'scale(1.2)';
+              setTimeout(() => icon.style.transform = 'scale(1)', 200);
+          })
+          .catch(console.error);
+      });
+  });
 </script>
 {% endblock content %}
