@@ -94,8 +94,7 @@ class Challenge(models.Model):
     output_description = RichTextField(config_name='math_editor', blank=True, null=True)
     sample_tests = models.JSONField(default=list)  
     hidden_tests = models.JSONField(default=list)
-    time_limit = models.FloatField(default=1.0)
-    time_limit = models.FloatField(default=1.0)
+    time_limit = models.IntegerField(default=1000)
     memory_limit = models.IntegerField(default=256)
 
     tags = models.ManyToManyField(Tag, related_name="challenges", blank=True)
@@ -128,29 +127,42 @@ class Challenge(models.Model):
     
 
 
+class ProgrammingLanguage(models.Model):
+    judge0_id = models.IntegerField(unique=True, help_text="Judge0 API dagi til ID raqami")
+    name = models.CharField(max_length=100)
+    monaco_identifier = models.CharField(max_length=50, help_text="Monaco Editor uchun til nomi, masalan: python, javascript, cpp")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Submission(models.Model):
     challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE, related_name='submissions')
     submitted_by = models.ForeignKey('users.User', on_delete=models.CASCADE, related_name='task_submissions')
     code = models.TextField()
-    language = models.CharField(max_length=50, choices=[
-        ("python", "Python"),
-        ("javascript", "JavaScript"),
-        ("cpp", "C++"),
-    ])
+    language = models.ForeignKey(ProgrammingLanguage, on_delete=models.SET_NULL, null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=[
+    status = models.CharField(max_length=30, choices=[
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
         ('wrong_answer', 'Wrong Answer'),
         ('time_limit_exceeded', 'Time Limit Exceeded'),
         ('runtime_error', 'Runtime Error'),
+        ('compilation_error', 'Compilation Error'),
+        ('internal_error', 'Internal Error'),
     ], default='pending')
+    execution_time = models.FloatField(null=True, blank=True, help_text="Sekundlarda")
+    memory_used = models.IntegerField(null=True, blank=True, help_text="KB da")
 
     class Meta:
         ordering = ['-submitted_at']
 
     def __str__(self):
-        return f"Submission by {self.submitted_by.email} for {self.task.title} - {self.status}"
+        return f"Submission by {self.submitted_by.email} for {self.challenge.title} - {self.status}"
 
 class SavedChallenge(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_challenges')

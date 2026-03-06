@@ -2,12 +2,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q, Exists, OuterRef
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from .models import Challenge, Submission, Tag, Topic, SavedChallenge
+from .models import Challenge, Submission, Tag, Topic, SavedChallenge, ProgrammingLanguage
 from .forms import ChallangeSubmissionForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
-from .utils.code_runners.python.python_judge import judge_submission
+from apps.users.utils import update_user_streak
+from .utils.judge_service import judge_all_tests
 import json
 
 
@@ -71,18 +72,22 @@ def challenge_detail(request, slug):
     next_challenge = Challenge.objects.filter(id__gt=challenge.id).order_by('id').first()
     prev_challenge = Challenge.objects.filter(id__lt=challenge.id).order_by('-id').first()
 
+    languages = ProgrammingLanguage.objects.filter(is_active=True)
+
     context = {
         'challenge': challenge, 
         'form': form,
         'submissions': None,
         'next_challenge': next_challenge,
-        'prev_challenge': prev_challenge
+        'prev_challenge': prev_challenge,
+        'languages': languages,
     }
 
     if request.user.is_authenticated:
-        submissions = Submission.objects.filter(submitted_by=request.user, challenge=challenge)
-        if submissions is not None:
-            context['submissions'] = submissions
+        submissions = Submission.objects.filter(
+            submitted_by=request.user, challenge=challenge
+        ).select_related('language')
+        context['submissions'] = submissions
     
     return render(request, 'challenges/challenge_detail.html', context)
 
@@ -103,33 +108,60 @@ def challenge_info(request):
 @login_required
 @require_POST
 def judge_submission_view(request, slug):
-    challenge = Challenge.objects.get(slug=slug)
+    challenge = get_object_or_404(Challenge, slug=slug)
     code = request.POST.get('code')
+    language_id = request.POST.get('language_id')
     
-    result = judge_submission(code, challenge.hidden_tests, challenge.time_limit)
+    # Get ProgrammingLanguage 
+    lang = get_object_or_404(ProgrammingLanguage, judge0_id=language_id)
     
-    from apps.users.utils import update_user_streak
+    result = judge_all_tests(
+        source_code=code,
+        language_id=int(language_id),
+        test_cases=challenge.hidden_tests,
+        cpu_time_limit=challenge.time_limit,
+        memory_limit=challenge.memory_limit,
+    )
+    
     update_user_streak(request.user)
     
     submission = Submission.objects.create(
         challenge=challenge,
         submitted_by=request.user,
         code=code,
-        language='python', # Default for now
-        status=result['verdict'].lower().replace(" ", "_")
+        language=lang,
+        status=result['status_key'],
+        execution_time=float(result['max_time']) if result.get('max_time') else None,
+        memory_used=result.get('max_memory'),
     )
+
+    # Add submission info to result for frontend
+    result['submission'] = {
+        'id': submission.id,
+        'status': submission.get_status_display(),
+        'status_key': submission.status,
+        'submitted_at': submission.submitted_at.strftime('%Y-%m-%d %H:%M'),
+        'language': lang.name,
+        'execution_time': result.get('max_time'),
+        'memory_used': result.get('max_memory'),
+    }
     
     return JsonResponse(result)
 
 @login_required
 @require_POST
-def run_code_view(request, slug):
-    from .utils.code_runners.python.python_judge import judge_submission
-    
+def run_code_view(request, slug):    
     challenge = get_object_or_404(Challenge, slug=slug)
     code = request.POST.get('code')
+    language_id = request.POST.get('language_id')
     
-    result = judge_submission(code, challenge.sample_tests, challenge.time_limit)
+    result = judge_all_tests(
+        source_code=code,
+        language_id=int(language_id),
+        test_cases=challenge.sample_tests,
+        cpu_time_limit=challenge.time_limit,
+        memory_limit=challenge.memory_limit,
+    )
     
     return JsonResponse(result)
 

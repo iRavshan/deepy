@@ -76,8 +76,6 @@
         <a href="{% url 'challenge_list' %}" class="nav-back-btn">
           <i class="fa-solid fa-list-ul"></i> Barcha masalalar
         </a>
-      </div>
-      <div class="nav-center">
         <a
           href="{% if prev_challenge %}{% url 'challenge_detail' prev_challenge.slug %}{% else %}#{% endif %}"
           class="nav-control-btn {% if not prev_challenge %}disabled{% endif %}"
@@ -136,14 +134,12 @@
             <button class="tab-btn" onclick="switchTab('hints')">
               <i class="fa-solid fa-lightbulb"></i>Yordam
             </button>
-            <button class="tab-btn" onclick="switchTab('tests')">
-              <i class="fa-solid fa-flask"></i>Sinovlar
-            </button>
             <button class="tab-btn" onclick="switchTab('subs')">
               <i class="fa-solid fa-clock-rotate-left"></i>Urinishlar
             </button>
           </div>
           <div class="tabs-nav-right">
+            <button class="maximize-btn" onclick="toggleMaximize('leftPanel')" title="To'liq ekran"><i class="fa-solid fa-expand"></i></button>
             <div class="font-size-control">
               <button
                 class="font-size-btn"
@@ -182,7 +178,10 @@
                 <span class="badge medium">O'rta.</span>
                 {% else %}
                 <span class="badge hard">Qiyin</span>
-                {% endif %} {% for tag in challenge.tags.all %}
+                {% endif %} 
+                <span class="badge tag"><i class="fa-solid fa-stopwatch"></i> {{ challenge.time_limit }} ms</span>
+                <span class="badge tag"><i class="fa-solid fa-file-code"></i> {{ challenge.memory_limit }} MB</span>
+                {% for tag in challenge.tags.all %}
                 <span class="badge tag"
                   ><i class="fa-solid fa-hashtag"></i> {{ tag.name }}</span
                 >
@@ -272,47 +271,41 @@
             {% endif %}
           </div>
 
-          <div id="tab-tests" class="tab-content">
-            <h2 style="margin-bottom: 20px">Sinovlar</h2>
-            <div class="test-case-selector">
-              {% for sample in challenge.sample_tests %}
-              <div
-                class="case-pill {% if forloop.counter == 1 %}active{% endif %}"
-                onclick="switchTestCase({{ forloop.counter }})"
-              >
-                Test {{ forloop.counter }}
-              </div>
-              {% endfor %}
-            </div>
-            {% for sample in challenge.sample_tests %}
-            <div
-              id="case-{{ forloop.counter }}"
-              class="case-content {% if forloop.counter == 1 %}active{% endif %}"
-            >
-              <div class="io-group">
-                <span class="io-label">Input</span>
-                <div class="io-box">{{ sample.input }}</div>
-              </div>
-              <div class="io-group">
-                <span class="io-label">Expected Output</span>
-                <div class="io-box">{{ sample.expected }}</div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-
           <div id="tab-subs" class="tab-content">
             <h2 style="margin-bottom: 20px">Urinishlar</h2>
-            {% if user.is_authenticated %} {% if submissions %}
+            {% if user.is_authenticated %}
+            <div id="submissionsList">
+            {% if submissions %}
+            {% for sub in submissions %}
             <div class="submission-item">
-              <div class="sub-status status-acc">
+              <div class="sub-status {% if sub.status == 'accepted' %}status-acc{% else %}status-fail{% endif %}">
+                {% if sub.status == 'accepted' %}
                 <i class="fa-solid fa-check"></i> Accepted
+                {% elif sub.status == 'wrong_answer' %}
+                <i class="fa-solid fa-xmark"></i> Wrong Answer
+                {% elif sub.status == 'time_limit_exceeded' %}
+                <i class="fa-solid fa-clock"></i> TLE
+                {% elif sub.status == 'runtime_error' %}
+                <i class="fa-solid fa-bug"></i> Runtime Error
+                {% elif sub.status == 'compilation_error' %}
+                <i class="fa-solid fa-triangle-exclamation"></i> Compilation Error
+                {% else %}
+                <i class="fa-solid fa-circle-question"></i> {{ sub.get_status_display }}
+                {% endif %}
               </div>
-              <div class="sub-time">Just now</div>
+              <div class="sub-details">
+                <span class="sub-lang">{{ sub.language.name|default:"—" }}</span>
+                {% if sub.execution_time %}<span class="sub-time-val"><i class="fa-solid fa-stopwatch"></i> {{ sub.execution_time }} s</span>{% endif %}
+                {% if sub.memory_used %}<span class="sub-mem-val"><i class="fa-solid fa-file-code"></i> {{ sub.memory_used }} KB</span>{% endif %}
+              </div>
+              <div class="sub-time">{{ sub.submitted_at|date:"d-M-Y H:i" }}</div>
             </div>
+            {% endfor %}
             {% else %}
             <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
-            {% endif %} {% else %}
+            {% endif %}
+            </div>
+            {% else %}
             <p>
               Urinishlaringizni ko'rish uchun
               <a href="{% url 'login' %}">hisobingizni faollashtiring</a>
@@ -324,124 +317,76 @@
 
       <div class="resizer" id="dragHandle"></div>
 
-      <section class="panel right-panel" id="rightPanel">
-        <div class="editor-header">
-          <h3 style="font-weight: 800">Yechimingiz</h3>
-          <select class="lang-select">
-            <option value="python">Python 3</option>
-          </select>
-        </div>
-        <form style="display: contents">
-          {% csrf_token %}
-          <div
-            class="editor-container-stack"
-            id="monaco-editor-container"
-          ></div>
-          <input type="hidden" name="code" id="hidden_code" />
-          <div class="buttons-row">
-            <button type="button" class="btn-3d btn-blue" id="runBtn">
-              <i class="fa-solid fa-play"></i>Yurgizish
-            </button>
-            <button type="button" class="btn-3d btn-green" id="submitBtn">
-              <i class="fa-solid fa-cloud-arrow-up"></i>Yuborish
-            </button>
+      <div class="right-wrapper" id="rightWrapper">
+        <section class="panel right-panel editor-panel" id="editorPanel">
+          <div class="editor-header">
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <select class="lang-select" id="langSelect">
+                {% for lang in languages %}
+                <option value="{{ lang.judge0_id }}" data-monaco="{{ lang.monaco_identifier }}">{{ lang.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button type="button" class="btn-3d btn-blue" id="runBtn">
+                <i class="fa-solid fa-play"></i>Yurgizish
+              </button>
+              <button type="button" class="btn-3d btn-green" id="submitBtn">
+                <i class="fa-solid fa-cloud-arrow-up"></i>Yuborish
+              </button>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button class="maximize-btn" onclick="toggleMaximize('editorPanel')" title="To'liq ekran"><i class="fa-solid fa-expand"></i></button>
+            </div>
           </div>
-        </form>
-      </section>
+          <form style="display: contents">
+            {% csrf_token %}
+            <div
+              class="editor-container-stack"
+              id="monaco-editor-container"
+            ></div>
+            <input type="hidden" name="code" id="hidden_code" />
+          </form>
+        </section>
+
+        <div class="resizer vertical-resizer" id="dragHandleV"></div>
+
+        <section class="panel testcases-panel" id="testcasesPanel">
+          <div class="testcases-header">
+            <h3 style="font-weight: 800">Testlar</h3>
+            <button class="maximize-btn" onclick="toggleMaximize('testcasesPanel')" title="To'liq ekran"><i class="fa-solid fa-expand"></i></button>
+          </div>
+          <div class="testcases-content" id="testcasesContent">
+            {% if challenge.sample_tests %}
+            <div class="tc-tabs">
+              {% for sample in challenge.sample_tests %}
+              <div class="tc-pill {% if forloop.first %}active{% endif %}" onclick="switchTestCaseResult({{ forloop.counter0 }})">
+                Test {{ forloop.counter }}
+              </div>
+              {% endfor %}
+            </div>
+            {% for sample in challenge.sample_tests %}
+            <div class="tc-detail" id="tc-detail-{{ forloop.counter0 }}" style="display: {% if forloop.first %}block{% else %}none{% endif %};">
+              <div class="tc-block">
+                <div class="tc-block-label">Kiruvchi ma'lumot:</div>
+                <div class="tc-block-value">{{ sample.input }}</div>
+                <div class="tc-block-label">Kutilgan natija:</div>
+                <div class="tc-block-value">{{ sample.expected }}</div>
+              </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: var(--text-medium); font-size: 0.95rem; text-align: center; margin-top: 20px;">
+              Ushbu masala uchun namunalar mavjud emas.
+            </p>
+            {% endif %}
+          </div>
+        </section>
+      </div>
     </main>
 
-    <!-- Feedback Overlay -->
-    <div
-      id="feedback-overlay"
-      class="hidden"
-      style="
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-      "
-    >
-      <div
-        style="
-          background: var(--bg-panel, #fff);
-          padding: 30px;
-          border-radius: 12px;
-          max-width: 500px;
-          width: 90%;
-          text-align: center;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        "
-      >
-        <div id="card-success" class="hidden" style="display: none">
-          <i
-            class="fa-solid fa-circle-check"
-            style="
-              font-size: 3rem;
-              color: var(--theme-green, green);
-              margin-bottom: 15px;
-            "
-          ></i>
-          <h2 style="color: var(--theme-green, green); margin-bottom: 10px">
-            Muvaffaqiyatli
-          </h2>
-          <p id="success-msg" style="font-weight: bold"></p>
-        </div>
-        <div id="card-fail" class="hidden" style="display: none">
-          <i
-            class="fa-solid fa-circle-xmark"
-            style="
-              font-size: 3rem;
-              color: var(--theme-red, red);
-              margin-bottom: 15px;
-            "
-          ></i>
-          <h2 style="color: var(--theme-red, red); margin-bottom: 10px">
-            Xatolik
-          </h2>
-          <p id="fail-msg" style="font-weight: bold"></p>
-        </div>
-        <pre
-          id="error-console"
-          style="
-            display: none;
-            background: #eee;
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            text-align: left;
-            margin-top: 15px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-          "
-        ></pre>
-        <button
-          onclick="
-            document.getElementById('feedback-overlay').style.display = 'none';
-            document.getElementById('feedback-overlay').classList.add('hidden');
-          "
-          style="
-            margin-top: 25px;
-            padding: 12px 30px;
-            border-radius: 8px;
-            border: none;
-            background: var(--theme-blue, blue);
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-block;
-          "
-        >
-          Yopish
-        </button>
-      </div>
-    </div>
+
+
 
     {% block extra_js %}{% endblock %}
     <style>
@@ -450,6 +395,30 @@
         --editor-bg: #2d2d2d;
         --editor-gutter: #3e3e3e;
         --editor-selection: rgba(255, 255, 255, 0.15);
+      }
+
+      /* Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--border-color, #ccc);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-corner {
+        background: transparent;
+      }
+
+      /* Dark Mode Scrollbars explicitly */
+      [data-theme="dark"] {
+        color-scheme: dark;
+      }
+      [data-theme="dark"] ::-webkit-scrollbar-thumb {
+        background-color: #445661; /* Specific darker color matching your dark theme border-color */
       }
 
       body {
@@ -582,43 +551,167 @@
       }
 
       /* RIGHT PANEL SPECIFICS */
-      .right-panel {
+      .right-wrapper {
         flex-grow: 1;
-        /* Takes remaining space */
+        display: flex;
+        flex-direction: column;
         min-width: 400px;
-        /* Minimum width constraint */
-        padding: 30px;
-        border-radius: 0 var(--panel-radius) var(--panel-radius) 0;
         /* Square left, rounded right */
-        border-left: none;
+        border-radius: 0 var(--panel-radius) var(--panel-radius) 0;
         /* Merge border with resizer */
+        border-left: none;
+        overflow: hidden;
+      }
+
+      .editor-panel {
+        flex: 1;
+        min-height: 200px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border: 2px solid var(--border-color);
+        border-radius: 0;
+      }
+
+      .testcases-panel {
+        flex: 1;
+        min-height: 100px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        border-top: 2px solid var(--border-color);
+        background: var(--bg-panel);
+      }
+
+      .testcases-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+      }
+
+      .tc-block {
+        background: var(--bg-app);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        font-family: monospace;
+        font-size: 14px;
+      }
+
+      .tc-block-label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: var(--text-medium);
+        font-family: var(--secondary-font);
+      }
+
+      .tc-block-value {
+        background: rgba(0,0,0,0.04);
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        white-space: pre-wrap;
+        color: var(--text-dark);
+        border: 1px solid rgba(0,0,0,0.05);
+      }
+      
+      [data-theme="dark"] .tc-block-value {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.05);
+      }
+
+      .tc-block-value:last-child {
+        margin-bottom: 0;
+      }
+
+      .testcases-content {
+        flex: 1;
+        overflow-y: auto;
+      }
+      
+      .tc-tabs {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding-bottom: 5px;
+      }
+      
+      .tc-tabs::-webkit-scrollbar {
+        height: 6px;
+      }
+      .tc-tabs::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 3px;
+      }
+
+      .tc-pill {
+        padding: 5px 12px;
+        border-radius: 20px;
+        background: var(--bg-body);
+        color: var(--text-medium);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.2s;
+        white-space: nowrap;
+        border: 1px solid var(--border-color);
+        user-select: none;
+      }
+
+      .tc-pill:hover {
+        background: var(--text-medium);
+        color: white;
+      }
+
+      .tc-pill.active {
+        background: var(--bg-panel);
+        color: var(--text-dark);
+        border: 1px solid var(--text-medium);
       }
 
       /* --- RESIZER HANDLE --- */
       .resizer {
-        width: 8px;
         background-color: #f0f0f0;
-        border-top: 2px solid var(--border-color);
-        border-bottom: 2px solid var(--border-color);
-        cursor: col-resize;
+        transition: background 0.2s;
+        z-index: 10;
         display: flex;
         justify-content: center;
         align-items: center;
-        transition: background 0.2s;
-        z-index: 10;
       }
 
-      .resizer:hover,
-      .resizer.active {
-        background-color: var(--text-medium);
+      .resizer.horizontal-resizer, .resizer:not(.vertical-resizer) {
+        width: 8px;
+        border-top: 2px solid var(--border-color);
+        border-bottom: 2px solid var(--border-color);
+        cursor: col-resize;
+        background: var(--bg-app);
+      }
+
+      .resizer.vertical-resizer {
+        height: 8px;
+        border-left: 2px solid var(--border-color);
+        border-right: 2px solid var(--border-color);
+        cursor: row-resize;
+        background: var(--bg-app);
       }
 
       /* Little grip dots in the resizer */
-      .resizer::after {
-        content: "•••";
+      .resizer:not(.vertical-resizer)::after {
+        content: "—";
         color: #ccc;
         font-size: 10px;
         writing-mode: vertical-rl;
+        letter-spacing: 2px;
+        pointer-events: none;
+      }
+
+      .resizer.vertical-resizer::after {
+        content: "—";
+        color: #ccc;
+        font-size: 10px;
         letter-spacing: 2px;
         pointer-events: none;
       }
@@ -785,12 +878,14 @@
         gap: 10px;
         flex-wrap: wrap;
       }
+      .badges.bag{
+        font-size: 0.7rem;
+      }
 
       .badge.tag {
         background: var(--theme-blue-light);
         color: var(--theme-blue-dark);
         font-weight: 500;
-        font-size: 0.8rem;
       }
 
       .problem-text p {
@@ -1038,7 +1133,6 @@
         border-radius: var(--btn-radius);
         border: 2px solid #1e1e1e;
         overflow: hidden;
-        margin-bottom: 20px;
         font-family: "Courier New", monospace;
         font-size: 16px;
         line-height: 1.5;
@@ -1148,6 +1242,93 @@
         box-shadow: none;
       }
 
+      /* Maximize Logic */
+      .maximize-btn {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: transparent;
+        color: var(--text-medium);
+        cursor: pointer;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        transition: all 0.15s;
+      }
+
+      .maximize-btn:hover {
+        background: rgba(0, 0, 0, 0.07);
+        color: var(--text-dark);
+      }
+
+      .maximized {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 9999 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
+        max-width: none !important;
+      }
+
+      /* Submission Items */
+      .submission-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 15px;
+        background: var(--bg-app);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: background 0.2s;
+      }
+      .submission-item:hover {
+        background: var(--border-color);
+      }
+      .sub-status {
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .sub-status.status-acc {
+        color: var(--theme-green);
+      }
+      .sub-status.status-fail {
+        color: var(--theme-red);
+      }
+      .sub-details {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: var(--text-medium);
+      }
+      .sub-lang {
+        background: var(--border-color);
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.8rem;
+      }
+      .sub-time {
+        font-size: 0.85rem;
+        color: var(--text-medium);
+        font-weight: 600;
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
       /* Responsive */
       @media (max-width: 900px) {
         .main-container {
@@ -1155,7 +1336,7 @@
         }
 
         .left-panel,
-        .right-panel {
+        .right-wrapper {
           width: 100%;
           border-radius: var(--panel-radius);
           border: 2px solid var(--border-color);
@@ -1175,8 +1356,8 @@
           height: auto;
         }
 
-        .right-panel {
-          height: 500px;
+        .right-wrapper {
+          height: 600px;
         }
 
         body {
@@ -1220,6 +1401,61 @@
         }
       });
 
+      // --- VERTICAL RESIZABLE LOGIC ---
+      const resizerV = document.getElementById("dragHandleV");
+      const editorPanel = document.getElementById("editorPanel");
+      const rightWrapper = document.getElementById("rightWrapper");
+
+      let isResizingV = false;
+
+      resizerV.addEventListener("mousedown", (e) => {
+        isResizingV = true;
+        document.body.style.cursor = "row-resize";
+        resizerV.classList.add("active");
+        document.body.style.userSelect = "none";
+      });
+
+      document.addEventListener("mousemove", (e) => {
+        if (!isResizingV) return;
+        const containerOffsetTop = rightWrapper.getBoundingClientRect().top;
+        const newHeight = e.clientY - containerOffsetTop;
+        const minHeight = 150;
+        const maxHeight = rightWrapper.clientHeight - 100;
+        if (newHeight > minHeight && newHeight < maxHeight) {
+          editorPanel.style.flex = "none";
+          editorPanel.style.height = `${newHeight}px`;
+        }
+      });
+
+      document.addEventListener("mouseup", () => {
+        if (isResizingV) {
+          isResizingV = false;
+          document.body.style.cursor = "default";
+          resizerV.classList.remove("active");
+          document.body.style.userSelect = "auto";
+        }
+      });
+
+      // --- MAXIMIZE LOGIC ---
+      function toggleMaximize(panelId) {
+        const panel = document.getElementById(panelId);
+        const btn = panel.querySelector('.maximize-btn i');
+        
+        if (panel.classList.contains('maximized')) {
+          panel.classList.remove('maximized');
+          if (btn) {
+            btn.classList.remove('fa-compress');
+            btn.classList.add('fa-expand');
+          }
+        } else {
+          panel.classList.add('maximized');
+          if (btn) {
+            btn.classList.remove('fa-expand');
+            btn.classList.add('fa-compress');
+          }
+        }
+      }
+
       // --- TABS LOGIC ---
       function switchTab(tabName) {
         document
@@ -1234,8 +1470,18 @@
         if (tabName === "desc") buttons[0].classList.add("active");
         if (tabName === "note") buttons[1].classList.add("active");
         if (tabName === "hints") buttons[2].classList.add("active");
-        if (tabName === "tests") buttons[3].classList.add("active");
-        if (tabName === "subs") buttons[4].classList.add("active");
+        if (tabName === "subs") buttons[3].classList.add("active");
+      }
+
+      function switchTestCaseResult(index) {
+          document.querySelectorAll('.tc-pill').forEach((el, i) => {
+              if(i === index) el.classList.add('active');
+              else el.classList.remove('active');
+          });
+          document.querySelectorAll('.tc-detail').forEach((el, i) => {
+              if(i === index) el.style.display = 'block';
+              else el.style.display = 'none';
+          });
       }
 
       function switchTestCase(caseNum) {
@@ -1339,7 +1585,7 @@
                 icon.classList.remove("fa-check", "fa-solid");
                 icon.classList.add("fa-copy", "fa-regular");
                 icon.style.color = "";
-              }, 2000);
+              }, 1000);
             }
           })
           .catch((err) => {
@@ -1386,11 +1632,15 @@
       });
 
       require(["vs/editor/editor.main"], function () {
+        // Get initial language from dropdown
+        const langSel = document.getElementById("langSelect");
+        const initialMonacoLang = langSel ? langSel.options[langSel.selectedIndex].getAttribute("data-monaco") || "python" : "python";
+        
         editor = monaco.editor.create(
           document.getElementById("monaco-editor-container"),
           {
-            value: `# Write your python code here\n\nclass Solution:\n    def solve(self):\n        pass`,
-            language: "python",
+            value: `# Write your code here\n`,
+            language: initialMonacoLang,
             theme: "vs-dark", // Default to dark, logic below handles switch
             automaticLayout: true,
             minimap: { enabled: false },
@@ -1431,6 +1681,7 @@
       // --- AJAX EXECUTION ---
       const runBtn = document.getElementById("runBtn");
       const submitBtn = document.getElementById("submitBtn");
+      const langSelect = document.getElementById("langSelect");
 
       // Helper to get CSRF token
       function getCookie(name) {
@@ -1451,16 +1702,41 @@
       }
       const csrftoken = getCookie("csrftoken");
 
+      // Language switch: update Monaco editor language
+      if (langSelect) {
+        langSelect.addEventListener("change", function() {
+          const selectedOption = this.options[this.selectedIndex];
+          const monacoLang = selectedOption.getAttribute("data-monaco");
+          if (editor && monacoLang) {
+            monaco.editor.setModelLanguage(editor.getModel(), monacoLang);
+          }
+        });
+      }
+
       async function executeCode(url, isSubmission) {
         if (!editor) return;
         const code = editor.getValue();
+        const languageId = langSelect ? langSelect.value : "71";
 
         // Loading State
         const btn = isSubmission ? submitBtn : runBtn;
         const originalText = btn.innerHTML;
         btn.innerHTML =
-          '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+          '<i class="fa-solid fa-spinner fa-spin"></i> Tekshirilmoqda...';
         btn.disabled = true;
+        runBtn.disabled = true;
+        submitBtn.disabled = true;
+
+        // Show loading state in testcases panel
+        const testCasesContent = document.getElementById("testcasesContent");
+        if (testCasesContent) {
+          testCasesContent.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-medium);">
+              <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px; display: block;"></i>
+              <p style="font-weight: bold;">${isSubmission ? 'Yashirin testlar tekshirilmoqda...' : 'Namuna testlar tekshirilmoqda...'}</p>
+            </div>
+          `;
+        }
 
         try {
           const response = await fetch(url, {
@@ -1469,7 +1745,7 @@
               "Content-Type": "application/x-www-form-urlencoded",
               "X-CSRFToken": csrftoken,
             },
-            body: `code=${encodeURIComponent(code)}`,
+            body: `code=${encodeURIComponent(code)}&language_id=${languageId}`,
           });
 
           const data = await response.json();
@@ -1477,12 +1753,14 @@
         } catch (error) {
           console.error("Error:", error);
           handleResult(
-            { verdict: "System Error", error: "Network Error" },
+            { verdict: "System Error", error: "Network xatolik yuz berdi", tests_run: [] },
             isSubmission,
           );
         } finally {
           btn.innerHTML = originalText;
           btn.disabled = false;
+          runBtn.disabled = false;
+          submitBtn.disabled = false;
         }
       }
 
@@ -1493,46 +1771,115 @@
         executeCode("{% url 'judge_submission' challenge.slug %}", true),
       );
 
-      function triggerFeedback(type) {
-        document.getElementById("card-success").style.display = "none";
-        document.getElementById("card-fail").style.display = "none";
-        if (type === "success") {
-          document.getElementById("card-success").style.display = "block";
-        } else {
-          document.getElementById("card-fail").style.display = "block";
-        }
-      }
-
       function handleResult(data, isSubmission) {
-        const successOverlay = document.getElementById("card-success");
-        const failOverlay = document.getElementById("card-fail");
-        const errorConsole = document.getElementById("error-console");
+        const testCasesContent = document.getElementById("testcasesContent");
+        let tcHtml = "";
 
-        document.getElementById("feedback-overlay").classList.remove("hidden");
-        document.getElementById("feedback-overlay").style.display = "flex"; // Ensure flex
+        // Summary header
+        const isAccepted = data.verdict === "Accepted";
+        const summaryColor = isAccepted ? "var(--theme-green)" : "var(--theme-red)";
+        const summaryIcon = isAccepted ? "fa-circle-check" : "fa-circle-xmark";
+        
+        let summaryExtra = "";
+        if (data.max_time) summaryExtra += `<span style="margin-left: 15px; font-size: 0.9rem; color: var(--text-medium);"><i class="fa-solid fa-stopwatch"></i> ${data.max_time} s</span>`;
+        if (data.max_memory) summaryExtra += `<span style="margin-left: 15px; font-size: 0.9rem; color: var(--text-medium);"><i class="fa-solid fa-file-code"></i> ${data.max_memory} KB</span>`;
 
-        // Reset
-        errorConsole.style.display = "none";
-        errorConsole.textContent = "";
+        tcHtml += `
+          <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 12px 15px; background: ${isAccepted ? 'rgba(88, 204, 2, 0.1)' : 'rgba(255, 75, 75, 0.1)'}; border-radius: 8px; border: 1px solid ${isAccepted ? 'rgba(88, 204, 2, 0.3)' : 'rgba(255, 75, 75, 0.3)'};">
+            <i class="fa-solid ${summaryIcon}" style="color: ${summaryColor}; font-size: 1.3rem; margin-right: 10px;"></i>
+            <span style="font-weight: bold; color: ${summaryColor}; font-size: 1.05rem;">${data.verdict}</span>
+            <span style="margin-left: 10px; font-size: 0.9rem; color: var(--text-medium);">(${data.passed_tests || 0}/${data.total_tests || 0} test)</span>
+            ${summaryExtra}
+          </div>
+        `;
 
-        if (data.verdict === "Accepted" || data.status === "OK") {
-          triggerFeedback("success");
-          document.getElementById("success-msg").textContent = isSubmission
-            ? "All tests passed! Challenge Solved."
-            : "Sample tests passed!";
-        } else {
-          triggerFeedback("fail");
-          let msg = "";
-          if (data.verdict) msg += data.verdict;
-          if (data.status && data.status !== "OK") msg += ": " + data.status;
+        if (data.tests_run && data.tests_run.length > 0) {
+            let tabsHtml = `<div class="tc-tabs">`;
+            let detailsHtml = ``;
+            
+            data.tests_run.forEach((test, idx) => {
+                let badge = "";
+                if(test.status === "Accepted") badge = '<i class="fa-solid fa-check" style="color: var(--theme-green);"></i>';
+                else if(test.status === "Wrong Answer") badge = '<i class="fa-solid fa-xmark" style="color: var(--theme-red);"></i>';
+                else badge = '<i class="fa-solid fa-triangle-exclamation" style="color: var(--theme-orange);"></i>';
+                
+                tabsHtml += `
+                    <div class="tc-pill ${idx === 0 ? 'active' : ''}" onclick="switchTestCaseResult(${idx})">
+                        Test ${test.test_number} <span style="margin-left:5px;">${badge}</span>
+                    </div>
+                `;
+                
+                let isPassed = test.status === "Accepted";
+                let colorClass = isPassed ? "var(--theme-green)" : "var(--theme-red)";
+                
+                let timeMemInfo = "";
+                if (test.time) timeMemInfo += `<span style="margin-right: 15px; color: var(--text-medium); font-size: 0.85rem;"><i class="fa-solid fa-stopwatch"></i> ${test.time} s</span>`;
+                if (test.memory) timeMemInfo += `<span style="color: var(--text-medium); font-size: 0.85rem;"><i class="fa-solid fa-file-code"></i> ${test.memory} KB</span>`;
+                
+                detailsHtml += `
+                    <div class="tc-detail" id="tc-detail-${idx}" style="display: ${idx === 0 ? 'block' : 'none'};">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px;">
+                            <div style="color: ${colorClass}; font-weight: bold; font-size: 1.1rem;">
+                                ${badge} ${isPassed ? "To'g'ri (Accepted)" : test.status}
+                            </div>
+                            <div>${timeMemInfo}</div>
+                        </div>
+                        <div class="tc-block">
+                            <div class="tc-block-label">Kiruvchi ma'lumot:</div>
+                            <div class="tc-block-value">${test.input}</div>
+                            
+                            <div class="tc-block-label" style="color: ${isPassed ? 'var(--text-medium)' : 'var(--theme-red)'};">Sizning javobingiz:</div>
+                            <div class="tc-block-value" style="color: ${isPassed ? 'var(--text-dark)' : 'var(--theme-red)'}; border-color: ${isPassed ? 'rgba(0,0,0,0.05)' : 'rgba(239, 68, 68, 0.2)'}; background: ${isPassed ? 'rgba(0,0,0,0.04)' : 'rgba(239, 68, 68, 0.05)'};">${test.user_output || ""}</div>
+                            
+                            <div class="tc-block-label" style="color: var(--theme-green-dark);">Kutilgan natija:</div>
+                            <div class="tc-block-value" style="color: var(--theme-green-dark); border-color: rgba(16, 185, 129, 0.2); background: rgba(16, 185, 129, 0.05);">${test.expected}</div>
+                            
+                            ${test.error ? `<div class="tc-block-label" style="color: var(--theme-orange); margin-top: 15px;">Xatolik:</div>
+                            <div class="tc-block-value" style="color: var(--theme-orange-dark); border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.05);">${test.error}</div>` : ""}
+                        </div>
+                    </div>
+                `;
+            });
+            tabsHtml += `</div>`;
+            tcHtml += tabsHtml + detailsHtml;
+        } else if (data.error) {
+            tcHtml += `
+              <div class="tc-block">
+                <div class="tc-block-label" style="color: var(--theme-orange);">Xatolik tafsilotlari:</div>
+                <div class="tc-block-value" style="color: var(--theme-orange-dark); border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.05);">${data.error}</div>
+              </div>
+            `;
+        }
+        
+        if (testCasesContent) {
+            testCasesContent.innerHTML = tcHtml;
+        }
 
-          document.getElementById("fail-msg").textContent =
-            msg || "Check your logic.";
+        // If submission, add to submissions list dynamically
+        if (isSubmission && data.submission) {
+          const subList = document.getElementById("submissionsList");
+          if (subList) {
+            const noSubMsg = subList.querySelector("p");
+            if (noSubMsg) noSubMsg.remove();
 
-          // Show error details if any
-          if (data.error || data.output) {
-            errorConsole.style.display = "block";
-            errorConsole.textContent = data.error || data.output;
+            const statusClass = data.submission.status_key === "accepted" ? "status-acc" : "status-fail";
+            const statusIcon = data.submission.status_key === "accepted" ? "fa-check" : "fa-xmark";
+            
+            const newSub = document.createElement("div");
+            newSub.className = "submission-item";
+            newSub.style.animation = "fadeIn 0.3s ease";
+            newSub.innerHTML = `
+              <div class="sub-status ${statusClass}">
+                <i class="fa-solid ${statusIcon}"></i> ${data.submission.status}
+              </div>
+              <div class="sub-details">
+                <span class="sub-lang">${data.submission.language}</span>
+                ${data.submission.execution_time ? `<span class="sub-time-val"><i class="fa-solid fa-stopwatch"></i> ${data.submission.execution_time} s</span>` : ""}
+                ${data.submission.memory_used ? `<span class="sub-mem-val"><i class="fa-solid fa-file-code"></i> ${data.submission.memory_used} KB</span>` : ""}
+              </div>
+              <div class="sub-time">${data.submission.submitted_at}</div>
+            `;
+            subList.insertBefore(newSub, subList.firstChild);
           }
         }
       }
