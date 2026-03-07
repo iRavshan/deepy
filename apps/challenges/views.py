@@ -21,7 +21,15 @@ def challenge_list(request):
             user=request.user,
             challenge=OuterRef('pk')
         )
-        challenges = challenges.annotate(is_saved=Exists(saved_subquery))
+        accepted_subquery = Submission.objects.filter(
+            submitted_by=request.user,
+            challenge=OuterRef('pk'),
+            status='accepted'
+        )
+        challenges = challenges.annotate(
+            is_saved=Exists(saved_subquery),
+            is_accepted=Exists(accepted_subquery)
+        )
 
     search_query = request.GET.get('q', '')
     if search_query:

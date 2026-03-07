@@ -1,5 +1,11 @@
 <div class="problem-card">
-    <div class="status-icon status-solved"><i class="fa-solid fa-o"></i></div>
+    <div class="status-icon {% if challenge.is_accepted %}status-solved{% endif %}">
+        {% if challenge.is_accepted %}
+        <i class="fa-solid fa-check"></i>
+        {% else %}
+        <i class="fa-solid fa-o"></i>
+        {% endif %}
+    </div>
     <div class="problem-info">
         <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}.
             {{ challenge.title|capfirst}}</a>
