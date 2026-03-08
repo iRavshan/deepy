@@ -15,9 +15,9 @@ def judge_single_test(source_code, language_id, stdin, expected_output, cpu_time
         "expected_output": expected_output,
     }
     if cpu_time_limit:
-        payload["cpu_time_limit"] = cpu_time_limit / 1000  # ms -> seconds
+        payload["cpu_time_limit"] = cpu_time_limit / 1000   
     if memory_limit:
-        payload["memory_limit"] = memory_limit * 1024  # MB -> KB
+        payload["memory_limit"] = memory_limit * 1024  
 
     try:
         response = requests.post(

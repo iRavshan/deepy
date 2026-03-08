@@ -1617,7 +1617,7 @@
 
       // --- FONT SIZE CONTROL ---
       (function () {
-        const leftPanelContent = document.querySelector(".left-panel-content");
+        const leftPanelContent = document.querySelector(".problem-text");
         const fontSizeLabel = document.getElementById("fontSizeLabel");
         const savedSize = localStorage.getItem("challengeFontSize");
         let currentSize = savedSize ? parseInt(savedSize) : 16;
@@ -1894,7 +1894,7 @@
                 let detailBody = "";
                 
                 if (isSubmission) {
-                    // Hidden tests: show only status + time/memory + error (no input/output values)
+                    // Hidden tests: show only status + time/memory + error
                     detailBody = `
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
                             <div style="color: ${colorClass}; font-weight: bold; font-size: 1.1rem;">
