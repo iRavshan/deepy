@@ -320,11 +320,11 @@
               </select>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
-              <button type="button" class="btn-3d btn-blue" id="runBtn">
-                <i class="fa-solid fa-play"></i>Yurgizish
+              <button type="button" class="btn-3d btn-blue" id="runBtn" title="Kodni ishga tushirish">
+                <i class="fa-solid fa-play"></i>
               </button>
-              <button type="button" class="btn-3d btn-green" id="submitBtn">
-                <i class="fa-solid fa-cloud-arrow-up"></i>Yuborish
+              <button type="button" class="btn-3d btn-green" id="submitBtn" title="Yechimni yuborish">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Yuborish
               </button>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
@@ -842,7 +842,7 @@
 
       .tab-btn {
         padding: 12px 20px;
-        border: none;
+        border: 2px solid transparent;
         background: transparent;
         font-weight: 700;
         color: var(--text-medium);
@@ -862,7 +862,7 @@
       .tab-btn.active {
         background: var(--bg-panel);
         color: var(--theme-blue);
-        border: 2px solid var(--border-color);
+        border-color: var(--border-color);
         border-bottom: 2px solid var(--bg-panel);
       }
 
@@ -924,7 +924,6 @@
       .problem-text p {
         margin-bottom: 20px;
         line-height: 1.6;
-        font-size: 1.05rem;
         font-weight: 500;
       }
 
@@ -1164,7 +1163,7 @@
         flex-grow: 1;
         background: var(--editor-bg);
         border-radius: var(--btn-radius);
-        border: 2px solid #1e1e1e;
+        border: 1px solid var(--border-color);
         overflow: hidden;
         font-family: "Courier New", monospace;
         font-size: 16px;
@@ -1280,19 +1279,14 @@
         justify-content: center;
         align-items: center;
         gap: 8px;
-        box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-        border: 1px solid rgba(255, 255, 255, 0.1);
       }
       .btn-blue {
-        background: linear-gradient(135deg, #3a86ff, #2563eb);
+        background: var(--theme-blue);
+        box-shadow: 0 4px 0 var(--theme-blue-dark);
       }
       .btn-green {
-        background: linear-gradient(135deg, #58cc02, #22c55e);
-      }
-      .btn-3d:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2);
-        filter: brightness(1.1);
+        background: var(--theme-green);
+        box-shadow: 0 4px 0 var(--theme-green-dark);
       }
       .btn-3d:active {
         transform: translateY(1px);
