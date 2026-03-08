@@ -1,4 +1,36 @@
 User-agent: *
 Allow: /
 
+Content-Signal: search=yes,ai-train=no
+
+# OpenAI (ChatGPT)
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: GPTBot
+Disallow: /
+
+# Google (Gemini va AI Overviews)
+User-agent: Googlebot
+Allow: /
+User-agent: Google-Extended
+Disallow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Anthropic (Claude)
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: ClaudeBot
+Disallow: /
+
+# AI skraperlarni bloklash
+User-agent: CCBot
+Disallow: /
+User-agent: Bytespider
+Disallow: /
+
 Sitemap: https://deepland.uz/sitemap.xml

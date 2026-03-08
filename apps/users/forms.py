@@ -6,11 +6,11 @@ from .models import User
 class EmailLoginForm(forms.Form):
     username = forms.EmailField(widget=forms.EmailInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Your Email'
+        'placeholder': 'Elektron pochta'
     }))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-input',
-        'placeholder': 'Password'
+        'placeholder': 'Parol'
     }))
     cf_turnstile = TurnstileCaptchaField()
 
@@ -25,11 +25,10 @@ class EmailLoginForm(forms.Form):
 
         if email and password:
             from django.contrib.auth import authenticate
-            # Pass email=email to avoid FieldError('username') in allauth backend
             self.user_cache = authenticate(self.request, email=email, password=password)
             if self.user_cache is None:
                 raise forms.ValidationError(
-                    "Bunday elektron pochta yoki parol noto'g'ri. Iltimos, ma'lumotlarni tekshirib qayta kiriting.",
+                    "Elektron pochta yoki parol noto'g'ri. Iltimos, ma'lumotlarni tekshirib qayta kiriting.",
                     code='invalid_login',
                 )
         return self.cleaned_data
