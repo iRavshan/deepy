@@ -4,7 +4,12 @@ from django.contrib.auth import login, authenticate, logout, update_session_auth
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.db.models import Count, Q
+from datetime import datetime, timezone
+import math
 from .forms import UserSignupForm, EmailLoginForm, UserSettingsForm
+from apps.users.models import User
+from apps.challenges.models import Challenge, Submission
 
 
 def signup_view(request):
@@ -102,3 +107,102 @@ def auth_success_view(request):
     It renders a script that closes the popup and reloads the main window.
     """
     return render(request, 'users/auth_success.html')
+
+def leaderboard_view(request):
+    challenges = Challenge.objects.annotate(
+        solvers_n=Count('submissions__submitted_by', filter=Q(submissions__status='accepted'), distinct=True)
+    )
+    challenge_scores = {}
+    for c in challenges:
+        n = c.solvers_n
+        score = 100 if n == 0 else max(1, math.floor(100 - 10 * math.log2(n)))
+        challenge_scores[c.id] = score
+
+    submissions = Submission.objects.order_by('submitted_at').values(
+        'submitted_by_id', 'challenge_id', 'status', 'submitted_at'
+    )
+    
+    user_stats = {}
+    for sub in submissions:
+        uid = sub['submitted_by_id']
+        cid = sub['challenge_id']
+        status = sub['status']
+        submitted_at = sub['submitted_at']
+        
+        if uid not in user_stats:
+            user_stats[uid] = {
+                'points': 0,
+                'solved_challenges': set(),
+                'total_considered_submissions': 0,
+                'last_successful_time': None
+            }
+            
+        stats = user_stats[uid]
+        
+        if cid in stats['solved_challenges']:
+            continue
+            
+        stats['total_considered_submissions'] += 1
+        
+        if status == 'accepted':
+            stats['solved_challenges'].add(cid)
+            stats['points'] += challenge_scores.get(cid, 0)
+            
+            if stats['last_successful_time'] is None or submitted_at > stats['last_successful_time']:
+                stats['last_successful_time'] = submitted_at
+
+    search_query = request.GET.get('q', '').strip()
+    sort_by = request.GET.get('sort', 'points_desc')
+
+    users = User.objects.filter(is_active=True)
+    if search_query:
+        users = users.filter(
+            Q(first_name__icontains=search_query) | 
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+        
+    leaderboard = []
+    
+    max_dt = datetime.max.replace(tzinfo=timezone.utc)
+    
+    for user in users:
+        stats = user_stats.get(user.id, {
+            'points': 0,
+            'solved_challenges': set(),
+            'total_considered_submissions': 0,
+            'last_successful_time': None
+        })
+        
+        solved_count = len(stats['solved_challenges'])
+        considered_count = stats['total_considered_submissions']
+        acceptance_rate = (solved_count / considered_count * 100) if considered_count > 0 else 0
+        acceptance_rate = int(round(acceptance_rate))
+        last_time = stats['last_successful_time'] or max_dt
+        
+        leaderboard.append({
+            'user': user,
+            'points': stats['points'],
+            'solved_count': solved_count,
+            'acceptance_rate': acceptance_rate,
+            'last_successful_time': last_time,
+        })
+        
+    if sort_by == 'points_asc':
+        leaderboard.sort(key=lambda x: (x['points'], x['solved_count'], x['acceptance_rate'], x['last_successful_time']))
+    elif sort_by == 'solved_asc':
+        leaderboard.sort(key=lambda x: (x['solved_count'], x['points'], x['acceptance_rate'], x['last_successful_time']))
+    elif sort_by == 'solved_desc':
+        leaderboard.sort(key=lambda x: (-x['solved_count'], -x['points'], -x['acceptance_rate'], x['last_successful_time']))
+    elif sort_by == 'acceptance_asc':
+        leaderboard.sort(key=lambda x: (x['acceptance_rate'], x['points'], x['solved_count'], x['last_successful_time']))
+    elif sort_by == 'acceptance_desc':
+        leaderboard.sort(key=lambda x: (-x['acceptance_rate'], -x['points'], -x['solved_count'], x['last_successful_time']))
+    else: # points_desc is default
+        leaderboard.sort(key=lambda x: (-x['points'], -x['solved_count'], -x['acceptance_rate'], x['last_successful_time']))
+
+    return render(request, 'users/leaderboard.html', {
+        'leaderboard': leaderboard,
+        'search_query': search_query,
+        'sort_by': sort_by
+    })

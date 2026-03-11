@@ -13,36 +13,31 @@
             </div>
         </div>
         <div class="problem-list">
-            <div class="problems" id="challenge-container">
-                {% for challenge in challenges%}
-                {% include 'challenges/includes/challenge_card.html' %}
-                {% empty %}
-                <p>Masalalar topilmadi</p>
-                {% endfor %}
+            <div class="problems-left-column">
+                <table class="challenges-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%; text-align: center;">Holati</th>
+                            <th style="width: 40%">Masala nomi</th>
+                            <th style="width: 15%">Ball</th>
+                            <th style="width: 15%">Yechganlar</th>
+                            <th style="width: 15%">Qabul qilinishi</th>
+                            <th style="width: 10%; text-align: center;">Saqlash</th>
+                        </tr>
+                    </thead>
+                    <tbody id="challenge-container">
+                        {% for challenge in challenges %}
+                        {% include 'challenges/includes/challenge_card.html' %}
+                        {% empty %}
+                        <tr><td colspan="6" style="text-align: center; padding: 20px;">Masalalar topilmadi</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 <div id="loading-spinner" style="display: none; text-align: center; width: 100%; padding: 20px;">
                     <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: var(--theme-blue);"></i>
                 </div>
             </div>
             <div class="sidebar">
-                <div class="filter-group">
-                    <div class="filter-header">Darajasi</div>
-                    <label class="filter-option">
-                        <input type="checkbox" name="difficulty" value="easy" onchange="this.form.submit()" {% if 'easy' in selected_difficulties %}checked{% endif %}>
-                        <div class="checkbox-visual"></div>
-                        Oson
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox" name="difficulty" value="medium" onchange="this.form.submit()" {% if 'medium' in selected_difficulties %}checked{% endif %}>
-                        <div class="checkbox-visual"></div>
-                        O'rta
-                    </label>
-                    <label class="filter-option">
-                        <input type="checkbox" name="difficulty" value="hard" onchange="this.form.submit()" {% if 'hard' in selected_difficulties %}checked{% endif %}>
-                        <div class="checkbox-visual"></div>
-                        Qiyin
-                    </label>
-                </div>
-
                 <div class="filter-group">
                     <div class="filter-header">Mavzular</div>
                     {% for tag in tags %}
@@ -92,7 +87,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                const tempDiv = document.createElement('div');
+                const tempDiv = document.createElement('tbody');
                 tempDiv.innerHTML = data.html;
                 
                 Array.from(tempDiv.children).forEach((child, index) => {

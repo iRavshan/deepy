@@ -1,0 +1,102 @@
+{% extends '../shared/_base.html' %}
+{% load static %}
+{% block title %}Reyting{% endblock %}
+
+{% block content %}
+<main class="container">
+    <form action="." method="GET">
+        <div class="page-header-row">
+            <h1 class="page-title">Umumiy reyting</h1>
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
+                {% if sort_by %}
+                <input type="hidden" name="sort" value="{{ sort_by }}">
+                {% endif %}
+            </div>
+        </div>
+    </form>
+
+    <table class="challenges-table">
+        <thead>
+            <tr>
+                <th style="width: 5%; text-align: center;">#</th>
+                <th style="width: 50%">Foydalanuvchi</th>
+                <th style="width: 15%; text-align: center;">
+                    <a href="?sort={% if sort_by == 'points_desc' %}points_asc{% else %}points_desc{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                        Ball
+                        <i class="fa-solid {% if sort_by == 'points_asc' %}fa-caret-up{% elif sort_by == 'points_desc' %}fa-caret-down{% else %}fa-sort{% endif %}" style="color: var(--text-medium);"></i>
+                    </a>
+                </th>
+                <th style="width: 15%; text-align: center;">
+                    <a href="?sort={% if sort_by == 'solved_desc' %}solved_asc{% else %}solved_desc{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                        Yechganlar
+                        <i class="fa-solid {% if sort_by == 'solved_asc' %}fa-caret-up{% elif sort_by == 'solved_desc' %}fa-caret-down{% else %}fa-sort{% endif %}" style="color: var(--text-medium);"></i>
+                    </a>
+                </th>
+                <th style="width: 15%; text-align: center;">
+                    <a href="?sort={% if sort_by == 'acceptance_desc' %}acceptance_asc{% else %}acceptance_desc{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
+                        Qabul qilinishi
+                        <i class="fa-solid {% if sort_by == 'acceptance_asc' %}fa-caret-up{% elif sort_by == 'acceptance_desc' %}fa-caret-down{% else %}fa-sort{% endif %}" style="color: var(--text-medium);"></i>
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in leaderboard %}
+            <tr>
+                <td style="text-align: center; font-weight: 800; color: var(--text-medium);">
+                    {{ forloop.counter }}
+                </td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        {% if entry.user.profile_picture %}
+                            <img src="{{ entry.user.profile_picture.url }}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--theme-blue); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.2rem;">
+                                {% if entry.user.first_name %}
+                                    {{ entry.user.first_name.0|upper }}
+                                {% else %}
+                                    <i class="fa-solid fa-user"></i>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        <div>
+                            <div class="problem-title" style="margin-bottom: 2px; font-size: 1.05rem;">
+                                {% if entry.user.first_name or entry.user.last_name %}
+                                    {{ entry.user.first_name }} {{ entry.user.last_name }}
+                                {% else %}
+                                    Nomsiz foydalanuvchi
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-medium); font-weight: 500;">
+                                {{ entry.user.email }}
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td style="text-align: center;">
+                    <span class="category-label" style="color: var(--theme-blue);">
+                        <i class="fa-solid fa-gem"></i> {{ entry.points }}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+                    <span class="category-label">
+                        <i class="fa-solid fa-check-double" style="color: var(--theme-green);"></i> {{ entry.solved_count }}
+                    </span>
+                </td>
+                <td style="text-align: center;">
+                    <span class="category-label">
+                        <i class="fa-solid fa-percent" style="color: var(--theme-orange);"></i> {{ entry.acceptance_rate }}%
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">Foydalanuvchilar topilmadi</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+{% endblock %}

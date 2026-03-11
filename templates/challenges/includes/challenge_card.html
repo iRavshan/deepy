@@ -1,25 +1,32 @@
-<div class="problem-card">
-    <div class="status-icon {% if challenge.is_accepted %}status-solved{% endif %}">
-        {% if challenge.is_accepted %}
-        <i class="fa-solid fa-check"></i>
-        {% else %}
-        <i class="fa-solid fa-o"></i>
-        {% endif %}
-    </div>
-    <div class="problem-info">
-        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}.
-            {{ challenge.title|capfirst}}</a>
-        <div class="problem-meta">
-            <span class="category-label" style="color: var(--theme-blue);"><i class="fa-solid fa-gem"></i> {{ challenge.current_score }}</span>
-            <span class="category-label"><i class="fa-solid fa-user"></i> {{ challenge.solvers_count }}</span>
-            <span class="category-label"><i class="fa-solid fa-check-double"></i> {{ challenge.acceptance_rate }}% </span>
+<tr class="problem-row">
+    <td class="status-cell">
+        <div class="status-icon {% if challenge.is_accepted %}status-solved{% endif %}">
+            {% if challenge.is_accepted %}
+            <i class="fa-solid fa-check"></i>
+            {% else %}
+            <i class="fa-solid fa-o"></i>
+            {% endif %}
         </div>
-    </div>
-    <div class="problem-actions">
-        {% if user.is_authenticated %}
-            <button class="bookmark-btn {% if challenge.is_saved %}active{% endif %}" data-slug="{{ challenge.slug }}">
-                <i class="{% if challenge.is_saved %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
-            </button>
-        {% endif %}
-    </div>
-</div>
+    </td>
+    <td class="title-cell">
+        <a href="{% url 'challenge_detail' challenge.slug %}" class="problem-title">{{ challenge.id }}. {{ challenge.title|capfirst }}</a>
+    </td>
+    <td class="score-cell">
+        <span class="category-label" style="color: var(--theme-blue);"><i class="fa-solid fa-gem"></i> {{ challenge.current_score }}</span>
+    </td>
+    <td class="solvers-cell">
+        <span class="category-label"><i class="fa-solid fa-check-double" style="color: var(--theme-green);"></i> {{ challenge.solvers_count }}</span>
+    </td>
+    <td class="acceptance-cell">
+        <span class="category-label"><i class="fa-solid fa-percent" style="color: var(--theme-orange);"></i> {{ challenge.acceptance_rate }}% </span>
+    </td>
+    <td class="action-cell">
+        <div class="problem-actions">
+            {% if user.is_authenticated %}
+                <button class="bookmark-btn {% if challenge.is_saved %}active{% endif %}" data-slug="{{ challenge.slug }}">
+                    <i class="{% if challenge.is_saved %}fa-solid{% else %}fa-regular{% endif %} fa-bookmark"></i>
+                </button>
+            {% endif %}
+        </div>
+    </td>
+</tr>
