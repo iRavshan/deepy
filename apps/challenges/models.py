@@ -85,17 +85,33 @@ class Challenge(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True, editable=False)
     description = RichTextField(config_name='math_editor', blank=True, null=True)
-    difficulty = models.CharField(max_length=20, choices=[
-        ('easy', 'Easy'),
-        ('medium', 'Medium'),
-        ('hard', 'Hard'),
-    ])
     input_description = RichTextField(config_name='math_editor', blank=True, null=True)
     output_description = RichTextField(config_name='math_editor', blank=True, null=True)
     sample_tests = models.JSONField(default=list)  
     hidden_tests = models.JSONField(default=list)
     time_limit = models.IntegerField(default=1000)
     memory_limit = models.IntegerField(default=256)
+
+    @property
+    def current_score(self):
+        import math
+        n = self.submissions.filter(status='accepted').values('submitted_by').distinct().count()
+        if n == 0:
+            return 100
+        score = math.floor(100 - 10 * math.log2(n))
+        return max(1, score)
+
+    @property
+    def solvers_count(self):
+        return self.submissions.filter(status='accepted').values('submitted_by').distinct().count()
+
+    @property
+    def acceptance_rate(self):
+        total = self.submissions.count()
+        if total == 0:
+            return 0
+        accepted = self.submissions.filter(status='accepted').count()
+        return int(round((accepted / total) * 100, 1))
 
     tags = models.ManyToManyField(Tag, related_name="challenges", blank=True)
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True, blank=True, related_name='challenges')

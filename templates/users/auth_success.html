@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authenticating...</title>
+</head>
+<body>
+    <script>
+        if (window.opener) {
+            window.opener.location.href = "{% url 'course_list' %}"; // or reload()
+            window.close();
+        } else {
+            window.location.href = "{% url 'course_list' %}";
+        }
+    </script>
+</body>
+</html>

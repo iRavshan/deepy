@@ -71,14 +71,25 @@
       <div class="divider">
         <span>yoki</span>
       </div>
-      <a href="{% provider_login_url 'google' %}" class="social-btn btn-transform">
+      <script>
+        const googleLoginUrl = "{% provider_login_url 'google' process='login' %}?next={% url 'auth_success' %}";
+        
+        function openOAuthPopup(url) {
+            const width = 500;
+            const height = 600;
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            window.open(url, "oauthPopup", `width=${width},height=${height},top=${top},left=${left}`);
+        }
+      </script>
+      <button type="button" onclick="openOAuthPopup(googleLoginUrl)" class="social-btn btn-transform">
         <i class="fa-brands fa-google icon-google" style="font-size: 1.2rem"></i>
         Google bilan kirish
-      </a>
-      <a class="social-btn btn-transform">
+      </button>
+      <button type="button" onclick="openOAuthPopup(githubLoginUrl)" class="social-btn btn-transform">
         <i class="fa-brands fa-github icon-github" style="font-size: 1.2rem"></i>
         GitHub bilan kirish
-      </a>
+      </button>
       <div class="footer-links">
         Hisobingiz mavjud emasmi? <a href="{% url 'signup' %}">Ro'yxatdan o'tish</a>
       </div>

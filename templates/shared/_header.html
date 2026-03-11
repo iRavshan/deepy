@@ -43,7 +43,13 @@
             </div>
             <div class="stat-item gems"><i class="fa-solid fa-gem"></i>470</div>
             <div class="user-dropdown-container" id="userDropdownContainer">
-                <img src="https://i.pravatar.cc/100?img=4" alt="User Avatar" class="avatar" id="navProfileImg" style="cursor: pointer;">
+                {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="Profile" class="avatar" id="navProfileImg" style="cursor: pointer; object-fit: cover;">
+                {% else %}
+                <div class="avatar" id="navProfileImg" style="cursor: pointer; background: linear-gradient(135deg, var(--theme-blue), var(--theme-blue-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;">
+                    {{ user.first_name|default:user.email|make_list|first|upper }}
+                </div>
+                {% endif %}
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <div class="dropdown-header">
                         <div class="dropdown-user-name">{{ user.first_name }} {{ user.last_name }}</div>

@@ -1,0 +1,53 @@
+{% extends 'shared/_base.html' %}
+{% load i18n %}
+{% block title %} Maxfiylik Siyosati {% endblock %}
+{% block content %}
+<main class="container">
+    <div style="max-width: 800px; margin: 40px auto; background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 2px solid var(--border-color); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+        <h1 style="font-size: 2.5rem; font-weight: 900; color: var(--text-dark); margin-bottom: 20px;">Maxfiylik Siyosati</h1>
+        <p style="color: var(--text-medium); margin-bottom: 30px; font-weight: 500;">So'nggi yangilangan sana: {% now "Y-m-d" %}</p>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">1. Umumiy qoidalar</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Ushbu Maxfiylik siyosati Deepland platformasi (keyingi o‘rinlarda "Platforma" deb yuritiladi) foydalanuvchilarining shaxsiy ma'lumotlarini qanday yig‘ishi, foydalanishi, saqlashi va himoya qilishini belgilaydi.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">2. Qanday ma'lumotlarni yig'amiz?</h2>
+            <ul style="color: var(--text-dark); line-height: 1.6; font-weight: 500; list-style-type: disc; margin-left: 20px;">
+                <li><strong>Ro'yxatdan o'tish ma'lumotlari:</strong> Ism, elektron pochta manzili ва parol.</li>
+                <li><strong>Profil ma'lumotlari:</strong> Profil rasmi, ijtimoiy tarmoq havolalari (LinkedIn, GitHub).</li>
+                <li><strong>Foydalanish ma'lumotlari:</strong> Yechilgan masalalar, kurslardagi progress, tizimga kirish vaqtlari.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">3. Ma'lumotlardan qanday foydalanamiz?</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Sizning ma'lumotlaringiz quyidagi maqsadlarda foydalaniladi:
+            </p>
+            <ul style="color: var(--text-dark); line-height: 1.6; font-weight: 500; list-style-type: disc; margin-left: 20px;">
+                <li>Platforma xizmatlarini taqdim etish va monitoring qilish.</li>
+                <li>Sizning yutuqlaringiz va reytingingizni hisoblash.</li>
+                <li>Platformadagi xavfsizlikni ta'minlash.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">4. Ma'lumotlarni himoya qilish</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Biz shaxsiy ma'lumotlaringizni xavfsiz saqlash uchun zamonaviy shifrlash va xavfsizlik choralarini qo'llaymiz. Ma'lumotlaringiz uchinchi shaxslarga sotilmaydi yoki ulashilmaydi (qonunchilikda ko'zda tutilgan hollar bundan mustasno).
+            </p>
+        </div>
+
+        <div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">5. Bog'lanish</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Ushbu siyosat bo‘yicha savollaringiz bo‘lsa, iltimos, biz bilan bog‘laning: <strong>info@deepland.uz</strong>
+            </p>
+        </div>
+    </div>
+</main>
+{% endblock content %}

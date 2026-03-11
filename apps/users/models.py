@@ -31,6 +31,11 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     is_email_verified = models.BooleanField(default=False)
+    
+    # Profile information
+    linkedin_url = models.URLField(max_length=255, null=True, blank=True)
+    github_url = models.URLField(max_length=255, null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pcs/', null=True, blank=True)
 
     # Streak tracking
     current_streak = models.IntegerField(default=0)

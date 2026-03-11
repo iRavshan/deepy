@@ -28,8 +28,8 @@
 
   ┌─────────────────────────────────────────────────────────────┐
   │  Faxriyorjon Botirxonov                                     │
-  │  Role ········ CTO                                          │
-  │  Location ···· Karshi, Uzbekistan (timezone: GMT+5)         │
+  │  Role ········ Co-founder & CTO                             │
+  │  Location ···· Karshi,  Uzbekistan (timezone: GMT+5)        │
   │  Superpower ·· Sleep                                        │
   │  Weakness ···· 404 Not Found                                │
   │  GitHub ······ github.com/fx-developer                      │

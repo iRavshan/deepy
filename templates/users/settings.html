@@ -27,9 +27,27 @@
             <!-- Profile Settings -->
             <div class="settings-card tab-content active" id="profile-tab">
                 <h2 class="card-title"><i class="fa-solid fa-user"></i> Shaxsiy ma'lumotlar</h2>
-                <form method="POST" action="{% url 'settings' %}">
+                <form method="POST" action="{% url 'settings' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="profile_update">
+                    <div class="profile-picture-section" style="margin-bottom: 25px; text-align: center;">
+                        <label style="display: block; font-weight: 700; color: var(--text-medium); margin-bottom: 15px;">Profil rasmi</label>
+                        <div class="avatar-preview" style="margin-top: 10px;">
+                            {% if profile_form.instance.profile_picture %}
+                                <img id="previewImage" src="{{ profile_form.instance.profile_picture.url }}" alt="Profile Picture" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--theme-blue); display: block; margin: 0 auto 15px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                            {% else %}
+                                <div id="previewInitials" style="width: 120px; height: 120px; border-radius: 50%; background: linear-gradient(135deg, var(--theme-blue), var(--theme-blue-dark)); color: white; display: flex; align-items: center; justify-content: center; font-size: 3rem; font-weight: bold; margin: 0 auto 15px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                                    {{ profile_form.instance.first_name|default:profile_form.instance.email|make_list|first|upper }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="file-input-wrapper">
+                            {{ profile_form.profile_picture }}
+                        </div>
+                        {% if profile_form.profile_picture.errors %}
+                            <div class="error-text">{% for error in profile_form.profile_picture.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
                     <div class="form-group">
                         <label>Ism</label>
                         {{ profile_form.first_name }}
@@ -49,6 +67,21 @@
                         {{ profile_form.email }}
                         {% if profile_form.email.errors %}
                             <div class="error-text">{% for error in profile_form.email.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fa-brands fa-linkedin" style="color: #0077b5;"></i> LinkedIn URL</label>
+                        {{ profile_form.linkedin_url }}
+                        {% if profile_form.linkedin_url.errors %}
+                            <div class="error-text">{% for error in profile_form.linkedin_url.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fa-brands fa-github"></i> GitHub URL</label>
+                        {{ profile_form.github_url }}
+                        {% if profile_form.github_url.errors %}
+                            <div class="error-text">{% for error in profile_form.github_url.errors %}{{ error }}{% endfor %}</div>
                         {% endif %}
                     </div>
                     
@@ -143,6 +176,40 @@
                 document.getElementById(tab.getAttribute('data-target')).classList.add('active');
             });
         });
+
+        // Image Preview Logic
+        const profilePictureInput = document.querySelector('input[type="file"][name="profile_picture"]');
+        const previewImage = document.getElementById('previewImage');
+        const previewInitials = document.getElementById('previewInitials');
+        const avatarPreviewContainer = document.querySelector('.avatar-preview');
+
+        if (profilePictureInput) {
+            profilePictureInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        let img = previewImage;
+                        if (!img) {
+                            img = document.createElement('img');
+                            img.id = 'previewImage';
+                            img.alt = 'Profile Picture';
+                            img.style.cssText = 'width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid var(--theme-blue); display: block; margin: 0 auto 15px auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1);';
+                            
+                            if (previewInitials) {
+                                previewInitials.replaceWith(img);
+                            } else if (previewImage) {
+                                // Shouldn't hit this if !img but just in case
+                            } else {
+                                avatarPreviewContainer.appendChild(img);
+                            }
+                        }
+                        img.src = e.target.result;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
     });
 </script>
 
@@ -264,7 +331,7 @@
         margin-bottom: 8px;
     }
     /* Style inputs the same as main web app */
-    .form-group input, 
+    .form-group input:not([type="file"]), 
     .form-group select {
         width: 100%;
         padding: 12px 15px;
@@ -278,11 +345,27 @@
         transition: border-color 0.2s, box-shadow 0.2s;
         appearance: none; /* for select */
     }
-    .form-group input:focus,
+    .form-group input:not([type="file"]):focus,
     .form-group select:focus {
         border-color: var(--theme-blue);
         box-shadow: 0 0 0 3px rgba(61, 133, 198, 0.2);
         outline: none;
+    }
+
+    .file-input-wrapper input[type="file"] {
+        display: inline-block;
+        padding: 8px 12px;
+        background: var(--bg-app);
+        border: 2px dashed var(--border-color);
+        border-radius: var(--btn-radius);
+        color: var(--text-medium);
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .file-input-wrapper input[type="file"]:hover {
+        border-color: var(--theme-blue);
+        background: rgba(61, 133, 198, 0.05);
     }
     .btn-submit {
         background: var(--theme-blue);

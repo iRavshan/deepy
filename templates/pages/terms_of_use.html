@@ -1,0 +1,67 @@
+{% extends 'shared/_base.html' %}
+{% load i18n %}
+{% block title %} Foydalanish Shartlari {% endblock %}
+{% block content %}
+<main class="container">
+    <div style="max-width: 800px; margin: 40px auto; background: var(--bg-panel); padding: 40px; border-radius: 16px; border: 2px solid var(--border-color); box-shadow: 0 10px 20px rgba(0,0,0,0.05);">
+        <h1 style="font-size: 2.5rem; font-weight: 900; color: var(--text-dark); margin-bottom: 20px;">Foydalanish Shartlari</h1>
+        <p style="color: var(--text-medium); margin-bottom: 30px; font-weight: 500;">Kuchga kirish sanasi: {% now "Y-m-d" %}</p>
+
+        <div style="margin-bottom: 30px;">
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Deepland platformasidan (keyingi o‘rinlarda "Platforma") foydalanish orqali quyida keltirilgan Foydalanish shartlariga qat'iy rozi ekanligingizni bildirasiz. Agar siz ushbu shartlarga rozi bo'lmasangiz, darhol platformadan foydalanishni to'xtatishingiz so'raladi.
+            </p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">1. Akkaunt va Ro'yxatdan o'tish</h2>
+            <ul style="color: var(--text-dark); line-height: 1.6; font-weight: 500; list-style-type: disc; margin-left: 20px;">
+                <li>Platformada ro'yxatdan o'tayotganingizda <strong>haqiqiy va to'g'ri ma'lumotlarni</strong> taqdim qilishingiz shart. Birov nomidan yoki soxta ismlar orqali ro'yxatdan o'tish taqiqlanadi.</li>
+                <li>O'z parolingiz va akkauntingizga uchinchi shaxslar kirishini oldini olish — sizning to'liq mas'uliyatingizdir. Birovning akkauntidan foydalanish ham qat'iyan taqiqlangan.</li>
+                <li>Haqoratli, so'kinish so'zlar qatnashgan yoki birovning qadr-qimmatini yerga uradigan ism/taxallusdan foydalanish holati kuzatilsa, akkaunt hech qanday ogohlantirishsiz o'chirilishi yoki bloklanishi mumkin.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">2. Kontent va Mualliflik Huquqlari</h2>
+            <ul style="color: var(--text-dark); line-height: 1.6; font-weight: 500; list-style-type: disc; margin-left: 20px;">
+                <li>Platformaga joylangan barcha kurslar, masalalar matnlari, maqolalar va ma'lumotlar Deepland nomidagi <strong>intellektual mulk</strong> hisoblanadi.</li>
+                <li>Ushbu ma'lumotlardan faqat shaxsiy maqsadlarda ta'lim yo'lida foydalanishingiz mumkin. Uarni nusxalash, qayta ishlab sotish yoki ruxsatsiz boshqa platformalarga ommaviy tarqatasish man etiladi.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">3. Tizim va Dasturlar Qoidalari</h2>
+            <ul style="color: var(--text-dark); line-height: 1.6; font-weight: 500; list-style-type: disc; margin-left: 20px;">
+                <li>Dasturlash masalalarini yechish va tizimga yuborishda faqatgina masala shartida so'ralgan funksionalni qamrab olgan va serverlarga atayin ziyon yetkazmaydigan kod xavfsizligidan dalolat berishingiz kerak.</li>
+                <li>Sayt faoliyatini sekinlashtirishga yoki buzib kirish (DDoS) amaliyotlarini bajarishga qaratilgan har qanday harakatlar huquqni muhofaza qilish organlariga xabar berilishiga olib kelishi mumkin.</li>
+                <li>Boshqa foydalanuvchilarning kodlarini avtomatlashgan tarzda ko'chirish va yechim sifatida yuborish — adolatsizlikdir. Bunday holatlar aniqlansa, foydalanuvchining reytinglari bekor qilinishi yoki uning faoliyati ma'lum muddatga cheklanishi mumkin.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">4. Boshqa Foydalanuvchilar bilan Muloqot</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">Tizimda chat, sharhlar yoki olimpiada muhiti mavjud bo'lgan hududlarda:</p>
+            <ul style="color: var(--text-dark); line-height: 1.6; font-weight: 500; list-style-type: disc; margin-left: 20px;">
+                <li>Boshqalarni kamsituvchi, tahqirlovchi yoki hurmatsizlik ifodalovchi fikrlar qoldirish qat'iyan man qilinadi.</li>
+                <li>Har qanday turdagi diskriminatsiya va bezorilik tasdiqlansa, mualliflar ogohlantirishsiz tizimdan chetlatiladi.</li>
+            </ul>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">5. O'zgartirishlar Kiritish</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Kompaniyamiz ixtiyoriy ravishda ushbu shartlarni oldindan e'lon qilmasdan istalgan vaqtda o'zgartirish, tahrirlash yoki bekor qilish huquqiga ega. Qoidalarni vaqti-vaqti bilan o'qib borish foydalanuvchining o'z zimmasiga yuklanadi.
+            </p>
+        </div>
+        
+        <div>
+            <h2 style="font-size: 1.5rem; font-weight: 800; color: var(--theme-blue); margin-bottom: 15px;">6. Ziddiyatlarni Hal Etish</h2>
+            <p style="color: var(--text-dark); line-height: 1.6; font-weight: 500;">
+                Deepland tizimi O'zbekiston Respublikasi qonunlariga muvofiq faoliyat olib boradi. Agar tushunmovchiliklar yuzaga kelsa, barchasi muzokaralar va yozma murojaatlar orqali mantiqan yechiladi: <strong>support@deepland.uz</strong>
+            </p>
+        </div>
+
+    </div>
+</main>
+{% endblock content %}

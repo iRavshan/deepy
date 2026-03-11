@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.password_validation import validate_password
 from django_cf_turnstile.fields import TurnstileCaptchaField
 from .models import User
 
@@ -15,7 +16,7 @@ class EmailLoginForm(forms.Form):
     cf_turnstile = TurnstileCaptchaField()
 
     def __init__(self, request=None, *args, **kwargs):
-        self.request = request
+        self.request = request  
         self.user_cache = None
         super().__init__(*args, **kwargs)
 
@@ -37,16 +38,38 @@ class EmailLoginForm(forms.Form):
         return self.user_cache
 
 
-class UserSignupForm(UserCreationForm):
+
+class UserSignupForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Parol'}))
     class Meta:
         model = User
-        fields = ['email', 'first_name']
+        fields = ['first_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Ismingiz (Ixtiyoriy)'}),
+            'email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'Elektron pochta'}),
+        }
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        validate_password(password)
+        return password
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user
 
 class UserSettingsForm(forms.ModelForm):
     first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Ismingiz'}))
     last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Familiyangiz'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Email manzil'}))
+    age = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={'placeholder': 'Yoshingiz'}))
+    linkedin_url = forms.URLField(required=False, widget=forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/username'}))
+    github_url = forms.URLField(required=False, widget=forms.URLInput(attrs={'placeholder': 'https://github.com/username'}))
+    profile_picture = forms.ImageField(required=False)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email', 'age', 'linkedin_url', 'github_url', 'profile_picture']

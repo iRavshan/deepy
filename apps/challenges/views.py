@@ -38,9 +38,6 @@ def challenge_list(request):
             Q(description__icontains=search_query)
         )
 
-    difficulties = request.GET.getlist('difficulty')
-    if difficulties:
-        challenges = challenges.filter(difficulty__in=difficulties)
 
 
     selected_tags = request.GET.getlist('tag')
@@ -51,7 +48,7 @@ def challenge_list(request):
 
     context = {
         'tags': all_tags,
-        'selected_difficulties': difficulties,
+
         'selected_tags': selected_tags,
         'search_query': search_query,
     }

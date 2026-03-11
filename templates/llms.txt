@@ -25,3 +25,9 @@ To provide high-quality, project-based AI education using real-world analogies a
 ## Contact & Links
 - Website: https://deepland.uz
 - Founder: Ravshan Sodiqov
+- Co-founder & CTO: Botirxonov Faxriyorjon
+## Key Features
+- **Interactive Learning**: Step-by-step guidance with real-world analogies.
+- **Real-World Projects**: Build a portfolio with projects like X-FACE and S.I.T.
+- **Competitive Environment**: Track your progress with global leaderboards.
+- **Multi-Language Support**: Content available in Uzbek, English, and Russian.

@@ -57,7 +57,7 @@ def settings_view(request):
         action = request.POST.get('action')
         
         if action == 'profile_update':
-            profile_form = UserSettingsForm(request.POST, instance=user)
+            profile_form = UserSettingsForm(request.POST, request.FILES, instance=user)
             if profile_form.is_valid():
                 profile_form.save()
                 messages.success(request, 'Shaxsiy ma\'lumotlar muvaffaqiyatli saqlandi!')
@@ -95,3 +95,10 @@ def bookmarks_view(request):
         'saved_challenges': saved_challenges,
         'saved_terms': saved_terms
     })
+
+def auth_success_view(request):
+    """
+    After successful social auth in a popup, this view is called.
+    It renders a script that closes the popup and reloads the main window.
+    """
+    return render(request, 'users/auth_success.html')
