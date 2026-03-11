@@ -1,13 +1,108 @@
-/* TEAM */
-Founder: Ravshan Sodiqov
-Our Team: Faxriyorjon Botirxonov
-Location: Karshi, Uzbekistan.
+  ██████╗ ███████╗███████╗██████╗ ██╗      █████╗ ███╗   ██╗██████╗ 
+  ██╔══██╗██╔════╝██╔════╝██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗
+  ██║  ██║█████╗  █████╗  ██████╔╝██║     ███████║██╔██╗ ██║██║  ██║
+  ██║  ██║██╔══╝  ██╔══╝  ██╔═══╝ ██║     ██╔══██║██║╚██╗██║██║  ██║
+  ██████╔╝███████╗███████╗██║     ███████╗██║  ██║██║ ╚████║██████╔╝
+  ╚═════╝ ╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝          
+                                                                    
+  /* We are the ones behind the commits.                           
+     The late nights. The cold coffee.                             
+     The rubber ducks who've heard too much.  */                   
 
-/* THANKS */
-University: Karshi State University
-School: Presidential School in Karshi
-Mentor: Erkin Eshboyev
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-/* SITE */
-Language: Uzbek, English, Russian
-Components: Django, PostgreSQL, Redis, Judge0, Docker, PWA
+  $ whoami
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  OUR TEAM
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Ravshan Sodiqov                                            │
+  │  Role ········ Founder & CEO                                │
+  │  Location ···· Karshi, Uzbekistan (timezone: GMT+5)         │
+  │  Superpower ·· Reads stack traces like poetry               │
+  │  Weakness ···· Cannot resist refactoring "just this once"   │
+  │  GitHub ······ github.com/iRavshan                          │
+  └─────────────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │  Faxriyorjon Botirxonov                                     │
+  │  Role ········ CTO                                          │
+  │  Location ···· Karshi, Uzbekistan (timezone: GMT+5)         │
+  │  Superpower ·· Sleep                                        │
+  │  Weakness ···· 404 Not Found                                │
+  │  GitHub ······ github.com/fx-developer                      │
+  └─────────────────────────────────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  $ git log --pretty=format:"%H — %s" --oneline | head -n 5
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  ORIGIN STORY
+
+  This project began as a weekend hack.
+  One weekend turned into eight months.
+  Eight months turned into something we're proud of.
+
+  We believed that developer tools should feel like a
+  conversation, not a confrontation. That documentation
+  should be a joy to read. That error messages should
+  respect your intelligence.
+
+  So we built the thing we wished existed.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  $ cat ACKNOWLEDGEMENTS.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  THANK YOU TO
+
+  · The compiler errors that were infuriating but always right
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  $ cat PHILOSOPHY.txt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  We write code for humans first.
+  Machines can read anything.
+  Humans deserve better.
+
+  We prefer boring infrastructure and interesting products.
+  We ship with shame, then iterate without it.
+  We break things slowly and fix them fast.
+
+  We think the best line of code is the one you don't write.
+  We think the second best is the one that explains itself.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  $ uptime
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  SITE
+
+  Last updated ·· 2026-03-11
+  Built with ···· TypeScript, Next.js, Postgres, stubbornness
+  Hosted on ····· our own infra (Sam's idea, Sam's problem)
+  Standards ····· HTML5, WCAG 2.1 AA, semantic everything
+  No tracking ··· We don't watch you. Promise.
+  Perf budget ··· < 100kb JS on first load (or we don't ship it)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  /* You found this file.                                           
+     That means you look at source code for fun.                   
+     That means you're one of us.                                   
+     Welcome.                                          */           
+
+  humanstxt.org — because machines aren't the only ones who ship.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
