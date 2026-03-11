@@ -15,6 +15,7 @@ Django==6.0.1
 django-allauth==65.13.1
 django-cf-turnstile==0.1.0
 django-ckeditor==6.7.3
+django-csp==4.0
 django-js-asset==3.1.2
 django-modeltranslation==0.19.19
 django-nested-admin==4.1.6
