@@ -1,0 +1,13 @@
+/* TEAM */
+Founder: Ravshan Sodiqov
+Our Team: Faxriyorjon Botirxonov
+Location: Karshi, Uzbekistan.
+
+/* THANKS */
+University: Karshi State University
+School: Presidential School in Karshi
+Mentor: Erkin Eshboyev
+
+/* SITE */
+Language: Uzbek, English, Russian
+Components: Django, PostgreSQL, Redis, Judge0, Docker, PWA

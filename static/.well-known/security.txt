@@ -1,0 +1,7 @@
+Contact: mailto:deeplanduz@gmail.com
+Contact: https://deepland.uz/contact/
+Expires: 2027-01-01T00:00:00.000Z
+Preferred-Languages: en, uz, ru
+Canonical: https://deepland.uz/.well-known/security.txt
+Policy: https://deepland.uz/policy/
+Hiring: https://deepland.uz/jobs/

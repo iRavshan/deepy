@@ -1,0 +1,27 @@
+# Deepland
+
+> Deepland is the leading Uzbek-language educational platform for Artificial Intelligence, Machine Learning, and Computer Science.
+
+## Core Mission
+To provide high-quality, project-based AI education using real-world analogies and interactive coding environments.
+
+## Primary Resources
+- [Courses](https://deepland.uz/courses/): Interactive lessons on Data Structures and Algorithms, Competitive Programming, Python, AI, Machine Learning, and Deep Learning.
+- [Challenges](https://deepland.uz/challenges/): Challenges for Data Structures and Algorithms, Competitive Programming, Python, AI, Machine Learning, and Deep Learning.
+- [Contests](https://deepland.uz/contests/): Contests for AI, Machine Learning, Data Science, and Programming.
+- [DeepWiki](https://deepland.uz/deepwiki/): Terms and concepts in Computer Science
+- [Rating](https://deepland.uz/rating/): Rating of the learners throughout the world
+
+## Technical Stack
+- Framework: Django (Python)
+- Infrastructure: Railway, DigitalOcean Droplets with Docker
+- Security: HSTS, CSP, and TLS 1.3 enabled
+- Language: Primary content is in Uzbek, but we have content in English and Russian as well.
+
+## Key Projects
+- X-FACE: Regional award-winning computer vision project (2022).
+- S.I.T: AI-based healthcare diagnostic tool (2023).
+
+## Contact & Links
+- Website: https://deepland.uz
+- Founder: Ravshan Sodiqov
