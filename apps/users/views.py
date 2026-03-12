@@ -5,7 +5,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.db.models import Count, Q
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import math
 from .forms import UserSignupForm, EmailLoginForm, UserSettingsForm
 from apps.users.models import User
@@ -118,10 +118,21 @@ def leaderboard_view(request):
         score = 100 if n == 0 else max(1, math.floor(100 - 10 * math.log2(n)))
         challenge_scores[c.id] = score
 
-    submissions = Submission.objects.order_by('submitted_at').values(
+    period = request.GET.get('period', 'all')
+    now = datetime.now(timezone.utc)
+    
+    submissions = Submission.objects.order_by('submitted_at')
+    
+    if period == 'day':
+        submissions = submissions.filter(submitted_at__gte=now - timedelta(days=1))
+    elif period == 'week':
+        submissions = submissions.filter(submitted_at__gte=now - timedelta(days=7))
+    elif period == 'month':
+        submissions = submissions.filter(submitted_at__gte=now - timedelta(days=30))
+        
+    submissions = submissions.values(
         'submitted_by_id', 'challenge_id', 'status', 'submitted_at'
     )
-    
     user_stats = {}
     for sub in submissions:
         uid = sub['submitted_by_id']
@@ -204,5 +215,6 @@ def leaderboard_view(request):
     return render(request, 'users/leaderboard.html', {
         'leaderboard': leaderboard,
         'search_query': search_query,
-        'sort_by': sort_by
+        'sort_by': sort_by,
+        'period': period
     })

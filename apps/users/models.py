@@ -42,6 +42,13 @@ class User(AbstractUser):
     max_streak = models.IntegerField(default=0)
     last_activity_date = models.DateField(null=True, blank=True)
     
+    @property
+    def points(self):
+        from apps.challenges.models import Submission, Challenge
+        challenge_ids = set(Submission.objects.filter(submitted_by=self, status='accepted').values_list('challenge_id', flat=True))
+        challenges = Challenge.objects.filter(id__in=challenge_ids)
+        return sum(c.current_score for c in challenges)
+    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []  # email and password are required automatically
 

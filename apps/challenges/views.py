@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Q, Exists, OuterRef
+from django.db.models import Q, Exists, OuterRef, Count, F, FloatField, ExpressionWrapper
+from django.db.models.functions import Coalesce, NullIf
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from .models import Challenge, Submission, Tag, Topic, SavedChallenge, ProgrammingLanguage
@@ -16,6 +17,9 @@ import json
 def challenge_list(request):
     challenges = Challenge.objects.all().select_related('topic').prefetch_related('tags')
 
+    total_challenges = Challenge.objects.count()
+    solved_challenges_count = 0
+
     if request.user.is_authenticated:
         saved_subquery = SavedChallenge.objects.filter(
             user=request.user,
@@ -30,6 +34,12 @@ def challenge_list(request):
             is_saved=Exists(saved_subquery),
             is_accepted=Exists(accepted_subquery)
         )
+        solved_challenges_count = Submission.objects.filter(
+            submitted_by=request.user,
+            status='accepted'
+        ).values('challenge').distinct().count()
+
+    progress_percentage = int((solved_challenges_count / total_challenges * 100)) if total_challenges > 0 else 0
 
     search_query = request.GET.get('q', '')
     if search_query:
@@ -44,13 +54,45 @@ def challenge_list(request):
     if selected_tags:
         challenges = challenges.filter(tags__slug__in=selected_tags).distinct()
 
+    sort_param = request.GET.get('sort', '')
+    if sort_param:
+        challenges = challenges.annotate(
+            solvers_n=Count('submissions__submitted_by', filter=Q(submissions__status='accepted'), distinct=True),
+            total_subs=Count('submissions'),
+            accepted_subs=Count('submissions', filter=Q(submissions__status='accepted')),
+            acc_rate=Coalesce(
+                ExpressionWrapper(
+                    F('accepted_subs') * 100.0 / NullIf(F('total_subs'), 0),
+                    output_field=FloatField()
+                ),
+                0.0
+            )
+        )
+        if sort_param == 'points_asc':
+            challenges = challenges.order_by('-solvers_n', '-id')
+        elif sort_param == 'points_desc':
+            challenges = challenges.order_by('solvers_n', 'id')
+        elif sort_param == 'solved_asc':
+            challenges = challenges.order_by('solvers_n', 'id')
+        elif sort_param == 'solved_desc':
+            challenges = challenges.order_by('-solvers_n', '-id')
+        elif sort_param == 'acceptance_asc':
+            challenges = challenges.order_by('acc_rate', 'id')
+        elif sort_param == 'acceptance_desc':
+            challenges = challenges.order_by('-acc_rate', '-id')
+    else:
+        challenges = challenges.order_by('id')
+
     all_tags = Tag.objects.all()
 
     context = {
         'tags': all_tags,
-
         'selected_tags': selected_tags,
         'search_query': search_query,
+        'sort_by': sort_param,
+        'total_challenges': total_challenges,
+        'solved_challenges_count': solved_challenges_count,
+        'progress_percentage': progress_percentage,
     }
 
     # Pagination

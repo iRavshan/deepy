@@ -5,26 +5,44 @@
 {% load i18n %}
 <main class="container">
     <form action="." method="GET">
-        <div class="page-header-row">
+        <div class="page-header-row" style="margin-bottom: 20px;">
             <h1 class="page-title">Masalalar</h1>
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
-            </div>
         </div>
         <div class="problem-list">
             <div class="problems-left-column">
+                <div class="dashboard-controls" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                    <div style="display: flex; flex-grow: 1; max-width: 500px; gap: 10px; align-items: center;">
+                        <div class="search-container" style="width: 100%; max-width: 100%;">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
+                        </div>
+                        <div style="position: relative;">
+                            <button type="button" class="info-link-btn" title="Filtr" style="background-color: var(--bg-panel); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border-color); flex-shrink: 0;" onclick="document.getElementById('sort-dropdown').classList.toggle('show'); event.stopPropagation();">
+                                <i class="fa-solid fa-filter"></i>
+                            </button>
+                            <div id="sort-dropdown" class="sort-menu" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 10px; background: var(--bg-panel); border: 2px solid var(--border-color); border-radius: var(--card-radius); padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: max-content; z-index: 100;">
+                                <div style="font-weight: 800; color: var(--text-medium); margin-bottom: 10px; font-size: 0.85rem; text-transform: uppercase;">Tartiblash</div>
+                                <input type="hidden" name="sort" id="sort-input" value="{{ sort_by }}">
+                                <div class="sort-option" data-sort-base="points" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
+                                    <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Ball bo'yicha</span>
+                                    <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
+                                </div>
+                                <div class="sort-option" data-sort-base="solved" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
+                                    <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Yechilganlar soni</span>
+                                    <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
+                                </div>
+                                <div class="sort-option" data-sort-base="acceptance" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
+                                    <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Qabul qilish darajasi</span>
+                                    <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="{% url 'challenge_random' %}" class="info-link-btn" title="Tasodifiy masala" style="background-color: var(--bg-panel); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border-color); flex-shrink: 0;">
+                            <i class="fa-solid fa-shuffle"></i>
+                        </a>
+                    </div>
+                </div>
                 <table class="challenges-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 5%; text-align: center;">Holati</th>
-                            <th style="width: 40%">Masala nomi</th>
-                            <th style="width: 15%">Ball</th>
-                            <th style="width: 15%">Yechganlar</th>
-                            <th style="width: 15%">Qabul qilinishi</th>
-                            <th style="width: 10%; text-align: center;">Saqlash</th>
-                        </tr>
-                    </thead>
                     <tbody id="challenge-container">
                         {% for challenge in challenges %}
                         {% include 'challenges/includes/challenge_card.html' %}
@@ -106,43 +124,107 @@
             });
         }
 
-        // Bookmark Logic
+        // Click Logic for Bookmark and Rows
         document.addEventListener('click', function(e) {
             const btn = e.target.closest('.bookmark-btn');
-            if (!btn) return;
+            if (btn) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const slug = btn.dataset.slug;
+                const icon = btn.querySelector('i');
+
+                fetch('{% url "toggle_challenge_save" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ slug: slug })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.saved) {
+                        btn.classList.add('active');
+                        icon.classList.remove('fa-regular');
+                        icon.classList.add('fa-solid');
+                    } else {
+                        btn.classList.remove('active');
+                        icon.classList.remove('fa-solid');
+                        icon.classList.add('fa-regular');
+                    }
+                    
+                    // Animate
+                    icon.style.transform = 'scale(1.2)';
+                    setTimeout(() => icon.style.transform = 'scale(1)', 200);
+                })
+                .catch(console.error);
+                return;
+            }
             
-            e.preventDefault();
-
-            const slug = btn.dataset.slug;
-            const icon = btn.querySelector('i');
-
-            fetch('{% url "toggle_challenge_save" %}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({ slug: slug })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.saved) {
-                    btn.classList.add('active');
-                    icon.classList.remove('fa-regular');
-                    icon.classList.add('fa-solid');
-                } else {
-                    btn.classList.remove('active');
-                    icon.classList.remove('fa-solid');
-                    icon.classList.add('fa-regular');
+            // Handle clicking the problem row
+            const row = e.target.closest('.problem-row');
+            const linkTag = e.target.closest('a');
+            if (row && !linkTag) {
+                const titleLink = row.querySelector('.problem-title');
+                if (titleLink) {
+                    window.location.href = titleLink.href;
                 }
-                
-                // Animate
-                icon.style.transform = 'scale(1.2)';
-                setTimeout(() => icon.style.transform = 'scale(1)', 200);
-            })
-            .catch(console.error);
+            }
         });
     });
+
+        // Custom Sort Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentSort = '{{ sort_by }}';
+            const sortInput = document.getElementById('sort-input');
+            
+            document.querySelectorAll('.sort-option').forEach(option => {
+                const base = option.dataset.sortBase;
+                const icon = option.querySelector('.sort-icon');
+                
+                let currentState = 'none';
+                if (currentSort === base + '_desc') currentState = 'desc';
+                if (currentSort === base + '_asc') currentState = 'asc';
+                
+                if (currentState === 'desc') {
+                    icon.className = 'sort-icon fa-solid fa-arrow-down-wide-short';
+                    icon.style.color = 'var(--theme-blue)';
+                    option.style.background = 'var(--bg-app)';
+                } else if (currentState === 'asc') {
+                    icon.className = 'sort-icon fa-solid fa-arrow-up-short-wide';
+                    icon.style.color = 'var(--theme-blue)';
+                    option.style.background = 'var(--bg-app)';
+                }
+                
+                option.addEventListener('mouseenter', () => {
+                    if (currentState === 'none') option.style.background = 'var(--bg-app)';
+                });
+                option.addEventListener('mouseleave', () => {
+                    if (currentState === 'none') option.style.background = '';
+                });
+
+                option.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (currentState === 'desc') {
+                        sortInput.value = base + '_asc';
+                    } else if (currentState === 'asc') {
+                        sortInput.value = base + '_desc'; 
+                    } else {
+                        sortInput.value = base + '_desc';
+                    }
+                    sortInput.closest('form').submit();
+                });
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('sort-dropdown');
+            if (dropdown && dropdown.classList.contains('show') && !e.target.closest('#sort-dropdown')) {
+                dropdown.classList.remove('show');
+            }
+        });
 
     // Add keyframes for animation if not exists
     const style = document.createElement('style');
@@ -156,6 +238,10 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+        
+        #sort-dropdown.show {
+            display: block !important;
         }
     `;
     document.head.appendChild(style);

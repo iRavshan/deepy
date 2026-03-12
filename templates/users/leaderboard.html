@@ -5,43 +5,58 @@
 {% block content %}
 <main class="container">
     <form action="." method="GET">
-        <div class="page-header-row">
+        <div class="page-header-row" style="margin-bottom: 20px;">
             <h1 class="page-title">Umumiy reyting</h1>
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
-                {% if sort_by %}
-                <input type="hidden" name="sort" value="{{ sort_by }}">
-                {% endif %}
+        </div>
+
+        <div class="dashboard-controls" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+            <div style="display: flex; flex-grow: 1; max-width: 600px; gap: 10px; align-items: center;">
+                <div class="search-container" style="width: 100%; max-width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
+                    {% if sort_by %}
+                    <input type="hidden" name="sort" value="{{ sort_by }}">
+                    {% endif %}
+                </div>
+                <div style="position: relative;">
+                    <button type="button" class="info-link-btn" title="Filtr" style="background-color: var(--bg-panel); width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--border-color); flex-shrink: 0;" onclick="document.getElementById('sort-dropdown').classList.toggle('show'); event.stopPropagation();">
+                        <i class="fa-solid fa-filter"></i>
+                    </button>
+                    <div id="sort-dropdown" class="sort-menu" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 10px; background: var(--bg-panel); border: 2px solid var(--border-color); border-radius: var(--card-radius); padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: max-content; z-index: 100;">
+                        <div style="font-weight: 800; color: var(--text-medium); margin-bottom: 10px; font-size: 0.85rem; text-transform: uppercase;">Tartiblash</div>
+                        <input type="hidden" name="sort" id="sort-input" value="{{ sort_by }}">
+                        <div class="sort-option" data-sort-base="points" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
+                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Ball bo'yicha</span>
+                            <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
+                        </div>
+                        <div class="sort-option" data-sort-base="solved" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
+                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Yechilganlar soni</span>
+                            <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
+                        </div>
+                        <div class="sort-option" data-sort-base="acceptance" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
+                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Qabul qilish darajasi</span>
+                            <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <select name="period" class="search-input" style="width: auto; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: var(--primary-font); font-weight: 600; font-size: 0.95rem; color: var(--text-dark); border: 2px solid var(--border-color); background: var(--bg-app); appearance: none;" onchange="this.form.submit()">
+                    <option value="all" {% if period == 'all' %}selected{% endif %}>Barcha</option>
+                    <option value="day" {% if period == 'day' %}selected{% endif %}>Mintaqa</option>
+                    <option value="week" {% if period == 'week' %}selected{% endif %}>Do'stlarim</option>
+                </select>
+                <select name="period" class="search-input" style="width: auto; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: var(--primary-font); font-weight: 600; font-size: 0.95rem; color: var(--text-dark); border: 2px solid var(--border-color); background: var(--bg-app); appearance: none;" onchange="this.form.submit()">
+                    <option value="all" {% if period == 'all' %}selected{% endif %}>Barcha vaqt</option>
+                    <option value="day" {% if period == 'day' %}selected{% endif %}>Bugun</option>
+                    <option value="week" {% if period == 'week' %}selected{% endif %}>Hafta</option>
+                    <option value="month" {% if period == 'month' %}selected{% endif %}>Oy</option>
+                </select>
             </div>
         </div>
     </form>
 
     <table class="challenges-table">
-        <thead>
-            <tr>
-                <th style="width: 5%; text-align: center;">#</th>
-                <th style="width: 50%">Foydalanuvchi</th>
-                <th style="width: 15%; text-align: center;">
-                    <a href="?sort={% if sort_by == 'points_desc' %}points_asc{% else %}points_desc{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                        Ball
-                        <i class="fa-solid {% if sort_by == 'points_asc' %}fa-caret-up{% elif sort_by == 'points_desc' %}fa-caret-down{% else %}fa-sort{% endif %}" style="color: var(--text-medium);"></i>
-                    </a>
-                </th>
-                <th style="width: 15%; text-align: center;">
-                    <a href="?sort={% if sort_by == 'solved_desc' %}solved_asc{% else %}solved_desc{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                        Yechganlar
-                        <i class="fa-solid {% if sort_by == 'solved_asc' %}fa-caret-up{% elif sort_by == 'solved_desc' %}fa-caret-down{% else %}fa-sort{% endif %}" style="color: var(--text-medium);"></i>
-                    </a>
-                </th>
-                <th style="width: 15%; text-align: center;">
-                    <a href="?sort={% if sort_by == 'acceptance_desc' %}acceptance_asc{% else %}acceptance_desc{% endif %}{% if search_query %}&q={{ search_query }}{% endif %}" style="color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;">
-                        Qabul qilinishi
-                        <i class="fa-solid {% if sort_by == 'acceptance_asc' %}fa-caret-up{% elif sort_by == 'acceptance_desc' %}fa-caret-down{% else %}fa-sort{% endif %}" style="color: var(--text-medium);"></i>
-                    </a>
-                </th>
-            </tr>
-        </thead>
         <tbody>
             {% for entry in leaderboard %}
             <tr>
@@ -99,4 +114,68 @@
         </tbody>
     </table>
 </main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Custom Sort Logic
+    document.addEventListener('DOMContentLoaded', () => {
+        const currentSort = '{{ sort_by }}';
+        const sortInput = document.getElementById('sort-input');
+        
+        document.querySelectorAll('.sort-option').forEach(option => {
+            const base = option.dataset.sortBase;
+            const icon = option.querySelector('.sort-icon');
+            
+            let currentState = 'none';
+            if (currentSort === base + '_desc') currentState = 'desc';
+            if (currentSort === base + '_asc') currentState = 'asc';
+            
+            if (currentState === 'desc') {
+                icon.className = 'sort-icon fa-solid fa-arrow-down-wide-short';
+                icon.style.color = 'var(--theme-blue)';
+                option.style.background = 'var(--bg-app)';
+            } else if (currentState === 'asc') {
+                icon.className = 'sort-icon fa-solid fa-arrow-up-short-wide';
+                icon.style.color = 'var(--theme-blue)';
+                option.style.background = 'var(--bg-app)';
+            }
+            
+            option.addEventListener('mouseenter', () => {
+                if (currentState === 'none') option.style.background = 'var(--bg-app)';
+            });
+            option.addEventListener('mouseleave', () => {
+                if (currentState === 'none') option.style.background = '';
+            });
+
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (currentState === 'desc') {
+                    sortInput.value = base + '_asc';
+                } else if (currentState === 'asc') {
+                    sortInput.value = base + '_desc'; 
+                } else {
+                    sortInput.value = base + '_desc';
+                }
+                sortInput.closest('form').submit();
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('sort-dropdown');
+            if (dropdown && dropdown.classList.contains('show') && !e.target.closest('#sort-dropdown')) {
+                dropdown.classList.remove('show');
+            }
+        });
+    });
+
+    const style = document.createElement('style');
+    style.innerHTML = `
+        #sort-dropdown.show {
+            display: block !important;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
 {% endblock %}
