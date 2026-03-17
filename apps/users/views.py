@@ -17,12 +17,18 @@ def signup_view(request):
         form = UserSignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)    
-            return redirect('course_list')
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')    
+            next_url = request.GET.get('next', 'course_list')
+            return redirect(next_url)
     else:
         form = UserSignupForm()
 
-    return render(request, 'users/signup.html', {'form': form})
+    turnstile_site_key = getattr(settings, 'CF_TURNSTILE_SITE_KEY', '0x4AAAAAACXctAclxgTNx4Cl')
+
+    return render(request, 'users/signup.html', {
+        'form': form,
+        'turnstile_site_key': turnstile_site_key
+    })
 
 
 def login_view(request):
@@ -218,3 +224,40 @@ def leaderboard_view(request):
         'sort_by': sort_by,
         'period': period
     })
+
+def profile_view(request, user_id):
+    from django.shortcuts import get_object_or_404
+    target_user = get_object_or_404(User, id=user_id)
+    
+    # Process submissions
+    submissions = Submission.objects.filter(submitted_by=target_user)
+    solved_ids = set(submissions.filter(status='accepted').values_list('challenge_id', flat=True))
+    attempted_ids = set(submissions.exclude(status='accepted').values_list('challenge_id', flat=True))
+    
+    # Attempted means they have attempted but NOT solved it yet
+    attempted_ids = attempted_ids - solved_ids
+    
+    # All challenges for github map
+    challenges = Challenge.objects.all().order_by('id')
+    
+    activity_map = []
+    for c in challenges:
+        if c.id in solved_ids:
+            state = 'solved'
+        elif c.id in attempted_ids:
+            state = 'attempted'
+        else:
+            state = 'unattempted'
+            
+        activity_map.append({
+            'challenge': c,
+            'state': state
+        })
+        
+    context = {
+        'target_user': target_user,
+        'solved_count': len(solved_ids),
+        'attempted_count': len(attempted_ids),
+        'activity_map': activity_map,
+    }
+    return render(request, 'users/profile.html', context)

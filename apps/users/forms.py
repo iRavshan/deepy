@@ -41,6 +41,8 @@ class EmailLoginForm(forms.Form):
 
 class UserSignupForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Parol'}))
+    cf_turnstile = TurnstileCaptchaField()
+    
     class Meta:
         model = User
         fields = ['first_name', 'email']

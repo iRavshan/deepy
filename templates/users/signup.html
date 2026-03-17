@@ -16,13 +16,21 @@
             </div>
             <form method="post">
               {% csrf_token %}
+              
+              {% if form.non_field_errors %}
+                <div style="color: var(--theme-red); background: var(--theme-red-light); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-weight: 700; font-size: 0.9rem; text-align: center;">
+                  {% for error in form.non_field_errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
                 <div class="form-group">
                     <div class="input-wrapper">
                         {{ form.first_name }}
                         <i class="fa-regular fa-user input-icon"></i>
                     </div>
                     {% if form.first_name.errors %}
-                        <div class="error-text" style="color: var(--theme-red); font-size: 0.85rem; margin-top: 5px; font-weight: 700;">{% for error in form.first_name.errors %}{{ error }}{% endfor %}</div>
+                        <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 5px; font-weight: 700;">{{ form.first_name.errors.0 }}</div>
                     {% endif %}
                 </div>
                 <div class="form-group">
@@ -31,7 +39,7 @@
                         <i class="fa-regular fa-envelope input-icon"></i>
                     </div>
                     {% if form.email.errors %}
-                        <div class="error-text" style="color: var(--theme-red); font-size: 0.85rem; margin-top: 5px; font-weight: 700;">{% for error in form.email.errors %}{{ error }}{% endfor %}</div>
+                        <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 5px; font-weight: 700;">{{ form.email.errors.0 }}</div>
                     {% endif %}
                 </div>
                 <div class="form-group">
@@ -40,15 +48,27 @@
                         <i class="fa-solid fa-lock input-icon"></i>
                     </div>
                     {% if form.password.errors %}
-                        <div class="error-text" style="color: var(--theme-red); font-size: 0.85rem; margin-top: 5px; font-weight: 700;">{% for error in form.password.errors %}{{ error }}{% endfor %}</div>
+                        <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 5px; font-weight: 700;">{{ form.password.errors.0 }}</div>
                     {% endif %}
                 </div>
-                {% if form.non_field_errors %}
-                    <div class="error-text" style="color: var(--theme-red); font-size: 0.85rem; margin-bottom:  १५px; font-weight: 700;">
-                        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
-                    </div>
+                
+                <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="light" style="margin-bottom: 15px;"></div>
+                
+                {% if form.cf_turnstile.errors %}
+                  <div style="color: var(--theme-red); font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; font-weight: 700;">
+                    Kaptcha xatoligi: Iltimos, qaytadan urinib ko'ring
+                  </div>
                 {% endif %}
+                
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                
                 <button type="submit" class="btn-signup btn-transform">Ro'yxatdan o'tish</button>
+                
+                {% if form.errors and not form.non_field_errors and not form.first_name.errors and not form.email.errors and not form.password.errors and not form.cf_turnstile.errors %}
+                  <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 10px;">
+                    Noma'lum xatolik: {{ form.errors }}
+                  </div>
+                {% endif %}
             </form>
             <div class="terms-text">
                 Ro'yxatdan o'tish orqali siz <a href="{% url 'terms_of_use' %}">foydalanish shartlari</a> va <a href="{% url 'privacy_policy' %}">maxfiylik siyosatimizga</a> rozilik berasiz.

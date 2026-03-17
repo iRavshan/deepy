@@ -9,8 +9,10 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
 from apps.users.utils import update_user_streak
-from .utils.judge_service import judge_all_tests
+from .utils.judge_service import judge_single_test
+from .tasks import process_submission_task, process_run_code_task
 import json
+import uuid
 
 
 
@@ -162,38 +164,25 @@ def judge_submission_view(request, slug):
     # Get ProgrammingLanguage 
     lang = get_object_or_404(ProgrammingLanguage, judge0_id=language_id)
     
-    result = judge_all_tests(
-        source_code=code,
-        language_id=int(language_id),
-        test_cases=challenge.hidden_tests,
-        cpu_time_limit=challenge.time_limit,
-        memory_limit=challenge.memory_limit,
-    )
-    
-    update_user_streak(request.user)
-    
     submission = Submission.objects.create(
         challenge=challenge,
         submitted_by=request.user,
         code=code,
         language=lang,
-        status=result['status_key'],
-        execution_time=float(result['max_time']) if result.get('max_time') else None,
-        memory_used=result.get('max_memory'),
+        status='pending',
     )
-
-    # Add submission info to result for frontend
-    result['submission'] = {
-        'id': submission.id,
-        'status': submission.get_status_display(),
-        'status_key': submission.status,
-        'submitted_at': submission.submitted_at.strftime('%Y-%m-%d %H:%M'),
-        'language': lang.name,
-        'execution_time': result.get('max_time'),
-        'memory_used': result.get('max_memory'),
-    }
     
-    return JsonResponse(result)
+    process_submission_task.delay(
+        submission_id=submission.id,
+        code=code,
+        language_id=int(language_id),
+        test_cases=challenge.hidden_tests,
+        time_limit=challenge.time_limit,
+        memory_limit=challenge.memory_limit,
+        user_id=request.user.id
+    )
+    
+    return JsonResponse({'status': 'processing', 'submission_id': submission.id})
 
 @login_required
 @require_POST
@@ -202,15 +191,37 @@ def run_code_view(request, slug):
     code = request.POST.get('code')
     language_id = request.POST.get('language_id')
     
-    result = judge_all_tests(
-        source_code=code,
+    task_uuid = str(uuid.uuid4())
+    process_run_code_task.delay(
+        task_uuid=task_uuid,
+        code=code,
         language_id=int(language_id),
         test_cases=challenge.sample_tests,
-        cpu_time_limit=challenge.time_limit,
+        time_limit=challenge.time_limit,
         memory_limit=challenge.memory_limit,
     )
     
-    return JsonResponse(result)
+    return JsonResponse({'status': 'processing', 'task_uuid': task_uuid})
+
+@login_required
+@require_POST
+def check_submission_status(request):
+    data = json.loads(request.body)
+    submission_id = data.get('submission_id')
+    task_uuid = data.get('task_uuid')
+    
+    from django.core.cache import cache
+    if submission_id:
+        result = cache.get(f"submission_detail_{submission_id}")
+    elif task_uuid:
+        result = cache.get(f"run_code_detail_{task_uuid}")
+    else:
+        return JsonResponse({"error": "No ID provided"})
+        
+    if result:
+        return JsonResponse(result)
+    else:
+        return JsonResponse({'status': 'processing'})
 
 @login_required
 @require_POST

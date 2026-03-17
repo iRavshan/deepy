@@ -120,6 +120,15 @@
         {% endif %}
       </div>
     </nav>
+    <div id="highlight-menu" class="highlight-menu">
+      <button class="color-btn" style="background-color: #fde047;" data-color="#fde047"></button>
+      <button class="color-btn" style="background-color: #86efac;" data-color="#86efac"></button>
+      <button class="color-btn" style="background-color: #93c5fd;" data-color="#93c5fd"></button>
+      <button class="color-btn" style="background-color: #fca5a5;" data-color="#fca5a5"></button>
+      <button class="color-btn" style="background-color: #d8b4fe;" data-color="#d8b4fe"></button>
+      <div style="width: 1px; height: 20px; background: var(--border-color); margin: 0 4px;"></div>
+      <button id="remove-highlights-btn" class="remove-highlight-btn" title="Barcha joylarni o'chirish"><i class="fa-solid fa-eraser"></i></button>
+    </div>
 
     <main class="main-container">
       <section class="panel left-panel" id="leftPanel">
@@ -150,13 +159,6 @@
                 <div class="title-meta-group">
                   <h1>{{ challenge.id }}. {{ challenge.title }}</h1>
                   <div class="badges">
-                    {% if challenge.difficulty == 'easy' %}
-                    <span class="badge easy">Oson</span>
-                    {% elif challenge.difficulty == 'medium' %}
-                    <span class="badge medium">O'rta</span>
-                    {% else %}
-                    <span class="badge hard">Qiyin</span>
-                    {% endif %}
                     <span class="badge tag"><i class="fa-solid fa-stopwatch"></i> {{ challenge.time_limit }} ms</span>
                     <span class="badge tag"><i class="fa-solid fa-file-code"></i> {{ challenge.memory_limit }} MB</span>
                     {% for tag in challenge.tags.all %}
@@ -266,36 +268,58 @@
           <div id="tab-subs" class="tab-content">
             <h2 style="margin-bottom: 20px">Urinishlar</h2>
             {% if user.is_authenticated %}
-            <div id="submissionsList">
-            {% if submissions %}
-            {% for sub in submissions %}
-            <div class="submission-item">
-              <div class="sub-status {% if sub.status == 'accepted' %}status-acc{% else %}status-fail{% endif %}">
-                {% if sub.status == 'accepted' %}
-                <i class="fa-solid fa-check"></i> Accepted
-                {% elif sub.status == 'wrong_answer' %}
-                <i class="fa-solid fa-xmark"></i> Wrong Answer
-                {% elif sub.status == 'time_limit_exceeded' %}
-                <i class="fa-solid fa-clock"></i> TLE
-                {% elif sub.status == 'runtime_error' %}
-                <i class="fa-solid fa-bug"></i> Runtime Error
-                {% elif sub.status == 'compilation_error' %}
-                <i class="fa-solid fa-triangle-exclamation"></i> Compilation Error
-                {% else %}
-                <i class="fa-solid fa-circle-question"></i> {{ sub.get_status_display }}
-                {% endif %}
+            <div id="submissionsListView">
+              <div id="submissionsList">
+              {% if submissions %}
+              {% for sub in submissions %}
+              <div class="submission-item" style="cursor: pointer;" onclick="showSubmissionDetail({{ sub.id }})">
+                <div class="sub-status {% if sub.status == 'accepted' %}status-acc{% else %}status-fail{% endif %}" id="sub-status-{{ sub.id }}">
+                  {% if sub.status == 'accepted' %}
+                  <i class="fa-solid fa-check"></i> Accepted
+                  {% elif sub.status == 'wrong_answer' %}
+                  <i class="fa-solid fa-xmark"></i> Wrong Answer
+                  {% elif sub.status == 'time_limit_exceeded' %}
+                  <i class="fa-solid fa-clock"></i> TLE
+                  {% elif sub.status == 'runtime_error' %}
+                  <i class="fa-solid fa-bug"></i> Runtime Error
+                  {% elif sub.status == 'compilation_error' %}
+                  <i class="fa-solid fa-triangle-exclamation"></i> Compilation Error
+                  {% else %}
+                  <i class="fa-solid fa-circle-question"></i> {{ sub.get_status_display }}
+                  {% endif %}
+                </div>
+                <div class="sub-details">
+                  <span class="sub-lang" id="sub-lang-{{ sub.id }}" data-monaco="{{ sub.language.monaco_identifier|default:'python' }}">{{ sub.language.name|default:"—" }}</span>
+                  {% if sub.execution_time %}<span class="sub-time-val" id="sub-time-{{ sub.id }}"><i class="fa-solid fa-stopwatch"></i> <span class="val">{{ sub.execution_time }}</span> s</span>{% endif %}
+                  {% if sub.memory_used %}<span class="sub-mem-val" id="sub-mem-{{ sub.id }}"><i class="fa-solid fa-file-code"></i> <span class="val">{{ sub.memory_used }}</span> KB</span>{% endif %}
+                </div>
+                <div class="sub-time" id="sub-date-{{ sub.id }}">{{ sub.submitted_at|date:"Y-m-d H:i" }}</div>
+                <div style="display: none;" id="sub-code-{{ sub.id }}">{{ sub.code|escape }}</div>
               </div>
-              <div class="sub-details">
-                <span class="sub-lang">{{ sub.language.name|default:"—" }}</span>
-                {% if sub.execution_time %}<span class="sub-time-val"><i class="fa-solid fa-stopwatch"></i> {{ sub.execution_time }} s</span>{% endif %}
-                {% if sub.memory_used %}<span class="sub-mem-val"><i class="fa-solid fa-file-code"></i> {{ sub.memory_used }} KB</span>{% endif %}
+              {% endfor %}
+              {% else %}
+              <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
+              {% endif %}
               </div>
-              <div class="sub-time">{{ sub.submitted_at|date:"d-M-Y H:i" }}</div>
             </div>
-            {% endfor %}
-            {% else %}
-            <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
-            {% endif %}
+
+            <div id="submissionDetailView" style="display: none;">
+              <button class="back-btn" onclick="hideSubmissionDetail()" style="background: none; border: none; font-size: 1rem; color: var(--theme-blue); cursor: pointer; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; padding: 0; font-family: var(--secondary-font);">
+                <i class="fa-solid fa-arrow-left"></i> Orqaga
+              </button>
+              <div class="submission-item" style="cursor: default; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                 <div class="sub-status" id="detail-sub-status" style="font-size: 1.1rem;"></div>
+                 <div class="sub-details" style="font-size: 0.95rem;">
+                    <span class="sub-lang" id="detail-sub-lang"></span>
+                    <span class="sub-time-val" id="detail-sub-time" style="display: none; margin-left: 15px;"><i class="fa-solid fa-stopwatch"></i> <span class="val"></span> s</span>
+                    <span class="sub-mem-val" id="detail-sub-mem" style="display: none; margin-left: 15px;"><i class="fa-solid fa-file-code"></i> <span class="val"></span> KB</span>
+                 </div>
+                 <div class="sub-time" id="detail-sub-date" style="font-size: 0.85rem; color: var(--text-medium);"></div>
+              </div>
+              <div>
+                <h4 style="margin-bottom: 10px; color: var(--text-dark);">Yechimingiz:</h4>
+                <div id="detail-monaco-editor-container" style="height: 350px; width: 100%; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;"></div>
+              </div>
             </div>
             {% else %}
             <p>
@@ -1426,6 +1450,72 @@
           height: auto;
         }
       }
+
+      /* Highlight text styling */
+      .problem-text span[style*="background-color"],
+      .problem-text font[style*="background-color"] {
+        font-weight: 700;
+      }
+      [data-theme="dark"] .problem-text span[style*="background-color"],
+      [data-theme="dark"] .problem-text font[style*="background-color"] {
+        color: #3c3c3c;
+      }
+
+      /* Highlight popup */
+      .highlight-menu {
+        position: absolute;
+        display: flex;
+        gap: 8px;
+        background: var(--bg-panel);
+        border: 1px solid var(--border-color);
+        padding: 8px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        align-items: center;
+      }
+
+      .highlight-menu.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .color-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: transform 0.2s;
+        padding: 0;
+      }
+      .color-btn:hover {
+        transform: scale(1.1);
+        border: 2px solid var(--text-medium);
+      }
+      .remove-highlight-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: var(--text-medium);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        font-size: 1.1rem;
+        transition: all 0.2s;
+      }
+      .remove-highlight-btn:hover {
+        color: var(--theme-red);
+        background: var(--bg-app);
+      }
     </style>
     <script>
       // --- RESIZABLE LOGIC (NEW) ---
@@ -1717,7 +1807,25 @@
         function updateEditorTheme() {
           const isDark =
             document.documentElement.getAttribute("data-theme") === "dark";
-          monaco.editor.setTheme(isDark ? "vs-dark" : "vs-light");
+          const currentTheme = isDark ? "vs-dark" : "vs-light";
+          monaco.editor.setTheme(currentTheme);
+        }
+
+        // Detail Editor (read-only)
+        const detailContainer = document.getElementById("detail-monaco-editor-container");
+        if (detailContainer) {
+            window.detailEditor = monaco.editor.create(detailContainer, {
+                value: "",
+                language: "python",
+                theme: document.documentElement.getAttribute("data-theme") === "dark" ? "vs-dark" : "vs-light",
+                automaticLayout: true,
+                readOnly: true,
+                minimap: { enabled: false },
+                fontSize: 14,
+                fontFamily: "'Fira Code', 'Consolas', monospace",
+                scrollBeyondLastLine: false,
+                padding: { top: 15 },
+            });
         }
 
         // Watch for theme changes (simple poll or observer if possible, doing manual check for now)
@@ -1811,19 +1919,52 @@
           });
 
           const data = await response.json();
-          handleResult(data, isSubmission);
+          pollResult(data, isSubmission, btn, originalText, code);
         } catch (error) {
           console.error("Error:", error);
           handleResult(
             { verdict: "System Error", error: "Network xatolik yuz berdi", tests_run: [] },
             isSubmission,
+            code
           );
-        } finally {
+          resetButtons(btn, originalText);
+        }
+      }
+
+      async function pollResult(data, isSubmission, btn, originalText, code) {
+          if (data.status === 'processing') {
+             setTimeout(async () => {
+                 try {
+                     const response = await fetch("{% url 'check_submission_status' %}", {
+                         method: "POST",
+                         headers: {
+                             "Content-Type": "application/json",
+                             "X-CSRFToken": csrftoken,
+                         },
+                         body: JSON.stringify({
+                             submission_id: data.submission_id,
+                             task_uuid: data.task_uuid
+                         })
+                     });
+                     const newData = await response.json();
+                     pollResult(newData, isSubmission, btn, originalText, code);
+                 } catch (e) {
+                     console.error("Poll Error:", e);
+                     handleResult({ verdict: "System Error", error: "Tarmoq bilan ulanishda xatolik yuz berdi. Iltimos saqlang va qaytadan urining.", tests_run: [] }, isSubmission, code);
+                     resetButtons(btn, originalText);
+                 }
+             }, 2000);
+          } else {
+             handleResult(data, isSubmission, code);
+             resetButtons(btn, originalText);
+          }
+      }
+
+      function resetButtons(btn, originalText) {
           btn.innerHTML = originalText;
           btn.disabled = false;
           runBtn.disabled = false;
           submitBtn.disabled = false;
-        }
       }
 
       runBtn.addEventListener("click", () =>
@@ -1833,7 +1974,7 @@
         executeCode("{% url 'judge_submission' challenge.slug %}", true),
       );
 
-      function handleResult(data, isSubmission) {
+      function handleResult(data, isSubmission, code) {
         const testCasesContent = document.getElementById("testcasesContent");
         let tcHtml = "";
 
@@ -1950,21 +2091,168 @@
             const newSub = document.createElement("div");
             newSub.className = "submission-item";
             newSub.style.animation = "fadeIn 0.3s ease";
+            newSub.style.cursor = "pointer";
+            newSub.onclick = function() { showSubmissionDetail(data.submission.id); };
             newSub.innerHTML = `
-              <div class="sub-status ${statusClass}">
+              <div class="sub-status ${statusClass}" id="sub-status-${data.submission.id}">
                 <i class="fa-solid ${statusIcon}"></i> ${data.submission.status}
               </div>
               <div class="sub-details">
-                <span class="sub-lang">${data.submission.language}</span>
-                ${data.submission.execution_time ? `<span class="sub-time-val"><i class="fa-solid fa-stopwatch"></i> ${data.submission.execution_time} s</span>` : ""}
-                ${data.submission.memory_used ? `<span class="sub-mem-val"><i class="fa-solid fa-file-code"></i> ${data.submission.memory_used} KB</span>` : ""}
+                <span class="sub-lang" id="sub-lang-${data.submission.id}" data-monaco="${langSelect ? langSelect.options[langSelect.selectedIndex].getAttribute('data-monaco') : 'python'}">${data.submission.language}</span>
+                ${data.submission.execution_time ? `<span class="sub-time-val" id="sub-time-${data.submission.id}"><i class="fa-solid fa-stopwatch"></i> <span class="val">${data.submission.execution_time}</span> s</span>` : ""}
+                ${data.submission.memory_used ? `<span class="sub-mem-val" id="sub-mem-${data.submission.id}"><i class="fa-solid fa-file-code"></i> <span class="val">${data.submission.memory_used}</span> KB</span>` : ""}
               </div>
-              <div class="sub-time">${data.submission.submitted_at}</div>
+              <div class="sub-time" id="sub-date-${data.submission.id}">${data.submission.submitted_at}</div>
+              <div style="display: none;" id="sub-code-${data.submission.id}">${escapeHtml(code || "")}</div>
             `;
             subList.insertBefore(newSub, subList.firstChild);
           }
         }
       }
+
+      // Utils & Detail logic
+      function escapeHtml(unsafe) {
+          return (unsafe || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+      }
+      
+      function showSubmissionDetail(id) {
+          const listView = document.getElementById('submissionsListView');
+          const detailView = document.getElementById('submissionDetailView');
+          if (listView && detailView) {
+              listView.style.display = 'none';
+              detailView.style.display = 'block';
+              
+              const statusEl = document.getElementById('sub-status-' + id);
+              if (statusEl) {
+                  const detailStatus = document.getElementById('detail-sub-status');
+                  detailStatus.className = 'sub-status ' + (statusEl.classList.contains('status-acc') ? 'status-acc' : 'status-fail');
+                  detailStatus.innerHTML = statusEl.innerHTML;
+              }
+              
+              const langEl = document.getElementById('sub-lang-' + id);
+              document.getElementById('detail-sub-lang').innerText = langEl.innerText;
+              const monacoLang = langEl.getAttribute('data-monaco') || 'python';
+              
+              const timeEl = document.getElementById('sub-time-' + id);
+              if (timeEl) {
+                  document.getElementById('detail-sub-time').style.display = 'inline';
+                  document.getElementById('detail-sub-time').querySelector('.val').innerText = timeEl.querySelector('.val').innerText;
+              } else {
+                  document.getElementById('detail-sub-time').style.display = 'none';
+              }
+              
+              const memEl = document.getElementById('sub-mem-' + id);
+              if (memEl) {
+                  document.getElementById('detail-sub-mem').style.display = 'inline';
+                  document.getElementById('detail-sub-mem').querySelector('.val').innerText = memEl.querySelector('.val').innerText;
+              } else {
+                  document.getElementById('detail-sub-mem').style.display = 'none';
+              }
+              
+              document.getElementById('detail-sub-date').innerText = document.getElementById('sub-date-' + id).innerText;
+              
+              const codeStr = document.getElementById('sub-code-' + id).innerText;
+              if (window.detailEditor) {
+                  window.detailEditor.setValue(codeStr);
+                  monaco.editor.setModelLanguage(window.detailEditor.getModel(), monacoLang);
+                  // Layout trick for display:none -> display:block
+                  setTimeout(() => window.detailEditor.layout(), 50);
+              }
+          }
+      }
+      
+      function hideSubmissionDetail() {
+          const listView = document.getElementById('submissionsListView');
+          const detailView = document.getElementById('submissionDetailView');
+          if (listView && detailView) {
+              detailView.style.display = 'none';
+              listView.style.display = 'block';
+          }
+      }
+
+
+      // Highlight Logic
+      document.addEventListener("DOMContentLoaded", () => {
+          const problemText = document.querySelector('.problem-text');
+          const highlightMenu = document.getElementById('highlight-menu');
+          const colorBtns = document.querySelectorAll('.color-btn');
+          const removeHighlightsBtn = document.getElementById('remove-highlights-btn');
+          
+          let currentSelectionRange = null;
+
+          if (problemText && highlightMenu) {
+              document.addEventListener('selectionchange', () => {
+                   const sel = window.getSelection();
+                   if (sel.isCollapsed) {
+                       highlightMenu.classList.remove('show');
+                       currentSelectionRange = null;
+                   }
+              });
+
+              problemText.addEventListener('mouseup', (e) => {
+                  const sel = window.getSelection();
+                  if (!sel.isCollapsed && sel.toString().trim() !== "") {
+                      const range = sel.getRangeAt(0);
+                      if (problemText.contains(range.commonAncestorContainer)) {
+                           currentSelectionRange = range.cloneRange();
+                           const rect = range.getBoundingClientRect();
+                           
+                           let top = rect.top + window.scrollY - 50; 
+                           let left = rect.left + window.scrollX + (rect.width / 2) - 110;
+
+                           highlightMenu.style.top = `${top}px`;
+                           highlightMenu.style.left = `${left}px`;
+                           highlightMenu.classList.add('show');
+                      }
+                  }
+              });
+
+              document.addEventListener('mousedown', (e) => {
+                  if (!highlightMenu.contains(e.target) && !problemText.contains(e.target)) {
+                      highlightMenu.classList.remove('show');
+                  }
+              });
+
+              colorBtns.forEach(btn => {
+                  btn.addEventListener('click', (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (currentSelectionRange) {
+                          const color = btn.getAttribute('data-color');
+                          const sel = window.getSelection();
+                          sel.removeAllRanges();
+                          sel.addRange(currentSelectionRange);
+                          
+                          document.designMode = "on";
+                          if (!document.execCommand("hiliteColor", false, color)) {
+                              document.execCommand("backColor", false, color);
+                          }
+                          document.designMode = "off";
+                          
+                          sel.removeAllRanges();
+                          highlightMenu.classList.remove('show');
+                          currentSelectionRange = null;
+                      }
+                  });
+              });
+
+              removeHighlightsBtn.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Remove any elements assigned inline background color from highlighting
+                  const spans = problemText.querySelectorAll('*[style*="background-color"]');
+                  spans.forEach(span => {
+                      const parent = span.parentNode;
+                      while(span.firstChild) {
+                          parent.insertBefore(span.firstChild, span);
+                      }
+                      parent.removeChild(span);
+                  });
+                  highlightMenu.classList.remove('show');
+                  currentSelectionRange = null;
+              });
+          }
+      });
     </script>
   </body>
 </html>

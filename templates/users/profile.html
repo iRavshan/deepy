@@ -1,8 +1,309 @@
-<h1>Your Profile</h1>
+{% extends '../shared/_base.html' %}
+{% load static %}
+{% block title %} {{ target_user.first_name|default:target_user.email }} Profili {% endblock %}
 
-<p>Username: {{ user.username }}</p>
-<p>Full name: {{ user.full_name }}</p>
-<p>Bio: {{ user.bio }}</p>
-<img src="{{ user.avatar.url }}" alt="Avatar">
+{% block content %}
+<style>
+    .profile-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+    
+    .profile-header {
+        display: flex;
+        gap: 40px;
+        background: var(--bg-panel);
+        padding: 40px;
+        border-radius: var(--panel-radius);
+        border: 2px solid var(--border-color);
+        margin-bottom: 30px;
+        position: relative;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    [data-theme='dark'] .profile-header {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
 
-<a href="{% url 'users:profile_edit' %}">Edit profile</a>
+    .profile-avatar {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 5px solid var(--border-color);
+        flex-shrink: 0;
+        background-color: var(--bg-app);
+        transition: transform 0.3s, border-color 0.3s;
+    }
+    
+    .profile-avatar:hover {
+        transform: scale(1.05);
+        border-color: var(--theme-blue);
+    }
+    
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .profile-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .profile-name {
+        margin: 0;
+        font-size: 2.2rem;
+        color: var(--text-dark);
+        font-weight: 800;
+        font-family: var(--primary-font);
+    }
+    
+    .profile-email {
+        margin: 8px 0 20px;
+        color: var(--text-medium);
+        font-size: 1.1rem;
+        font-family: var(--secondary-font);
+    }
+    
+    .profile-stats {
+        display: flex;
+        gap: 15px;
+        font-weight: bold;
+        font-family: var(--secondary-font);
+        flex-wrap: wrap;
+    }
+    
+    .stat-badge {
+        padding: 10px 18px;
+        border-radius: var(--btn-radius);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.05rem;
+    }
+    
+    .stat-points { background: rgba(28, 176, 246, 0.1); color: var(--theme-blue-dark); border: 2px solid rgba(28, 176, 246, 0.2); }
+    .stat-solved { background: rgba(88, 204, 2, 0.1); color: var(--theme-green-dark); border: 2px solid rgba(88, 204, 2, 0.2); }
+    .stat-attempted { background: rgba(255, 150, 0, 0.1); color: var(--theme-orange-dark); border: 2px solid rgba(255, 150, 0, 0.2); }
+    
+    [data-theme='dark'] .stat-points { color: var(--theme-blue); }
+    [data-theme='dark'] .stat-solved { color: var(--theme-green); }
+    [data-theme='dark'] .stat-attempted { color: var(--theme-orange); }
+    
+    .profile-social {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        display: flex;
+        gap: 20px;
+    }
+    
+    .profile-social a {
+        color: var(--text-medium);
+        font-size: 1.6rem;
+        transition: transform 0.2s, color 0.2s;
+    }
+    
+    .profile-social a:hover {
+        transform: translateY(-4px);
+        color: var(--text-dark);
+    }
+
+    .activity-section {
+        background: var(--bg-panel);
+        padding: 40px;
+        border-radius: var(--panel-radius);
+        border: 2px solid var(--border-color);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    }
+    
+    [data-theme='dark'] .activity-section {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .activity-title {
+        margin-top: 0;
+        margin-bottom: 25px;
+        color: var(--text-dark);
+        font-weight: 800;
+        font-size: 1.8rem;
+        font-family: var(--primary-font);
+    }
+    
+    .github-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px; /* Slightly more gap for cleaner look */
+        max-width: 100%;
+        padding: 10px 0;
+    }
+    
+    .grid-box {
+        display: inline-block;
+        width: 22px; 
+        height: 22px;
+        border-radius: 6px; /* Soft round edges */
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s, background-color 0.2s;
+        text-decoration: none;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    [data-theme="dark"] .grid-box {
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+    
+    .grid-box:hover {
+        transform: scale(1.3);
+        z-index: 10;
+        box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    [data-theme="dark"] .grid-box:hover {
+        box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+    
+    /* Elegant state colors mapped properly */
+    .state-unattempted { background-color: var(--border-color); opacity: 0.6; }
+    .state-attempted { background-color: var(--theme-gold); }
+    .state-solved { background-color: var(--theme-green); }
+    
+    .map-legend {
+        display: flex;
+        gap: 25px;
+        align-items: center;
+        margin-top: 30px;
+        font-size: 1rem;
+        color: var(--text-medium);
+        font-weight: bold;
+        font-family: var(--secondary-font);
+        padding-top: 20px;
+        border-top: 2px dashed var(--border-color);
+    }
+    
+    .legend-item { display: flex; align-items: center; gap: 10px; }
+    .legend-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.05); }
+    
+    @media (max-width: 800px) {
+        .profile-header {
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            padding: 30px 20px;
+            gap: 20px;
+        }
+        
+        .profile-social {
+            position: relative;
+            top: 0;
+            right: 0;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .profile-stats {
+            justify-content: center;
+        }
+        
+        .github-grid {
+            gap: 4px;
+        }
+        
+        .grid-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+        }
+        
+        .map-legend {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-social">
+            {% if target_user.github_url %}
+            <a href="{{ target_user.github_url }}" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+            {% endif %}
+            {% if target_user.linkedin_url %}
+            <a href="{{ target_user.linkedin_url }}" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            {% endif %}
+        </div>
+        
+        <div class="profile-avatar">
+            {% if target_user.profile_picture %}
+                <img src="{{ target_user.profile_picture.url }}" alt="{{ target_user.first_name }}">
+            {% else %}
+                <img src="https://ui-avatars.com/api/?name={{ target_user.first_name|default:target_user.email|urlencode }}&background=E5E5E5&color=777777&size=200&font-size=0.33&bold=true" alt="Avatar">
+            {% endif %}
+        </div>
+        
+        <div class="profile-info">
+            <h1 class="profile-name">
+                {% if target_user.first_name %}
+                    {{ target_user.first_name }} {{ target_user.last_name }}
+                {% else %}
+                    Nomlanmagan Dasturchi
+                {% endif %}
+            </h1>
+            <p class="profile-email">
+                 <i class="fa-regular fa-envelope" style="margin-right: 5px;"></i> 
+                 {{ target_user.email|truncatechars:35 }}
+            </p>
+            
+            <div class="profile-stats">
+                <span class="stat-badge stat-points">
+                    <i class="fa-solid fa-star"></i> {{ target_user.points|default:0 }} Ball
+                </span>
+                <span class="stat-badge stat-solved" title="To'g'ri ishlangan masalalar">
+                    <i class="fa-solid fa-check-double"></i> {{ solved_count }} Yechilgan
+                </span>
+                <span class="stat-badge stat-attempted" title="Urinish qilingan xato/kech masalalar">
+                    <i class="fa-solid fa-code"></i> {{ attempted_count }} Urinish
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="activity-section">
+        <h2 class="activity-title">
+            <i class="fa-solid fa-chart-line" style="margin-right: 10px; color: var(--theme-purple);"></i> Dasturchi xaritasi
+        </h2>
+        
+        <div class="github-map-container">
+            <div class="github-grid">
+                {% for item in activity_map %}
+                <a href="{% url 'challenge_detail' item.challenge.slug %}" 
+                   class="grid-box state-{{ item.state }}" 
+                   title="{{ item.challenge.title }} {% if item.state == 'solved' %}(Yechilgan){% elif item.state == 'attempted' %}(Urinish qilingan){% else %}(Yechilmagan){% endif %}">
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="map-legend">
+            <div class="legend-item">
+                <div class="legend-box state-unattempted" style="opacity: 0.6"></div> Ochilmagan / Yechilmagan
+            </div>
+            <div class="legend-item">
+                <div class="legend-box state-attempted"></div> Urinish tarixi (Xato yoki TLE/RE yechimlar)
+            </div>
+            <div class="legend-item">
+                <div class="legend-box state-solved"></div> Namunali Yechilgan (To'g'ri)
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
