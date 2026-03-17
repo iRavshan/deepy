@@ -91,10 +91,58 @@
     .stat-points { background: rgba(28, 176, 246, 0.1); color: var(--theme-blue-dark); border: 2px solid rgba(28, 176, 246, 0.2); }
     .stat-solved { background: rgba(88, 204, 2, 0.1); color: var(--theme-green-dark); border: 2px solid rgba(88, 204, 2, 0.2); }
     .stat-attempted { background: rgba(255, 150, 0, 0.1); color: var(--theme-orange-dark); border: 2px solid rgba(255, 150, 0, 0.2); }
+    .stat-social { background: rgba(204, 52, 141, 0.1); color: var(--theme-purple-dark); border: 2px solid rgba(204, 52, 141, 0.2); }
     
     [data-theme='dark'] .stat-points { color: var(--theme-blue); }
     [data-theme='dark'] .stat-solved { color: var(--theme-green); }
     [data-theme='dark'] .stat-attempted { color: var(--theme-orange); }
+    [data-theme='dark'] .stat-social { color: var(--theme-pink); }
+    
+    .profile-actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+    }
+
+    .btn-follow {
+        padding: 10px 24px;
+        font-size: 1.1rem;
+        background-color: var(--theme-green);
+        color: white;
+        border: none;
+        border-radius: var(--btn-radius);
+        cursor: pointer;
+        font-family: var(--primary-font);
+        font-weight: 700;
+        box-shadow: 0 4px 0 var(--theme-green-dark);
+        transition: transform 0.1s, box-shadow 0.1s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-follow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 0 var(--theme-green-dark);
+    }
+
+    .btn-follow:active {
+        transform: translateY(4px);
+        box-shadow: 0 0 0 var(--theme-green-dark);
+    }
+    
+    .btn-unfollow {
+        background-color: var(--theme-red);
+        box-shadow: 0 4px 0 var(--theme-red-dark);
+    }
+
+    .btn-unfollow:hover {
+        box-shadow: 0 6px 0 var(--theme-red-dark);
+    }
+    
+    .btn-unfollow:active {
+        box-shadow: 0 0 0 var(--theme-red-dark);
+    }
     
     .profile-social {
         position: absolute;
@@ -108,11 +156,6 @@
         color: var(--text-medium);
         font-size: 1.6rem;
         transition: transform 0.2s, color 0.2s;
-    }
-    
-    .profile-social a:hover {
-        transform: translateY(-4px);
-        color: var(--text-dark);
     }
 
     .activity-section {
@@ -272,7 +315,25 @@
                 <span class="stat-badge stat-attempted" title="Urinish qilingan xato/kech masalalar">
                     <i class="fa-solid fa-code"></i> {{ attempted_count }} Urinish
                 </span>
+                <span class="stat-badge stat-social" title="Quyidagilarga obuna bo'lgan">
+                    <i class="fa-solid fa-user-plus"></i> <span id="following-count">{{ following_count }}</span> Kuzatayotganlar
+                </span>
+                <span class="stat-badge stat-social" title="Quyidagilar tomonidan obuna qilingan">
+                    <i class="fa-solid fa-users"></i> <span id="followers-count">{{ followers_count }}</span> Kuzatuvchilar
+                </span>
             </div>
+            
+            {% if user.is_authenticated and user != target_user %}
+            <div class="profile-actions">
+                <button id="follow-btn" class="btn-follow {% if is_following %}btn-unfollow{% endif %}">
+                    {% if is_following %}
+                        <i class="fa-solid fa-user-minus"></i> Obunani bekor qilish
+                    {% else %}
+                        <i class="fa-solid fa-user-plus"></i> Obuna bo'lish
+                    {% endif %}
+                </button>
+            </div>
+            {% endif %}
         </div>
     </div>
 
@@ -304,6 +365,46 @@
             </div>
         </div>
     </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const followBtn = document.getElementById('follow-btn');
+        if (followBtn) {
+            followBtn.addEventListener('click', async () => {
+                followBtn.disabled = true;
+                try {
+                    const response = await fetch("{% url 'toggle_follow' target_user.id %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        document.getElementById('followers-count').innerText = data.followers_count;
+                        
+                        if (data.is_following) {
+                            followBtn.classList.add('btn-unfollow');
+                            followBtn.innerHTML = '<i class="fa-solid fa-user-minus"></i> Obunani bekor qilish';
+                        } else {
+                            followBtn.classList.remove('btn-unfollow');
+                            followBtn.innerHTML = '<i class="fa-solid fa-user-check"></i> Obuna bo\'lish';
+                        }
+                    }
+                } catch (error) {
+                    console.error("Follow error:", error);
+                } finally {
+                    followBtn.disabled = false;
+                }
+            });
+        }
+    });
+</script>
 
 {% endblock %}

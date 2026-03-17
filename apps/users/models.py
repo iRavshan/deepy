@@ -42,6 +42,14 @@ class User(AbstractUser):
     max_streak = models.IntegerField(default=0)
     last_activity_date = models.DateField(null=True, blank=True)
     
+    # Followers and following
+    following = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='followers',
+        blank=True
+    )
+    
     @property
     def points(self):
         from apps.challenges.models import Submission, Challenge

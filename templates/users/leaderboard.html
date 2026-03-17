@@ -77,13 +77,13 @@
                             </div>
                         {% endif %}
                         <div>
-                            <div class="problem-title" style="margin-bottom: 2px; font-size: 1.05rem;">
+                            <a href="{% url 'profile' entry.user.id %}" class="problem-title" style="margin-bottom: 2px; font-size: 1.05rem;">
                                 {% if entry.user.first_name or entry.user.last_name %}
                                     {{ entry.user.first_name }} {{ entry.user.last_name }}
                                 {% else %}
                                     Nomsiz foydalanuvchi
                                 {% endif %}
-                            </div>
+                            </a>
                             <div style="font-size: 0.85rem; color: var(--text-medium); font-weight: 500;">
                                 {{ entry.user.email }}
                             </div>

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login_view, signup_view, logout_view, settings_view, bookmarks_view, auth_success_view, leaderboard_view, profile_view
+from .views import login_view, signup_view, logout_view, settings_view, bookmarks_view, auth_success_view, leaderboard_view, profile_view, toggle_follow_view
 
 urlpatterns = [
     path('login/', login_view, name='login'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('auth-success/', auth_success_view, name='auth_success'),
     path('rating/', leaderboard_view, name='rating'),
     path('profile/<int:user_id>/', profile_view, name='profile'),
+    path('profile/<int:user_id>/toggle-follow/', toggle_follow_view, name='toggle_follow'),
 ]

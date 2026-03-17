@@ -254,10 +254,45 @@ def profile_view(request, user_id):
             'state': state
         })
         
+    # Follower stats
+    followers_count = target_user.followers.count()
+    following_count = target_user.following.count()
+    is_following = False
+    if request.user.is_authenticated and request.user != target_user:
+        is_following = target_user.followers.filter(id=request.user.id).exists()
+        
     context = {
         'target_user': target_user,
         'solved_count': len(solved_ids),
         'attempted_count': len(attempted_ids),
         'activity_map': activity_map,
+        'followers_count': followers_count,
+        'following_count': following_count,
+        'is_following': is_following,
     }
     return render(request, 'users/profile.html', context)
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+@login_required
+@require_POST
+def toggle_follow_view(request, user_id):
+    from django.shortcuts import get_object_or_404
+    target_user = get_object_or_404(User, id=user_id)
+    
+    if request.user == target_user:
+        return JsonResponse({'error': 'You cannot follow yourself'}, status=400)
+        
+    if request.user.following.filter(id=user_id).exists():
+        request.user.following.remove(target_user)
+        is_following = False
+    else:
+        request.user.following.add(target_user)
+        is_following = True
+        
+    return JsonResponse({
+        'is_following': is_following,
+        'followers_count': target_user.followers.count(),
+        'following_count': target_user.following.count()
+    })
