@@ -1,3 +1,4 @@
+{% load i18n %}
       <footer class="footer" style="background: var(--bg-panel); border-top: 2px solid var(--border-color); padding: 40px 0 20px 0; margin-top: auto;">
         <div class="container">
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 20px;">
@@ -6,7 +7,7 @@
                 Deepland
               </div>
               <p style="font-size: 0.9rem; color: var(--text-medium); font-weight: 600; margin: 0; max-width: 300px;">
-                Algoritmlarni qiziqarli va interaktiv tarzda o'rganing.
+                {% trans "Learn algorithms in a fun and interactive way." %}
               </p>
             </div>
             
@@ -24,11 +25,11 @@
           
           <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; font-size: 0.85rem; font-weight: 700; color: var(--text-medium); gap: 15px;">
             <div>
-              &copy; <script>document.write(new Date().getFullYear())</script> Deepland. Barcha huquqlar himoyalangan.
+              &copy; <script>document.write(new Date().getFullYear())</script> Deepland. {% trans "All rights reserved." %}
             </div>
             <div style="display: flex; gap: 20px;">
-              <a href="{% url 'terms_of_use' %}" style="color: var(--text-medium); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--theme-blue)'" onmouseout="this.style.color='var(--text-medium)'">Foydalanish shartlari</a>
-              <a href="{% url 'privacy_policy' %}" style="color: var(--text-medium); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--theme-blue)'" onmouseout="this.style.color='var(--text-medium)'">Maxfiylik siyosati</a>
+              <a href="{% url 'terms' %}" style="color: var(--text-medium); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--theme-blue)'" onmouseout="this.style.color='var(--text-medium)'">{% trans "Terms of Use" %}</a>
+              <a href="{% url 'privacy' %}" style="color: var(--text-medium); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--theme-blue)'" onmouseout="this.style.color='var(--text-medium)'">{% trans "Privacy Policy" %}</a>
             </div>
           </div>
         </div>

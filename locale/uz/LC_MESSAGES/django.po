@@ -1,0 +1,262 @@
+# Uzbek translations for Deepland
+# Copyright (C) 2026 Deepland
+# This file is distributed under the same license as the Deepland package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Deepland 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-19 10:00+0500\n"
+"PO-Revision-Date: 2026-03-19 10:00+0500\n"
+"Last-Translator: Deepland Team\n"
+"Language-Team: Uzbek\n"
+"Language: uz\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+# Navigation
+msgid "Courses"
+msgstr "Kurslar"
+
+msgid "Challenges"
+msgstr "Masalalar"
+
+msgid "Olympiads"
+msgstr "Olimpiadalar"
+
+msgid "Leaderboard"
+msgstr "Reyting"
+
+msgid "Deepwiki"
+msgstr "Deepwiki"
+
+msgid "Log in"
+msgstr "Kirish"
+
+msgid "Log out"
+msgstr "Chiqish"
+
+msgid "Profile"
+msgstr "Profil"
+
+msgid "Progress"
+msgstr "Progress"
+
+msgid "Messages"
+msgstr "Xabarlar"
+
+msgid "Bookmarks"
+msgstr "Saqlanganlar"
+
+msgid "Settings"
+msgstr "Sozlamalar"
+
+# Streak
+msgid "Streak"
+msgstr "Muntazamlik"
+
+msgid "days"
+msgstr "kun"
+
+msgid "Keep the fire burning!"
+msgstr "Olovni o'chirmang!"
+
+# Footer
+msgid "Learn algorithms in a fun and interactive way."
+msgstr "Algoritmlarni qiziqarli va interaktiv tarzda o'rganing."
+
+msgid "All rights reserved."
+msgstr "Barcha huquqlar himoyalangan."
+
+msgid "Terms of Use"
+msgstr "Foydalanish shartlari"
+
+msgid "Privacy Policy"
+msgstr "Maxfiylik siyosati"
+
+# Home page
+msgid "Interactive Learning Platform"
+msgstr "Interaktiv ta'lim platforma"
+
+msgid "Master Skills Through"
+msgstr "Ko'nikmalarni o'yin orqali"
+
+msgid "Play"
+msgstr "o'rganing"
+
+msgid "Deepland is a gamified, interactive learning platform where education meets adventure. Earn XP, collect badges, and learn with friends."
+msgstr "Deepland — bu o'yin va sarguzashtlar bilan to'la interaktiv ta'lim platformasi. XP to'plang, nishonlar yig'ing va do'stlaringiz bilan birga o'rganing."
+
+msgid "Start Learning"
+msgstr "O'rganishni boshlash"
+
+msgid "Join Community"
+msgstr "Jamiyatga qo'shilish"
+
+msgid "Why Deepland?"
+msgstr "Nima uchun Deepland?"
+
+msgid "Gamified Progress"
+msgstr "O'yin orqali rivojlanish"
+
+msgid "Learn through interactive tasks and get instant feedback. Watch your XP grow and level up like in a game."
+msgstr "Interaktiv topshiriqlar orqali o'rganing va tezkor natijalar oling. XP darajangiz o'sishini kuzating."
+
+msgid "Smart Challenges"
+msgstr "Aqlli masalalar"
+
+msgid "From coding to logic, our challenges are designed to keep you sharp and curious about the world."
+msgstr "Dasturlashdan mantiqiy masalalargacha — bizning topshiriqlarimiz sizni doimiy ravishda rivojlantirishga mo'ljallangan."
+
+msgid "Meet the Guides"
+msgstr "Yo'lboshchilar bilan tanishing"
+
+msgid "Four unique characters—Nova, Pixel, Lyra, and Byte—will accompany you on your learning journey."
+msgstr "To'rtta noyob qahramon — Nova, Pixel, Lyra va Byte — o'rganish sayohatingizda sizga hamrohlik qiladi."
+
+msgid "Meet Your Companions"
+msgstr "Hamrohlaringiz bilan tanishing"
+
+msgid "The Balanced Mentor"
+msgstr "Muvozanatli murabbiy"
+
+msgid "Guides with wisdom and patience, ensuring steady progress and stability."
+msgstr "Donolik va sabr-toqat bilan yo'l ko'rsatadi, barqaror rivojlanishni ta'minlaydi."
+
+msgid "The Analytical Creator"
+msgstr "Tahliliy ijodkor"
+
+msgid "Blends logic with emotion to help you make well-rounded decisions."
+msgstr "Mantiq va his-tuyg'ularni uyg'unlashtiradi, to'g'ri qarorlar qabul qilishga yordam beradi."
+
+msgid "The Master of Logic"
+msgstr "Mantiq ustasi"
+
+msgid "Brings order and structure to every task, making learning efficient."
+msgstr "Har bir topshiriqqa tartib va tuzilma olib keladi, o'rganishni samarali qiladi."
+
+msgid "The Creative Spark"
+msgstr "Ijodiy uchqun"
+
+msgid "Injects fun and creativity into the process, keeping motivation high."
+msgstr "Jarayonga quvonch va ijodkorlik qo'shadi, motivatsiyani yuqori tutadi."
+
+msgid "Ready to start your adventure?"
+msgstr "Sarguzashtni boshlashga tayyormisiz?"
+
+msgid "Join thousands of learners and start mastering new skills today."
+msgstr "Minglab o'quvchilarga qo'shiling va bugundan yangi ko'nikmalarni egallashni boshlang."
+
+msgid "Launch Deepland"
+msgstr "Deeplandni ishga tushirish"
+
+# Login page
+msgid "Continue your journey on Deepland"
+msgstr "Deeplandda sayohatingizni davom ettiring"
+
+msgid "Forgot your password?"
+msgstr "Parolni unutdingizmi?"
+
+msgid "Captcha error: Please try again"
+msgstr "Kaptcha xatoligi: Iltimos, qaytadan urinib ko'ring"
+
+msgid "Unknown error"
+msgstr "Noma'lum xatolik"
+
+msgid "or"
+msgstr "yoki"
+
+msgid "Sign in with Google"
+msgstr "Google orqali kirish"
+
+msgid "Sign in with GitHub"
+msgstr "GitHub orqali kirish"
+
+msgid "Don't have an account?"
+msgstr "Hisobingiz mavjud emasmi?"
+
+msgid "Sign up"
+msgstr "Ro'yxatdan o'tish"
+
+# Signup page
+msgid "Join the Deepland community."
+msgstr "Deepland jamiyatiga qo'shiling."
+
+msgid "By signing up, you agree to our"
+msgstr "Ro'yxatdan o'tish orqali siz bizning"
+
+msgid "and"
+msgstr "va"
+
+msgid "Already have an account?"
+msgstr "Hisobingiz bormi?"
+
+# Settings page
+msgid "General"
+msgstr "Umumiy"
+
+msgid "Password"
+msgstr "Parol"
+
+msgid "Language"
+msgstr "Til"
+
+msgid "Personal Information"
+msgstr "Shaxsiy ma'lumotlar"
+
+msgid "Profile picture"
+msgstr "Profil rasmi"
+
+msgid "First name"
+msgstr "Ism"
+
+msgid "Last name"
+msgstr "Familiya"
+
+msgid "Save"
+msgstr "Saqlash"
+
+msgid "Change Password"
+msgstr "Parolni o'zgartirish"
+
+msgid "Update Password"
+msgstr "Parolni yangilash"
+
+# Profile page
+msgid "Unnamed Developer"
+msgstr "Nomlanmagan dasturchi"
+
+msgid "Points"
+msgstr "Ball"
+
+msgid "Solved"
+msgstr "Yechilgan"
+
+msgid "Attempted"
+msgstr "Urinish"
+
+msgid "Following"
+msgstr "Obunalar"
+
+msgid "Followers"
+msgstr "Obunachilar"
+
+msgid "Follow"
+msgstr "Obuna bo'lish"
+
+msgid "Unfollow"
+msgstr "Obunani bekor qilish"
+
+msgid "Developer Map"
+msgstr "Dasturchi xaritasi"
+
+msgid "Not attempted"
+msgstr "Yechilmagan"
+
+msgid "Attempted (Wrong / TLE / RE)"
+msgstr "Urinish tarixi (Xato yoki TLE/RE)"
+
+msgid "Solved (Accepted)"
+msgstr "Yechilgan (To'g'ri)"

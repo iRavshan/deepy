@@ -1,19 +1,20 @@
 {% extends '../shared/_base.html' %}
 {% load static %}
-{% block title %}Reyting{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Leaderboard" %}{% endblock %}
 
 {% block content %}
 <main class="container">
     <form action="." method="GET">
         <div class="page-header-row" style="margin-bottom: 20px;">
-            <h1 class="page-title">Umumiy reyting</h1>
+            <h1 class="page-title">{% trans "Leaderboard" %}</h1>
         </div>
 
         <div class="dashboard-controls" style="display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <div style="display: flex; flex-grow: 1; max-width: 600px; gap: 10px; align-items: center;">
                 <div class="search-container" style="width: 100%; max-width: 100%;">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                    <input type="search" name="q" class="search-input" placeholder="Qidirish..." value="{{ search_query }}">
+                    <input type="search" name="q" class="search-input" placeholder="{% trans 'Search...' %}" value="{{ search_query }}">
                     {% if sort_by %}
                     <input type="hidden" name="sort" value="{{ sort_by }}">
                     {% endif %}
@@ -23,18 +24,18 @@
                         <i class="fa-solid fa-filter"></i>
                     </button>
                     <div id="sort-dropdown" class="sort-menu" style="display: none; position: absolute; right: 0; top: 100%; margin-top: 10px; background: var(--bg-panel); border: 2px solid var(--border-color); border-radius: var(--card-radius); padding: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: max-content; z-index: 100;">
-                        <div style="font-weight: 800; color: var(--text-medium); margin-bottom: 10px; font-size: 0.85rem; text-transform: uppercase;">Tartiblash</div>
+                        <div style="font-weight: 800; color: var(--text-medium); margin-bottom: 10px; font-size: 0.85rem; text-transform: uppercase;">{% trans "Sort by" %}</div>
                         <input type="hidden" name="sort" id="sort-input" value="{{ sort_by }}">
                         <div class="sort-option" data-sort-base="points" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
-                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Ball bo'yicha</span>
+                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">{% trans "By points" %}</span>
                             <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
                         </div>
                         <div class="sort-option" data-sort-base="solved" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
-                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Yechilganlar soni</span>
+                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">{% trans "By solved count" %}</span>
                             <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
                         </div>
                         <div class="sort-option" data-sort-base="acceptance" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; cursor: pointer; color: var(--text-dark); transition: background 0.2s;">
-                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">Qabul qilish darajasi</span>
+                            <span style="font-weight: 600; font-size: 0.95rem; margin-right: 20px;">{% trans "By acceptance rate" %}</span>
                             <i class="sort-icon fa-solid fa-sort" style="color: var(--text-medium);"></i>
                         </div>
                     </div>
@@ -42,15 +43,15 @@
             </div>
             <div>
                 <select name="period" class="search-input" style="width: auto; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: var(--primary-font); font-weight: 600; font-size: 0.95rem; color: var(--text-dark); border: 2px solid var(--border-color); background: var(--bg-app); appearance: none;" onchange="this.form.submit()">
-                    <option value="all" {% if period == 'all' %}selected{% endif %}>Barcha</option>
-                    <option value="day" {% if period == 'day' %}selected{% endif %}>Mintaqa</option>
-                    <option value="week" {% if period == 'week' %}selected{% endif %}>Do'stlarim</option>
+                    <option value="all" {% if period == 'all' %}selected{% endif %}>{% trans "All" %}</option>
+                    <option value="day" {% if period == 'day' %}selected{% endif %}>{% trans "Region" %}</option>
+                    <option value="week" {% if period == 'week' %}selected{% endif %}>{% trans "Friends" %}</option>
                 </select>
                 <select name="period" class="search-input" style="width: auto; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-family: var(--primary-font); font-weight: 600; font-size: 0.95rem; color: var(--text-dark); border: 2px solid var(--border-color); background: var(--bg-app); appearance: none;" onchange="this.form.submit()">
-                    <option value="all" {% if period == 'all' %}selected{% endif %}>Barcha vaqt</option>
-                    <option value="day" {% if period == 'day' %}selected{% endif %}>Bugun</option>
-                    <option value="week" {% if period == 'week' %}selected{% endif %}>Hafta</option>
-                    <option value="month" {% if period == 'month' %}selected{% endif %}>Oy</option>
+                    <option value="all" {% if period == 'all' %}selected{% endif %}>{% trans "All time" %}</option>
+                    <option value="day" {% if period == 'day' %}selected{% endif %}>{% trans "Today" %}</option>
+                    <option value="week" {% if period == 'week' %}selected{% endif %}>{% trans "Week" %}</option>
+                    <option value="month" {% if period == 'month' %}selected{% endif %}>{% trans "Month" %}</option>
                 </select>
             </div>
         </div>
@@ -81,7 +82,7 @@
                                 {% if entry.user.first_name or entry.user.last_name %}
                                     {{ entry.user.first_name }} {{ entry.user.last_name }}
                                 {% else %}
-                                    Nomsiz foydalanuvchi
+                                    {% trans "Anonymous user" %}
                                 {% endif %}
                             </a>
                             <div style="font-size: 0.85rem; color: var(--text-medium); font-weight: 500;">
@@ -108,7 +109,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align: center; padding: 20px;">Foydalanuvchilar topilmadi</td>
+                <td colspan="5" style="text-align: center; padding: 20px;">{% trans "No users found" %}</td>
             </tr>
             {% endfor %}
         </tbody>

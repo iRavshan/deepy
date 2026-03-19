@@ -718,9 +718,9 @@
         <button class="nav-btn secondary"></button>
       </div>
 
-      <button class="outline-btn secondary btn-transform" onclick="toggleSidebar()">
-        Mundarija <i class="fa-solid fa-bars"></i>
-      </button>
+        <button class="outline-btn secondary btn-transform" onclick="toggleSidebar()">
+            {% trans "Contents" %} <i class="fa-solid fa-bars"></i>
+        </button>
     </nav>
 
     <main class="container">
@@ -751,7 +751,7 @@
         
         <div class="quiz-action-area" style="margin-top: 50px; text-align: center; margin-bottom: 50px;">
             <a href="{% url 'lesson_quiz' course.slug lesson.slug %}" class="start-quiz-btn">
-                Start Quiz <i class="fa-solid fa-arrow-right"></i>
+                {% trans "Start Quiz" %} <i class="fa-solid fa-arrow-right"></i>
             </a>
         </div>
       </div>
@@ -850,7 +850,7 @@
 
           // Copy Button (Right side)
           const copyBtn = document.createElement("button");
-          copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Nusxalash';
+          copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> {% trans "Copy" %}';
           copyBtn.style.background = "white";
           copyBtn.style.border = "1px solid var(--border-color)";
           copyBtn.style.borderRadius = "8px";
@@ -868,13 +868,13 @@
           // Copy Logic
           copyBtn.onclick = () => {
             navigator.clipboard.writeText(code).then(() => {
-              copyBtn.innerHTML =
-                '<i class="fa-solid fa-check"></i> Nusxalandi!';
+                copyBtn.innerHTML =
+                  '<i class="fa-solid fa-check"></i> {% trans "Copied!" %}';
               copyBtn.style.color = "var(--theme-green)";
               copyBtn.style.borderColor = "var(--theme-green)";
               setTimeout(() => {
                 copyBtn.innerHTML =
-                  '<i class="fa-regular fa-copy"></i> Nusxalash';
+                  '<i class="fa-regular fa-copy"></i> {% trans "Copy" %}';
                 copyBtn.style.color = "var(--text-medium)";
                 copyBtn.style.borderColor = "var(--border-color)";
               }, 2000);

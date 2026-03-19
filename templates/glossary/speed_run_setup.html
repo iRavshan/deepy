@@ -1,21 +1,22 @@
 {% extends '../shared/_base.html' %}
-{% block title %} Speed Run Setup {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Speed Run Setup" %} {% endblock %}
 {% block content %}
 <main class="container">
     <div class="setup-card speed-run-card">
-        <h1 class="page-title text-center" style="color: var(--theme-pink);">Speed Run Setup</h1>
-        <p class="subtitle text-center">Test your knowledge against the clock!</p>
+        <h1 class="page-title text-center" style="color: var(--theme-pink);">{% trans "Speed Run Setup" %}</h1>
+        <p class="subtitle text-center">{% trans "Test your knowledge against the clock!" %}</p>
 
         <form action="{% url 'speed_run' %}" method="GET" class="setup-form">
             
             <!-- Topics Section -->
             <div class="form-section">
-                <h3><i class="fa-solid fa-list-ul"></i>Mavzularni tanlang</h3>
+                <h3><i class="fa-solid fa-list-ul"></i>{% trans "Select topics" %}</h3>
                 <div class="topic-selection-grid">
                     <label class="topic-checkbox special-all">
                         <input type="checkbox" name="topics" value="all" checked id="all-topics">
                         <span class="checkbox-visual"><i class="fa-solid fa-check"></i></span>
-                        <span class="topic-name">Barcha mavzular</span>
+                        <span class="topic-name">{% trans "All topics" %}</span>
                     </label>
                     {% for topic in topics %}
                     <label class="topic-checkbox">
@@ -30,20 +31,20 @@
             <div class="form-row">
                 <!-- Card Front Section -->
                 <div class="form-section half">
-                    <h3><i class="fa-solid fa-layer-group"></i>Avval ko'rsatilsin</h3>
+                    <h3><i class="fa-solid fa-layer-group"></i>{% trans "Show first" %}</h3>
                     <div class="radio-group">
                         <label class="custom-radio">
                             <input type="radio" name="side" value="term" checked>
                             <span class="radio-content">
                                 <span class="radio-icon"><i class="fa-solid fa-font"></i></span>
-                                <span class="radio-text">Termin</span>
+                                <span class="radio-text">{% trans "Term" %}</span>
                             </span>
                         </label>
                         <label class="custom-radio">
                             <input type="radio" name="side" value="definition">
                             <span class="radio-content">
                                 <span class="radio-icon"><i class="fa-solid fa-align-left"></i></span>
-                                <span class="radio-text">Ta'rif</span>
+                                <span class="radio-text">{% trans "Definition" %}</span>
                             </span>
                         </label>
                     </div>
@@ -51,20 +52,20 @@
 
                 <!-- Game Mode Section -->
                 <div class="form-section half">
-                    <h3><i class="fa-solid fa-gamepad"></i>Rejim</h3>
+                    <h3><i class="fa-solid fa-gamepad"></i>{% trans "Mode" %}</h3>
                     <div class="radio-group">
                         <label class="custom-radio">
                             <input type="radio" name="mode" value="survival" checked id="mode-survival">
                             <span class="radio-content">
                                 <span class="radio-icon"><i class="fa-solid fa-infinity"></i></span>
-                                <span class="radio-text">Barcha termin</span>
+                                <span class="radio-text">{% trans "All terms" %}</span>
                             </span>
                         </label>
                         <label class="custom-radio">
                             <input type="radio" name="mode" value="timed" id="mode-timed">
                             <span class="radio-content">
                                 <span class="radio-icon"><i class="fa-solid fa-stopwatch"></i></span>
-                                <span class="radio-text">Taymer</span>
+                                <span class="radio-text">{% trans "Timer" %}</span>
                             </span>
                         </label>
                     </div>
@@ -73,7 +74,7 @@
 
             <!-- Duration Slider (Hidden by default) -->
             <div class="form-section" id="duration-section" style="display: none;">
-                <h3><i class="fa-solid fa-hourglass-half"></i> Davomiylik: <span id="duration-display">60</span>s</h3>
+                <h3><i class="fa-solid fa-hourglass-half"></i> {% trans "Duration:" %} <span id="duration-display">60</span>s</h3>
                 <div class="range-container">
                     <input type="range" name="duration" min="30" max="300" step="15" value="60" class="custom-range" id="duration-slider">
                     <div class="range-labels">
@@ -84,7 +85,7 @@
             </div>
 
             <button type="submit" class="btn-start btn-transform speed-btn">
-                Boshlash <i class="fa-solid fa-rocket"></i>
+                {% trans "Start" %} <i class="fa-solid fa-rocket"></i>
             </button>
         </form>
     </div>

@@ -9,10 +9,10 @@
         {% cycle 'theme-green' 'theme-blue' 'theme-purple' 'theme-orange' 'theme-brown' 'theme-pink' 'theme-red' as current_theme silent %}
         <div class="unit-header {{ current_theme }}">
             <div class="unit-info">
-                <h2>Bo'lim {{ section.order }}</h2>
+                <h2>{% trans "Section" %} {{ section.order }}</h2>
                 <p>{{ section.title }}</p>
             </div>
-            <a class="unit-info-btn btn-transform"><i class="fa-solid fa-book"></i>Qo'llanma</a>
+            <a class="unit-info-btn btn-transform"><i class="fa-solid fa-book"></i>{% trans "Guide" %}</a>
         </div>
 
         <div class="path-nodes {{ current_theme }}">
@@ -40,10 +40,10 @@
                 <div class="trophy-icon">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <h3>Kurs sertifikati</h3>
-                <p>Complete all levels to unlock your certification</p>
+                <h3>{% trans "Course Certificate" %}</h3>
+                <p>{% trans "Complete all levels to unlock your certification" %}</p>
                 <div class="gate-lock-btn">
-                    <i class="fa-solid fa-lock"></i> <span>Locked</span>
+                    <i class="fa-solid fa-lock"></i> <span>{% trans "Locked" %}</span>
                 </div>
             </div>
         </div>
@@ -59,8 +59,8 @@
             <div class="cert-section">
                 <div class="cert-icon">📜</div>
                 <div class="cert-details">
-                    <span class="cert-title">Kurs sertifikati</span>
-                    <span class="cert-status">Finish course to unlock</span>
+                    <span class="cert-title">{% trans "Course Certificate" %}</span>
+                    <span class="cert-status">{% trans "Finish course to unlock" %}</span>
                 </div>
             </div>
 
@@ -78,12 +78,12 @@
                 <div class="term-data">
                     <div class="term-title"><b>{{ random_term.term }}</b> - {{ random_term.short_definition }}</div>
                     <a href="{% url 'term' random_term.slug %}" class="read-more-btn">
-                        Batafsil <i class="fa-solid fa-arrow-right-long"></i>
+                        {% trans "Read more" %} <i class="fa-solid fa-arrow-right-long"></i>
                     </a>
                 </div>
                 {% else %}
                 <div class="term-data">
-                    <p class="term-def">No terms available.</p>
+                    <p class="term-def">{% trans "No terms available." %}</p>
                 </div>
                 {% endif %}
             </div>
@@ -120,7 +120,7 @@
                             <div class="term-data fade-in">
                                 <div class="term-title"><b>${data.term}</b> - ${data.short_definition}</div>
                                 <a href="/deepwiki/term/${data.slug}" class="read-more-btn">
-                                    Batafsil <i class="fa-solid fa-arrow-right-long"></i>
+                                    {% trans "Read more" %} <i class="fa-solid fa-arrow-right-long"></i>
                                 </a>
                             </div>
                         `;

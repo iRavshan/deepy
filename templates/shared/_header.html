@@ -6,11 +6,11 @@
     <a href="{% url 'home' %}" class="logo">Deepland</a>
 
     <div class="nav-links-middle">
-        <a href="{% url 'course_list' %}" class="nav-link-item">Kurslar</a>
-        <a href="{% url 'challenge_list' %}" class="nav-link-item">Masalalar</a>
-        <a href="#" class="nav-link-item">Olimpiadalar</a>
-        <a href="{% url 'rating' %}" class="nav-link-item">Reyting</a>
-        <a href="{% url 'glossary' %}" class="nav-link-item">Deepwiki</a>
+        <a href="{% url 'course_list' %}" class="nav-link-item">{% trans "Courses" %}</a>
+        <a href="{% url 'challenge_list' %}" class="nav-link-item">{% trans "Challenges" %}</a>
+        <a href="#" class="nav-link-item">{% trans "Olympiads" %}</a>
+        <a href="{% url 'rating' %}" class="nav-link-item">{% trans "Leaderboard" %}</a>
+        <a href="{% url 'glossary' %}" class="nav-link-item">{% trans "Deepwiki" %}</a>
     </div>
 
     <div class="nav-links-right">
@@ -27,8 +27,8 @@
                         <div class="fire-ring">
                             <i class="fa-solid fa-fire"></i>
                         </div>
-                        <div class="streak-title">Muntazamlik</div>
-                        <div class="streak-big-number">{{ user.current_streak }} kun</div>
+                        <div class="streak-title">{% trans "Streak" %}</div>
+                        <div class="streak-big-number">{{ user.current_streak }} {% trans "days" %}</div>
                     </div>
                     
                     <div class="streak-week-container" id="streakWeekContainer" 
@@ -37,7 +37,7 @@
                     </div>
 
                     <div class="panel-footer">
-                        Olovni o'chirmang! <i class="fa-solid fa-fire-flame-curved"></i>
+                        {% trans "Keep the fire burning!" %} <i class="fa-solid fa-fire-flame-curved"></i>
                     </div>
                 </div>
             </div>
@@ -57,29 +57,29 @@
                     </div>
                     <div class="dropdown-divider"></div>
                     <a href="{% url 'profile' user.id %}" class="dropdown-item">
-                        <i class="fa-solid fa-user"></i> Profil
+                        <i class="fa-solid fa-user"></i> {% trans "Profile" %}
                     </a>
                     <a href="#" class="dropdown-item">
-                        <i class="fa-solid fa-chart-line"></i> Progress
+                        <i class="fa-solid fa-chart-line"></i> {% trans "Progress" %}
                     </a>
                     <a href="{% url 'bookmarks' %}" class="dropdown-item">
-                        <i class="fa-solid fa-message"></i> Xabarlar
+                        <i class="fa-solid fa-message"></i> {% trans "Messages" %}
                     </a>
                     <a href="{% url 'bookmarks' %}" class="dropdown-item">
-                        <i class="fa-solid fa-bookmark"></i> Saqlanganlar
+                        <i class="fa-solid fa-bookmark"></i> {% trans "Bookmarks" %}
                     </a>
                     <a href="{% url 'settings' %}" class="dropdown-item">
-                        <i class="fa-solid fa-gear"></i> Sozlamalar
+                        <i class="fa-solid fa-gear"></i> {% trans "Settings" %}
                     </a>
                     <div class="dropdown-divider"></div>
                     <a href="{% url 'logout' %}" class="dropdown-item item-logout">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Chiqish
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> {% trans "Log out" %}
                     </a>
                 </div>
             </div>
         </div>
         {% else %}
-        <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
+        <a href="{% url 'login' %}" class="login-btn btn-transform">{% trans "Log in" %}</a>
         {% endif %}
     </div>
 </nav>

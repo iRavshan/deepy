@@ -1,12 +1,13 @@
 {% extends '../shared/_blank.html' %}
 {% load static %}
-{% block title %} Speed Run Game {% endblock %}
+{% load i18n %}
+{% block title %} {% trans "Speed Run Game" %} {% endblock %}
 {% block content %}
 <div class="app-container">
     
     <!-- Header: Score & Music -->
     <button class="header-btn btn-exit" onclick="window.location.href='{% url 'speed_run_setup' %}'">
-        <i class="fa-solid fa-xmark"></i> Yakunlash
+        <i class="fa-solid fa-xmark"></i> {% trans "End" %}
     </button>
 
     <div class="score-board">
@@ -29,7 +30,7 @@
         <div class="card-scene" onclick="flipCard()">
             <div class="card" id="cardObj">
                 <div class="card-face card-front">
-                    <div id="txtFront">Yuklanmoqda...</div>
+                    <div id="txtFront">{% trans "Loading..." %}</div>
                 </div>
                 <div class="card-face card-back">
                     <div id="txtBack">...</div>
@@ -37,47 +38,47 @@
             </div>
         </div>
 
-        <button class="btn btn-blue" id="btnFlip" onclick="flipCard()">Javobni ko'rsatish</button>
+        <button class="btn btn-blue" id="btnFlip" onclick="flipCard()">{% trans "Show answer" %}</button>
 
         <div class="feedback-grid hidden" id="feedbackArea">
             <button class="btn btn-red" onclick="handleResult(false)">
-                <i class="fa-solid fa-xmark"></i> Noto'g'ri
+                <i class="fa-solid fa-xmark"></i> {% trans "Wrong" %}
             </button>
             <button class="btn btn-correct" onclick="handleResult(true)">
-                <i class="fa-solid fa-check"></i> To'g'ri
+                <i class="fa-solid fa-check"></i> {% trans "Correct" %}
             </button>
         </div>
     </div>
 
     <!-- RESULT SCREEN -->
     <div id="resultScreen" class="screen">
-        <h1 id="resultTitle">O'yin tugadi!</h1>
+        <h1 id="resultTitle">{% trans "Game over!" %}</h1>
         
         <div class="final-score-box">
             <h2 class="big-score"><i class="fa-solid fa-gem"></i><span id="finalScore">0</span></h2>
-            <p>Jami ochkolar</p>
+            <p>{% trans "Total score" %}</p>
         </div>
 
         <div class="stats-grid">
             <div class="stat-box correct">
                 <i class="fa-solid fa-check"></i>
                 <span id="countCorrect">0</span>
-                <label>To'g'ri</label>
+                <label>{% trans "Correct" %}</label>
             </div>
             <div class="stat-box incorrect">
                 <i class="fa-solid fa-xmark"></i>
                 <span id="countIncorrect">0</span>
-                <label>Noto'g'ri</label>
+                <label>{% trans "Wrong" %}</label>
             </div>
             <div class="stat-box skipped">
                 <i class="fa-solid fa-forward"></i>
                 <span id="countSkipped">0</span>
-                <label>Javob berilmadi</label>
+                <label>{% trans "Unanswered" %}</label>
             </div>
         </div>
 
-        <button class="btn btn-primary" onclick="window.location.reload()" style="margin-top: 30px;">Yana boshlash</button>
-        <button class="btn btn-secondary" onclick="window.location.href='{% url 'speed_run_setup' %}'" style="margin-top: 10px;">Yangi o'yin</button>
+        <button class="btn btn-primary" onclick="window.location.reload()" style="margin-top: 30px;">{% trans "Play again" %}</button>
+        <button class="btn btn-secondary" onclick="window.location.href='{% url 'speed_run_setup' %}'" style="margin-top: 10px;">{% trans "New game" %}</button>
     </div>
 
 </div>

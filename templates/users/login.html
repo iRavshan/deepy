@@ -1,5 +1,5 @@
 {% extends '../shared/_blank.html' %} 
-{% block title %} Kirish {% endblock %} 
+{% block title %} {% trans "Log in" %} {% endblock %} 
 {% block content %} 
 {% load static %} 
 {% load i18n %} 
@@ -11,8 +11,8 @@
     </div>
     <div class="login-card">
       <div class="login-header">
-        <h1>Kirish</h1>
-        <p>Deeplandda sayohatingizni davom ettiring</p>
+        <h1>{% trans "Log in" %}</h1>
+        <p>{% trans "Continue your journey on Deepland" %}</p>
       </div>
       <form method="post" action="{% url 'login' %}">
         {% csrf_token %}
@@ -45,31 +45,31 @@
           {% endif %}
         </div>
         
-        <a href="#" class="forgot-pass">Parolni unutdingizmi?</a>
+        <a href="#" class="forgot-pass">{% trans "Forgot your password?" %}</a>
         
         <!-- The vital widget -->
         <div class="cf-turnstile" data-sitekey="{{ turnstile_site_key }}" data-theme="light" style="margin-bottom: 15px;"></div>
         
         {% if form.cf_turnstile.errors %}
           <div style="color: var(--theme-red); font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; font-weight: 700;">
-            Kaptcha xatoligi: Iltimos, qaytadan urinib ko'ring
+            {% trans "Captcha error: Please try again" %}
           </div>
         {% endif %}
         
         <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
         
-        <button type="submit" class="btn-login btn-transform">Kirish</button>
+        <button type="submit" class="btn-login btn-transform">{% trans "Log in" %}</button>
       </form>
       
       <!-- Hidden debug panel if there are hidden errors -->
       {% if form.errors and not form.non_field_errors and not form.username.errors and not form.password.errors and not form.cf_turnstile.errors %}
       <div style="color: var(--theme-red); font-size: 0.8rem; margin-top: 10px;">
-        Noma'lum xatolik: {{ form.errors }}
+        {% trans "Unknown error" %}: {{ form.errors }}
       </div>
       {% endif %}
 
       <div class="divider">
-        <span>yoki</span>
+        <span>{% trans "or" %}</span>
       </div>
       <script>
         const googleLoginUrl = "{% provider_login_url 'google' process='login' %}?next={% url 'auth_success' %}";
@@ -84,14 +84,14 @@
       </script>
       <button type="button" onclick="openOAuthPopup(googleLoginUrl)" class="social-btn btn-transform">
         <i class="fa-brands fa-google icon-google" style="font-size: 1.2rem"></i>
-        Google bilan kirish
+        {% trans "Sign in with Google" %}
       </button>
       <button type="button" onclick="openOAuthPopup(githubLoginUrl)" class="social-btn btn-transform">
         <i class="fa-brands fa-github icon-github" style="font-size: 1.2rem"></i>
-        GitHub bilan kirish
+        {% trans "Sign in with GitHub" %}
       </button>
       <div class="footer-links">
-        Hisobingiz mavjud emasmi? <a href="{% url 'signup' %}">Ro'yxatdan o'tish</a>
+        {% trans "Don't have an account?" %} <a href="{% url 'signup' %}">{% trans "Sign up" %}</a>
       </div>
     </div>
   </div>

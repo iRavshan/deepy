@@ -254,12 +254,58 @@ def profile_view(request, user_id):
             'state': state
         })
         
+    from django.db.models import Count, Q
+    import math
+    
+    challenges_with_solvers = Challenge.objects.annotate(
+        solvers_n=Count('submissions__submitted_by', filter=Q(submissions__status='accepted'), distinct=True)
+    )
+    challenge_scores = {}
+    for c in challenges_with_solvers:
+        n = c.solvers_n
+        score = 100 if n == 0 else max(1, math.floor(100 - 10 * math.log2(n)))
+        challenge_scores[c.id] = score
+
+    all_submissions = Submission.objects.values('submitted_by_id', 'challenge_id', 'status')
+    user_points = {}
+    user_solved = {}
+    for sub in all_submissions:
+        uid = sub['submitted_by_id']
+        cid = sub['challenge_id']
+        status = sub['status']
+        if uid not in user_points:
+            user_points[uid] = 0
+            user_solved[uid] = set()
+            
+        if cid in user_solved[uid]:
+            continue
+            
+        if status == 'accepted':
+            user_solved[uid].add(cid)
+            user_points[uid] += challenge_scores.get(cid, 0)
+            
+    target_points = user_points.get(target_user.id, 0)
+    
+    # Sort distinct points to find rank
+    unique_scores = sorted(list(set(user_points.values())), reverse=True)
+    if target_points > 0:
+        rating = unique_scores.index(target_points) + 1
+    else:
+        rating = "—"
+
     # Follower stats
-    followers_count = target_user.followers.count()
-    following_count = target_user.following.count()
+    followers = target_user.followers.all()
+    following = target_user.following.all()
+    
+    followers_count = followers.count()
+    following_count = following.count()
+    
+    recent_followers = followers[:3]
+    recent_following = following[:3]
+    
     is_following = False
     if request.user.is_authenticated and request.user != target_user:
-        is_following = target_user.followers.filter(id=request.user.id).exists()
+        is_following = followers.filter(id=request.user.id).exists()
         
     context = {
         'target_user': target_user,
@@ -268,7 +314,13 @@ def profile_view(request, user_id):
         'activity_map': activity_map,
         'followers_count': followers_count,
         'following_count': following_count,
+        'recent_followers': recent_followers,
+        'recent_following': recent_following,
         'is_following': is_following,
+        'max_streak': getattr(target_user, 'max_streak', 0),
+        'current_points': target_points,
+        'rating': rating,
+        'date_joined': target_user.date_joined,
     }
     return render(request, 'users/profile.html', context)
 

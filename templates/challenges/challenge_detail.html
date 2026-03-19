@@ -74,7 +74,7 @@
     <nav class="challenge-nav">
       <div class="nav-left">
         <a href="{% url 'challenge_list' %}" class="nav-back-btn">
-          <i class="fa-solid fa-list-ul"></i> Barcha masalalar
+          <i class="fa-solid fa-list-ul"></i> {% trans "All Challenges" %}
         </a>
         <a
           href="{% if prev_challenge %}{% url 'challenge_detail' prev_challenge.slug %}{% else %}#{% endif %}"
@@ -116,7 +116,7 @@
           />
         </div>
         {% else %}
-        <a href="{% url 'login' %}" class="login-btn btn-transform">Kirish</a>
+        <a href="{% url 'login' %}" class="login-btn btn-transform">{% trans "Log in" %}</a>
         {% endif %}
       </div>
     </nav>
@@ -135,16 +135,16 @@
         <div class="tabs-nav">
           <div class="tabs-nav-left">
             <button class="tab-btn active" onclick="switchTab('desc')">
-              <i class="fa-solid fa-file-lines"></i>Izoh
+              <i class="fa-solid fa-file-lines"></i>{% trans "Description" %}
             </button>
             <button class="tab-btn" onclick="switchTab('note')">
-              <i class="fa-solid fa-note-sticky"></i>Qaydlar
+              <i class="fa-solid fa-note-sticky"></i>{% trans "Notes" %}
             </button>
             <button class="tab-btn" onclick="switchTab('hints')">
-              <i class="fa-solid fa-lightbulb"></i>Yordam
+              <i class="fa-solid fa-lightbulb"></i>{% trans "Hints" %}
             </button>
             <button class="tab-btn" onclick="switchTab('subs')">
-              <i class="fa-solid fa-clock-rotate-left"></i>Urinishlar
+              <i class="fa-solid fa-clock-rotate-left"></i>{% trans "Submissions" %}
             </button>
           </div>
           <div class="tabs-nav-right">
@@ -187,17 +187,17 @@
 
               <div class="input-output-box">
                 <div class="input-box">
-                  <h3 class="input-box-title">Kiruvchi ma'lumot:</h3>
+                  <h3 class="input-box-title">{% trans "Input data:" %}</h3>
                   {{ challenge.input_description|safe }}
                 </div>
                 <div class="output-box">
-                  <h3 class="output-box-title">Chiquvchi ma'lumot:</h3>
+                  <h3 class="output-box-title">{% trans "Output data:" %}</h3>
                   {{ challenge.output_description|safe }}
                 </div>
               </div>
 
               {% for sample in challenge.sample_tests %}
-              <h3 class="example-box-title">Namuna {{ forloop.counter }}:</h3>
+              <h3 class="example-box-title">{% trans "Example" %} {{ forloop.counter }}:</h3>
               <table class="example-table">
                 <thead>
                   <tr>
@@ -247,7 +247,7 @@
           </div>
 
           <div id="tab-hints" class="tab-content">
-            <h2 style="margin-bottom: 20px">Yordam</h2>
+            <h2 style="margin-bottom: 20px">{% trans "Hints" %}</h2>
             {% if challenge.hints.all %} {% for hint in challenge.hints.all %}
             <div class="hint-card">
               <i class="fa-solid fa-lightbulb hint-icon"></i>
@@ -260,13 +260,13 @@
             </div>
             {% endfor %} {% else %}
             <p style="margin: 0; font-size: 0.95rem">
-              Ushbu masala uchun yordam mavjud emas
+              {% trans "No hints available for this challenge" %}
             </p>
             {% endif %}
           </div>
 
           <div id="tab-subs" class="tab-content">
-            <h2 style="margin-bottom: 20px">Urinishlar</h2>
+            <h2 style="margin-bottom: 20px">{% trans "Submissions" %}</h2>
             {% if user.is_authenticated %}
             <div id="submissionsListView">
               <div id="submissionsList">
@@ -298,14 +298,14 @@
               </div>
               {% endfor %}
               {% else %}
-              <p>Ushbu masala uchun sizda urinishlar hozircha mavjud emas</p>
+              <p>{% trans "You have no submissions for this challenge yet" %}</p>
               {% endif %}
               </div>
             </div>
 
             <div id="submissionDetailView" style="display: none;">
               <button class="back-btn" onclick="hideSubmissionDetail()" style="background: none; border: none; font-size: 1rem; color: var(--theme-blue); cursor: pointer; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; padding: 0; font-family: var(--secondary-font);">
-                <i class="fa-solid fa-arrow-left"></i> Orqaga
+                <i class="fa-solid fa-arrow-left"></i> {% trans "Back" %}
               </button>
               <div class="submission-item" style="cursor: default; background: var(--bg-panel); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                  <div class="sub-status" id="detail-sub-status" style="font-size: 1.1rem;"></div>
@@ -317,14 +317,14 @@
                  <div class="sub-time" id="detail-sub-date" style="font-size: 0.85rem; color: var(--text-medium);"></div>
               </div>
               <div>
-                <h4 style="margin-bottom: 10px; color: var(--text-dark);">Yechimingiz:</h4>
+                <h4 style="margin-bottom: 10px; color: var(--text-dark);">{% trans "Your solution:" %}</h4>
                 <div id="detail-monaco-editor-container" style="height: 350px; width: 100%; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;"></div>
               </div>
             </div>
             {% else %}
             <p>
-              Urinishlaringizni ko'rish uchun
-              <a href="{% url 'login' %}">hisobingizni faollashtiring</a>
+              {% trans "Log in to see your submissions" %}
+              <a href="{% url 'login' %}">{% trans "Log in" %}</a>
             </p>
             {%endif %}
           </div>
@@ -348,7 +348,7 @@
                 <i class="fa-solid fa-play"></i>
               </button>
               <button type="button" class="btn-3d btn-green" id="submitBtn" title="Yechimni yuborish">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Yuborish
+                <i class="fa-solid fa-cloud-arrow-up"></i> {% trans "Submit" %}
               </button>
             </div>
             <div style="display: flex; gap: 10px; align-items: center;">
@@ -369,7 +369,7 @@
 
         <section class="panel testcases-panel" id="testcasesPanel">
           <div class="testcases-header">
-            <h3 style="font-weight: 800">Testlar</h3>
+            <h3 style="font-weight: 800">{% trans "Tests" %}</h3>
             <button class="maximize-btn" onclick="toggleMaximize('testcasesPanel')" title="To'liq ekran"><i class="fa-solid fa-expand"></i></button>
           </div>
           <div class="testcases-content" id="testcasesContent">
@@ -384,16 +384,16 @@
             {% for sample in challenge.sample_tests %}
             <div class="tc-detail" id="tc-detail-{{ forloop.counter0 }}" style="display: {% if forloop.first %}block{% else %}none{% endif %};">
               <div class="tc-block">
-                <div class="tc-block-label">Kiruvchi ma'lumot:</div>
+                <div class="tc-block-label">{% trans "Input data:" %}</div>
                 <div class="tc-block-value">{{ sample.input }}</div>
-                <div class="tc-block-label">Kutilgan natija:</div>
+                <div class="tc-block-label">{% trans "Expected output:" %}</div>
                 <div class="tc-block-value">{{ sample.expected }}</div>
               </div>
             </div>
             {% endfor %}
             {% else %}
             <p style="color: var(--text-medium); font-size: 0.95rem; text-align: center; margin-top: 20px;">
-              Ushbu masala uchun namunalar mavjud emas.
+              {% trans "No examples available for this challenge." %}
             </p>
             {% endif %}
           </div>

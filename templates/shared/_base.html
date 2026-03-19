@@ -2,7 +2,8 @@
 <!DOCTYPE html>
 {% load static %}
 {% load humanize %}
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D8MZ25N2J1"></script>
     <script>

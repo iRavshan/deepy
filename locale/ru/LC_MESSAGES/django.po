@@ -1,0 +1,262 @@
+# Russian translations for Deepland
+# Copyright (C) 2026 Deepland
+# This file is distributed under the same license as the Deepland package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Deepland 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-19 10:00+0500\n"
+"PO-Revision-Date: 2026-03-19 10:00+0500\n"
+"Last-Translator: Deepland Team\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14) ? 2 : 3);\n"
+
+# Navigation
+msgid "Courses"
+msgstr "Курсы"
+
+msgid "Challenges"
+msgstr "Задачи"
+
+msgid "Olympiads"
+msgstr "Олимпиады"
+
+msgid "Leaderboard"
+msgstr "Рейтинг"
+
+msgid "Deepwiki"
+msgstr "Deepwiki"
+
+msgid "Log in"
+msgstr "Войти"
+
+msgid "Log out"
+msgstr "Выйти"
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Progress"
+msgstr "Прогресс"
+
+msgid "Messages"
+msgstr "Сообщения"
+
+msgid "Bookmarks"
+msgstr "Закладки"
+
+msgid "Settings"
+msgstr "Настройки"
+
+# Streak
+msgid "Streak"
+msgstr "Серия"
+
+msgid "days"
+msgstr "дней"
+
+msgid "Keep the fire burning!"
+msgstr "Не дайте огню погаснуть!"
+
+# Footer
+msgid "Learn algorithms in a fun and interactive way."
+msgstr "Изучайте алгоритмы увлекательно и интерактивно."
+
+msgid "All rights reserved."
+msgstr "Все права защищены."
+
+msgid "Terms of Use"
+msgstr "Условия использования"
+
+msgid "Privacy Policy"
+msgstr "Политика конфиденциальности"
+
+# Home page
+msgid "Interactive Learning Platform"
+msgstr "Интерактивная образовательная платформа"
+
+msgid "Master Skills Through"
+msgstr "Освойте навыки через"
+
+msgid "Play"
+msgstr "Игру"
+
+msgid "Deepland is a gamified, interactive learning platform where education meets adventure. Earn XP, collect badges, and learn with friends."
+msgstr "Deepland — это геймифицированная интерактивная образовательная платформа, где обучение встречается с приключениями. Зарабатывайте XP, собирайте значки и учитесь с друзьями."
+
+msgid "Start Learning"
+msgstr "Начать обучение"
+
+msgid "Join Community"
+msgstr "Присоединиться"
+
+msgid "Why Deepland?"
+msgstr "Почему Deepland?"
+
+msgid "Gamified Progress"
+msgstr "Геймифицированный прогресс"
+
+msgid "Learn through interactive tasks and get instant feedback. Watch your XP grow and level up like in a game."
+msgstr "Учитесь через интерактивные задания и получайте мгновенную обратную связь. Следите за ростом XP и повышайте уровень."
+
+msgid "Smart Challenges"
+msgstr "Умные задачи"
+
+msgid "From coding to logic, our challenges are designed to keep you sharp and curious about the world."
+msgstr "От программирования до логики — наши задачи созданы, чтобы держать вас в тонусе."
+
+msgid "Meet the Guides"
+msgstr "Познакомьтесь с проводниками"
+
+msgid "Four unique characters—Nova, Pixel, Lyra, and Byte—will accompany you on your learning journey."
+msgstr "Четыре уникальных персонажа — Nova, Pixel, Lyra и Byte — будут сопровождать вас в учебном путешествии."
+
+msgid "Meet Your Companions"
+msgstr "Познакомьтесь с вашими спутниками"
+
+msgid "The Balanced Mentor"
+msgstr "Сбалансированный наставник"
+
+msgid "Guides with wisdom and patience, ensuring steady progress and stability."
+msgstr "Направляет с мудростью и терпением, обеспечивая стабильный прогресс."
+
+msgid "The Analytical Creator"
+msgstr "Аналитический создатель"
+
+msgid "Blends logic with emotion to help you make well-rounded decisions."
+msgstr "Сочетает логику с эмоциями, помогая принимать взвешенные решения."
+
+msgid "The Master of Logic"
+msgstr "Мастер логики"
+
+msgid "Brings order and structure to every task, making learning efficient."
+msgstr "Привносит порядок и структуру в каждую задачу, делая обучение эффективным."
+
+msgid "The Creative Spark"
+msgstr "Творческая искра"
+
+msgid "Injects fun and creativity into the process, keeping motivation high."
+msgstr "Добавляет веселье и креативность в процесс, поддерживая высокую мотивацию."
+
+msgid "Ready to start your adventure?"
+msgstr "Готовы начать своё приключение?"
+
+msgid "Join thousands of learners and start mastering new skills today."
+msgstr "Присоединяйтесь к тысячам учеников и начните осваивать новые навыки уже сегодня."
+
+msgid "Launch Deepland"
+msgstr "Запустить Deepland"
+
+# Login page
+msgid "Continue your journey on Deepland"
+msgstr "Продолжите своё путешествие на Deepland"
+
+msgid "Forgot your password?"
+msgstr "Забыли пароль?"
+
+msgid "Captcha error: Please try again"
+msgstr "Ошибка капчи: Пожалуйста, попробуйте снова"
+
+msgid "Unknown error"
+msgstr "Неизвестная ошибка"
+
+msgid "or"
+msgstr "или"
+
+msgid "Sign in with Google"
+msgstr "Войти через Google"
+
+msgid "Sign in with GitHub"
+msgstr "Войти через GitHub"
+
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
+
+msgid "Sign up"
+msgstr "Регистрация"
+
+# Signup page
+msgid "Join the Deepland community."
+msgstr "Присоединяйтесь к сообществу Deepland."
+
+msgid "By signing up, you agree to our"
+msgstr "Регистрируясь, вы соглашаетесь с нашими"
+
+msgid "and"
+msgstr "и"
+
+msgid "Already have an account?"
+msgstr "Уже есть аккаунт?"
+
+# Settings page
+msgid "General"
+msgstr "Общие"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Personal Information"
+msgstr "Личная информация"
+
+msgid "Profile picture"
+msgstr "Фото профиля"
+
+msgid "First name"
+msgstr "Имя"
+
+msgid "Last name"
+msgstr "Фамилия"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Change Password"
+msgstr "Изменить пароль"
+
+msgid "Update Password"
+msgstr "Обновить пароль"
+
+# Profile page
+msgid "Unnamed Developer"
+msgstr "Безымянный разработчик"
+
+msgid "Points"
+msgstr "Баллы"
+
+msgid "Solved"
+msgstr "Решено"
+
+msgid "Attempted"
+msgstr "Попытки"
+
+msgid "Following"
+msgstr "Подписки"
+
+msgid "Followers"
+msgstr "Подписчики"
+
+msgid "Follow"
+msgstr "Подписаться"
+
+msgid "Unfollow"
+msgstr "Отписаться"
+
+msgid "Developer Map"
+msgstr "Карта разработчика"
+
+msgid "Not attempted"
+msgstr "Не пробовали"
+
+msgid "Attempted (Wrong / TLE / RE)"
+msgstr "Попытки (Ошибка / TLE / RE)"
+
+msgid "Solved (Accepted)"
+msgstr "Решено (Принято)"

@@ -1,18 +1,18 @@
 {% extends "shared/_base.html" %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Interaktiv ta'lim platforma{% endblock %}
+{% block title %}{% trans "Interactive Learning Platform" %}{% endblock %}
 
 {% block content %}
 <div class="home-hero">
     <div class="hero-container">
         <div class="hero-content">
-            <h1 class="hero-title">Master Skills Through <span class="text-gradient">Play</span></h1>
-            <p class="hero-subtitle">Deepland is a gamified, interactive learning platform where education meets adventure.
-                Earn XP, collect badges, and learn with friends.</p>
+            <h1 class="hero-title">{% trans "Master Skills Through" %} <span class="text-gradient">{% trans "Play" %}</span></h1>
+            <p class="hero-subtitle">{% trans "Deepland is a gamified, interactive learning platform where education meets adventure. Earn XP, collect badges, and learn with friends." %}</p>
             <div class="hero-actions">
-                <a href="{% url 'course_list' %}" class="btn-primary">Start Learning</a>
-                <a href="{% url 'login' %}" class="btn-secondary">Join Community</a>
+                <a href="{% url 'course_list' %}" class="btn-primary">{% trans "Start Learning" %}</a>
+                <a href="{% url 'login' %}" class="btn-secondary">{% trans "Join Community" %}</a>
             </div>
         </div>
         <div class="hero-visual">
@@ -26,29 +26,28 @@
 
 <section class="features-section">
     <div class="container">
-        <h2 class="section-title">Why Deepland?</h2>
+        <h2 class="section-title">{% trans "Why Deepland?" %}</h2>
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon icon-green">
                     <i class="fa-solid fa-gamepad"></i>
                 </div>
-                <h3>Gamified Progress</h3>
-                <p>Learn through interactive tasks and get instant feedback. Watch your XP grow and level up like in a
-                    game.</p>
+                <h3>{% trans "Gamified Progress" %}</h3>
+                <p>{% trans "Learn through interactive tasks and get instant feedback. Watch your XP grow and level up like in a game." %}</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon icon-blue">
                     <i class="fa-solid fa-brain"></i>
                 </div>
-                <h3>Smart Challenges</h3>
-                <p>From coding to logic, our challenges are designed to keep you sharp and curious about the world.</p>
+                <h3>{% trans "Smart Challenges" %}</h3>
+                <p>{% trans "From coding to logic, our challenges are designed to keep you sharp and curious about the world." %}</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon icon-pink">
                     <i class="fa-solid fa-user-group"></i>
                 </div>
-                <h3>Meet the Guides</h3>
-                <p>Four unique characters—Nova, Pixel, Lyra, and Byte—will accompany you on your learning journey.</p>
+                <h3>{% trans "Meet the Guides" %}</h3>
+                <p>{% trans "Four unique characters—Nova, Pixel, Lyra, and Byte—will accompany you on your learning journey." %}</p>
             </div>
         </div>
     </div>
@@ -56,27 +55,27 @@
 
 <section class="characters-section">
     <div class="container">
-        <h2 class="section-title">Meet Your Companions</h2>
+        <h2 class="section-title">{% trans "Meet Your Companions" %}</h2>
         <div class="char-grid">
             <div class="char-card yellow">
                 <div class="char-header">NOVA</div>
-                <div class="char-role">The Balanced Mentor</div>
-                <p>Guides with wisdom and patience, ensuring steady progress and stability.</p>
+                <div class="char-role">{% trans "The Balanced Mentor" %}</div>
+                <p>{% trans "Guides with wisdom and patience, ensuring steady progress and stability." %}</p>
             </div>
             <div class="char-card blue">
                 <div class="char-header">PIXEL</div>
-                <div class="char-role">The Analytical Creator</div>
-                <p>Blends logic with emotion to help you make well-rounded decisions.</p>
+                <div class="char-role">{% trans "The Analytical Creator" %}</div>
+                <p>{% trans "Blends logic with emotion to help you make well-rounded decisions." %}</p>
             </div>
             <div class="char-card purple">
                 <div class="char-header">LYRA</div>
-                <div class="char-role">The Master of Logic</div>
-                <p>Brings order and structure to every task, making learning efficient.</p>
+                <div class="char-role">{% trans "The Master of Logic" %}</div>
+                <p>{% trans "Brings order and structure to every task, making learning efficient." %}</p>
             </div>
             <div class="char-card green">
                 <div class="char-header">BYTE</div>
-                <div class="char-role">The Creative Spark</div>
-                <p>Injects fun and creativity into the process, keeping motivation high.</p>
+                <div class="char-role">{% trans "The Creative Spark" %}</div>
+                <p>{% trans "Injects fun and creativity into the process, keeping motivation high." %}</p>
             </div>
         </div>
     </div>
@@ -85,9 +84,9 @@
 <section class="cta-section">
     <div class="container">
         <div class="cta-card">
-            <h2>Ready to start your adventure?</h2>
-            <p>Join thousands of learners and start mastering new skills today.</p>
-            <a href="{% url 'course_list' %}" class="btn-primary lg">Launch Deepland</a>
+            <h2>{% trans "Ready to start your adventure?" %}</h2>
+            <p>{% trans "Join thousands of learners and start mastering new skills today." %}</p>
+            <a href="{% url 'course_list' %}" class="btn-primary lg">{% trans "Launch Deepland" %}</a>
         </div>
     </div>
 </section>
