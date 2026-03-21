@@ -8,10 +8,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-'''
+
 #Content Security Policy
 CSP_FRAME_ANCESTORS = ("'self'",)
 CSP_REPORT_ONLY = True
@@ -26,7 +26,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-'''
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [
@@ -217,13 +217,23 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Allauth Settings
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+
+# Social auth: skip intermediate pages, auto-create users
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
+LOGIN_REDIRECT_URL = '/en/courses/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/en/courses/'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_ADAPTER = 'apps.users.adapter.CustomSocialAccountAdapter'
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -233,12 +243,22 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-        }
+        },
+        'APP': {
+            'client_id': os.environ.get('GOOGLE_CLIENT_ID'),
+            'secret': os.environ.get('GOOGLE_CLIENT_SECRET'),
+            'key': '',
+        },
     },
     'github': {
         'SCOPE': [
             'user:email',
             'read:user',
         ],
-    }
+        'APP': {
+            'client_id': os.environ.get('GITHUB_CLIENT_ID'),
+            'secret': os.environ.get('GITHUB_CLIENT_SECRET'),
+            'key': '',
+        },
+    },
 }

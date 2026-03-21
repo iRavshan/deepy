@@ -49,6 +49,13 @@
                         {% endif %}
                     </div>
                     <div class="form-group">
+                        <label>{% trans "Username" %}</label>
+                        {{ profile_form.username }}
+                        {% if profile_form.username.errors %}
+                            <div class="error-text">{% for error in profile_form.username.errors %}{{ error }}{% endfor %}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
                         <label>{% trans "First name" %}</label>
                         {{ profile_form.first_name }}
                         {% if profile_form.first_name.errors %}

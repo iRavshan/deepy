@@ -40,6 +40,7 @@ class EmailLoginForm(forms.Form):
 
 
 class UserSignupForm(forms.ModelForm):
+    first_name = forms.CharField(required=True, widget=forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Ismingiz'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-input', 'placeholder': 'Parol'}))
     cf_turnstile = TurnstileCaptchaField()
     
@@ -47,7 +48,6 @@ class UserSignupForm(forms.ModelForm):
         model = User
         fields = ['first_name', 'email']
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-input', 'placeholder': 'Ismingiz (Ixtiyoriy)'}),
             'email': forms.EmailInput(attrs={'class': 'form-input', 'placeholder': 'Elektron pochta'}),
         }
 
@@ -64,6 +64,7 @@ class UserSignupForm(forms.ModelForm):
         return user
 
 class UserSettingsForm(forms.ModelForm):
+    username = forms.CharField(required=True, widget=forms.TextInput(attrs={'placeholder': 'Foydalanuvchi nomi'}))
     first_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Ismingiz'}))
     last_name = forms.CharField(required=False, widget=forms.TextInput(attrs={'placeholder': 'Familiyangiz'}))
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'placeholder': 'Email manzil'}))
@@ -74,4 +75,4 @@ class UserSettingsForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'age', 'linkedin_url', 'github_url', 'profile_picture']
+        fields = ['username', 'first_name', 'last_name', 'email', 'age', 'linkedin_url', 'github_url', 'profile_picture']

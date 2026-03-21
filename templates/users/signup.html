@@ -1,9 +1,9 @@
 {% extends '../shared/_blank.html' %}
+{% load i18n %}
 {% block title %} {% trans "Sign up" %} {% endblock %}
-{% load socialaccount %}
 {% block content %}
 {% load static %}
-{% load i18n %}
+{% load socialaccount %}
 <div class="login-wrapper">
     <div class="login-container">
         <div class="mascot-wrapper">
@@ -78,7 +78,7 @@
             </div>
             <script>
                 const googleLoginUrl = "{% provider_login_url 'google' process='login' %}?next={% url 'auth_success' %}";
-                
+                const githubLoginUrl = "{% provider_login_url 'github' process='login' %}?next={% url 'auth_success' %}";
                 function openOAuthPopup(url) {
                     const width = 500;
                     const height = 600;

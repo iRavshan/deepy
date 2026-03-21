@@ -53,7 +53,7 @@
                 <div class="user-dropdown-menu" id="userDropdownMenu">
                     <div class="dropdown-header">
                         <div class="dropdown-user-name">{{ user.first_name }} {{ user.last_name }}</div>
-                        <div class="dropdown-user-email">{{ user.email }}</div>
+                        <div class="dropdown-user-email">@{{ user.username }}</div>
                     </div>
                     <div class="dropdown-divider"></div>
                     <a href="{% url 'profile' user.id %}" class="dropdown-item">

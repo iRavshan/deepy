@@ -458,7 +458,7 @@
                         {% trans "Unnamed Developer" %}
                     {% endif %}
                 </h1>
-                <div class="profile-username">{{ target_user.email }}</div>
+                <div class="profile-username">@{{ target_user.username }}</div>
                 
                 <div class="profile-meta">
                     <span><i class="fa-solid fa-calendar-days"></i> {% trans "Joined" %} {{ date_joined|date:"F Y" }}</span>

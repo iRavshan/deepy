@@ -4,6 +4,8 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.sitemaps.views import sitemap
 from django.conf.urls.i18n import i18n_patterns
+from django.conf import settings as django_settings
+from django.conf.urls.static import static
 from config.sitemaps import StaticViewSitemap, CourseSitemap, ChallengeSitemap
 from . import views
 
@@ -13,7 +15,6 @@ sitemaps = {
     'challenges': ChallengeSitemap,
 }
 
-# Non-prefixed URLs (language-independent resources)
 urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
     path('humans.txt', TemplateView.as_view(template_name='humans.txt', content_type='text/plain')),
@@ -23,7 +24,6 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 ]
 
-# Language-prefixed URLs (e.g. /en/, /uz/, /ru/)
 urlpatterns += i18n_patterns(
     path('', views.home, name='home'),
     path('admin/', admin.site.urls),
@@ -42,3 +42,6 @@ handler404 = 'config.views.custom_404'
 handler500 = 'config.views.custom_500'
 handler403 = 'config.views.custom_403'
 handler400 = 'config.views.custom_400'
+
+if django_settings.DEBUG:
+    urlpatterns += static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)
