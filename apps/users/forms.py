@@ -26,12 +26,25 @@ class EmailLoginForm(forms.Form):
 
         if email and password:
             from django.contrib.auth import authenticate
+            from allauth.account.models import EmailAddress
+            from django.conf import settings
+            
             self.user_cache = authenticate(self.request, email=email, password=password)
+            
             if self.user_cache is None:
                 raise forms.ValidationError(
                     "Elektron pochta yoki parol noto'g'ri. Iltimos, ma'lumotlarni tekshirib qayta kiriting.",
                     code='invalid_login',
                 )
+                
+            # Check allauth email verification status
+            if getattr(settings, 'ACCOUNT_EMAIL_VERIFICATION', 'none') == 'mandatory':
+                email_address = EmailAddress.objects.filter(user=self.user_cache, email__iexact=email).first()
+                if not email_address or not email_address.verified:
+                    raise forms.ValidationError(
+                        "Ushbu elektron pochta tasdiqlanmagan. Iltimos, elektron pochtangizga habardorni tasdiqlang."
+                    )
+                    
         return self.cleaned_data
 
     def get_user(self):

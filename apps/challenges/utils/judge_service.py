@@ -21,9 +21,6 @@ STATUS_MAP = {
 }
 
 def judge_single_test(source_code, language_id, stdin, expected_output, cpu_time_limit=None, memory_limit=None):
-    """
-    Judge0 API ga bitta test yuboradi va natijani qaytaradi.
-    """
     payload = {
         "source_code": source_code,
         "language_id": language_id,

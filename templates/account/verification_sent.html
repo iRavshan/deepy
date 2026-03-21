@@ -1,0 +1,31 @@
+{% extends '../shared/_blank.html' %}
+{% load i18n %}
+{% block title %} {% trans "Verify your email" %} {% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="mascot-wrapper">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Robot Mascot" class="mascot-img">
+        </div>
+        <div class="login-card" style="text-align: center;">
+            <div class="login-header">
+                <h1>{% trans "Verify Your Email" %}</h1>
+                <p>{% trans "We have sent an email to you for verification. Follow the link provided to finalize the signup process." %}</p>
+            </div>
+            
+            <div style="margin: 30px 0; font-size: 3rem; color: var(--theme-blue);">
+                <i class="fa-solid fa-envelope-open-text"></i>
+            </div>
+            
+            <p style="color: var(--text-medium); font-size: 0.95rem;">
+                {% trans "If you don't see the email in your inbox, please check your spam or junk folder." %}
+            </p>
+            
+            <div class="profile-actions" style="margin-top: 30px;">
+                <a href="{% url 'login' %}" class="btn-login btn-transform" style="display: block; text-decoration: none; text-align: center;">{% trans "Return to login" %}</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -17,15 +17,33 @@ def signup_view(request):
         form = UserSignupForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')    
-            next_url = request.GET.get('next', 'course_list')
-            return redirect(next_url)
+            
+            # Tie the new user to allauth's EmailAddress system dynamically
+            from allauth.account.models import EmailAddress
+            from allauth.account.utils import send_email_confirmation
+            
+            EmailAddress.objects.create(
+                user=user, 
+                email=user.email, 
+                primary=True, 
+                verified=False
+            )
+            
+            # Blast out the email confirmation but handle local SMTP config issues gracefully
+            try:
+                send_email_confirmation(request, user, signup=True)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Failed to send confirmation email: {e}")
+            
+            # Immediately shift user over to the new verification_sent page
+            return redirect('account_email_verification_sent')
     else:
         form = UserSignupForm()
 
     turnstile_site_key = getattr(settings, 'CF_TURNSTILE_SITE_KEY', '0x4AAAAAACXctAclxgTNx4Cl')
 
-    return render(request, 'users/signup.html', {
+    return render(request, 'account/signup.html', {
         'form': form,
         'turnstile_site_key': turnstile_site_key
     })
@@ -46,7 +64,7 @@ def login_view(request):
 
     turnstile_site_key = getattr(settings, 'CF_TURNSTILE_SITE_KEY', '0x4AAAAAACXctAclxgTNx4Cl')
 
-    return render(request, "users/login.html", {
+    return render(request, "account/login.html", {
         'form': form,
         'turnstile_site_key': turnstile_site_key
     })
@@ -112,7 +130,7 @@ def auth_success_view(request):
     After successful social auth in a popup, this view is called.
     It renders a script that closes the popup and reloads the main window.
     """
-    return render(request, 'users/auth_success.html')
+    return render(request, 'account/auth_success.html')
 
 def leaderboard_view(request):
     challenges = Challenge.objects.annotate(
@@ -203,20 +221,21 @@ def leaderboard_view(request):
             'solved_count': solved_count,
             'acceptance_rate': acceptance_rate,
             'last_successful_time': last_time,
+            'date_joined': user.date_joined,
         })
         
     if sort_by == 'points_asc':
-        leaderboard.sort(key=lambda x: (x['points'], x['solved_count'], x['acceptance_rate'], x['last_successful_time']))
+        leaderboard.sort(key=lambda x: (x['points'], x['solved_count'], x['acceptance_rate'], x['date_joined'], x['last_successful_time']))
     elif sort_by == 'solved_asc':
-        leaderboard.sort(key=lambda x: (x['solved_count'], x['points'], x['acceptance_rate'], x['last_successful_time']))
+        leaderboard.sort(key=lambda x: (x['solved_count'], x['points'], x['acceptance_rate'], x['date_joined'], x['last_successful_time']))
     elif sort_by == 'solved_desc':
-        leaderboard.sort(key=lambda x: (-x['solved_count'], -x['points'], -x['acceptance_rate'], x['last_successful_time']))
+        leaderboard.sort(key=lambda x: (-x['solved_count'], -x['points'], -x['acceptance_rate'], x['date_joined'], x['last_successful_time']))
     elif sort_by == 'acceptance_asc':
-        leaderboard.sort(key=lambda x: (x['acceptance_rate'], x['points'], x['solved_count'], x['last_successful_time']))
+        leaderboard.sort(key=lambda x: (x['acceptance_rate'], x['points'], x['solved_count'], x['date_joined'], x['last_successful_time']))
     elif sort_by == 'acceptance_desc':
-        leaderboard.sort(key=lambda x: (-x['acceptance_rate'], -x['points'], -x['solved_count'], x['last_successful_time']))
+        leaderboard.sort(key=lambda x: (-x['acceptance_rate'], -x['points'], -x['solved_count'], x['date_joined'], x['last_successful_time']))
     else: # points_desc is default
-        leaderboard.sort(key=lambda x: (-x['points'], -x['solved_count'], -x['acceptance_rate'], x['last_successful_time']))
+        leaderboard.sort(key=lambda x: (-x['points'], -x['solved_count'], -x['acceptance_rate'], x['date_joined'], x['last_successful_time']))
 
     return render(request, 'users/leaderboard.html', {
         'leaderboard': leaderboard,

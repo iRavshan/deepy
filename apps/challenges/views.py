@@ -3,13 +3,11 @@ from django.db.models import Q, Exists, OuterRef, Count, F, FloatField, Expressi
 from django.db.models.functions import Coalesce, NullIf
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
-from .models import Challenge, Submission, Tag, Topic, SavedChallenge, ProgrammingLanguage
+from .models import Challenge, Submission, Tag, SavedChallenge, ProgrammingLanguage
 from .forms import ChallangeSubmissionForm
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
-from apps.users.utils import update_user_streak
-from .utils.judge_service import judge_single_test
 from .tasks import process_submission_task, process_run_code_task
 import json
 import uuid
@@ -161,7 +159,6 @@ def judge_submission_view(request, slug):
     code = request.POST.get('code')
     language_id = request.POST.get('language_id')
     
-    # Get ProgrammingLanguage 
     lang = get_object_or_404(ProgrammingLanguage, judge0_id=language_id)
     
     submission = Submission.objects.create(

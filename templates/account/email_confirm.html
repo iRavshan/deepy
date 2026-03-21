@@ -1,0 +1,41 @@
+{% extends '../shared/_blank.html' %}
+{% load i18n %}
+{% load account %}
+
+{% block title %} {% trans "Confirm Email" %} {% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-container">
+        <div class="mascot-wrapper">
+            <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Robot Mascot" class="mascot-img">
+        </div>
+        <div class="login-card" style="text-align: center;">
+            <div class="login-header">
+                <h1>{% trans "Confirm Email" %}</h1>
+            </div>
+
+            {% if confirmation %}
+                {% user_display confirmation.email_address.user as user_display %}
+                <p>{% trans 'Please confirm that' %} <strong style="color: var(--theme-blue);">{{ confirmation.email_address.email }}</strong> {% trans 'is an email address for user' %} <strong>{{ user_display }}</strong>.</p>
+
+                <form method="post" action="{% url 'account_confirm_email' confirmation.key %}" style="margin-top: 25px;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-login btn-transform">{% trans "Confirm" %}</button>
+                </form>
+            {% else %}
+                <div style="margin: 30px 0; font-size: 3rem; color: var(--theme-red);">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                </div>
+                <p style="color: var(--theme-red); font-weight: bold;">
+                    {% trans "This email confirmation link has expired or is invalid. Please request a new email confirmation." %}
+                </p>
+                <div class="profile-actions" style="margin-top: 30px;">
+                    <a href="{% url 'login' %}" class="btn-login btn-transform" style="display: block; text-decoration: none; text-align: center;">{% trans "Go to login" %}</a>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

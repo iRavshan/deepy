@@ -770,42 +770,6 @@ a {
   display: block;
 }
 
-.course-grid .course-card .card-body .course-info {
-  color: var(--text-medium);
-  font-weight: 500;
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.course-grid .course-card .card-body .course-info .course-level.beginner-level {
-  color: var(--theme-green-dark);
-  background: var(--theme-green-light);
-  padding: 8px 12px;
-  border-radius: var(--card-radius);
-}
-
-.course-grid
-  .course-card
-  .card-body
-  .course-info
-  .course-level.intermediate-level {
-  color: var(--theme-orange-dark);
-  background-color: var(--theme-orange-light);
-  padding: 8px 12px;
-  border-radius: var(--card-radius);
-}
-
-.course-grid .course-card .card-body .course-info .course-level.advanced-level {
-  color: var(--theme-red-dark);
-  background: var(--theme-red-light);
-  padding: 8px 12px;
-  border-radius: var(--card-radius);
-}
-
 .course-grid .course-card .card-body .progress-container {
   display: flex;
   align-items: center;
